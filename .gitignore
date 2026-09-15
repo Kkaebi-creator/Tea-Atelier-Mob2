@@ -1,0 +1,11 @@
+# Nested mobile app dependencies and build output
+Work/tea-atelier-mobile-new/node_modules/
+Work/tea-atelier-mobile-new/dist/
+Work/tea-atelier-mobile-new/.vscode/
+Work/tea-atelier-mobile-new/.env.local
+Work/tea-atelier-mobile-new/.env.development.local
+Work/tea-atelier-mobile-new/.env.test.local
+
+# The nested website copy is not part of the mobile deployment
+Work/tea-atelier-mobile-new/tea-atelier-main/
+Work/tea-atelier-mobile-new/tea-atelier-mobile-new/

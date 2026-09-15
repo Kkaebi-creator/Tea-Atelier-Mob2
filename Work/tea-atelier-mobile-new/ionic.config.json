@@ -1,0 +1,7 @@
+{
+  "name": "tea-atelier-mobile-new",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
