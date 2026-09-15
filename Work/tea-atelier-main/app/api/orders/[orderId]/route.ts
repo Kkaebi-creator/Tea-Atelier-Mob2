@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { getUserId } from "@/lib/api-auth";
+import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleCorsOptions();
+}
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ orderId: string }> }
 ) {
   const userId = getUserId(req);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId) return addCorsHeaders(NextResponse.json({ error: "Unauthorized" }, { status: 401 }));
 
   const { orderId } = await params;
 
@@ -24,7 +29,7 @@ export async function GET(
   // Order doesn't exist, OR exists but belongs to a different user —
   // same 404 for both so we don't leak which orders exist.
   if (!order || order.user_id !== userId) {
-    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    return addCorsHeaders(NextResponse.json({ error: "Order not found" }, { status: 404 }));
   }
 
   const itemsResult = await pool.query(
@@ -40,7 +45,7 @@ export async function GET(
     0
   );
 
-  return NextResponse.json({
+  return addCorsHeaders(NextResponse.json({
     orderId: order.order_id,
     recipientName: order.recipient_name,
     orderStatus: order.order_status,
@@ -56,5 +61,5 @@ export async function GET(
       quantity: row.quantity,
       price: parseFloat(row.price),
     })),
-  });
+  }));
 }

@@ -67,7 +67,7 @@ export async function POST(req: Request) {
   const userId = getUserId(req);
   if (!userId) return addCorsHeaders(NextResponse.json({ error: "Unauthorized" }, { status: 401 }));
 
-  const { street, city, province, deliveryFee, paymentMethod, phone, fullName } = await req.json();
+  const { street, city, province, deliveryFee, paymentMethod, phone, fullName, productIds } = await req.json();
 
   if (!street || !city || !province) {
     return addCorsHeaders(NextResponse.json({ error: "All address fields are required." }, { status: 400 }));
@@ -79,13 +79,19 @@ export async function POST(req: Request) {
     await client.query("BEGIN");
 
     // Get the user's current cart, with live prices/stock based from products table
-    const cartResult = await client.query(
-      `SELECT c.product_id, c.quantity, p.price, p.stock_quantity, p.product_name
+    const selectedProductIds = Array.isArray(productIds) && productIds.length > 0
+      ? productIds.map((id: string) => Number(id)).filter((id: number) => Number.isInteger(id))
+      : null;
+    const cartQuery = selectedProductIds
+      ? `SELECT c.product_id, c.quantity, p.price, p.stock_quantity, p.product_name
        FROM cart c
        JOIN products p ON p.product_id = c.product_id
-       WHERE c.user_id = $1`,
-      [userId]
-    );
+       WHERE c.user_id = $1 AND p.product_id = ANY($2::int[])`
+      : `SELECT c.product_id, c.quantity, p.price, p.stock_quantity, p.product_name
+       FROM cart c
+       JOIN products p ON p.product_id = c.product_id
+       WHERE c.user_id = $1`;
+    const cartResult = await client.query(cartQuery, selectedProductIds ? [userId, selectedProductIds] : [userId]);
 
     if (cartResult.rows.length === 0) {
       await client.query("ROLLBACK");
@@ -143,8 +149,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // Clear the cart
-    await client.query("DELETE FROM cart WHERE user_id = $1", [userId]);
+    // Clear only the items included in this order; leave the rest for later.
+    if (selectedProductIds) {
+      await client.query(
+        "DELETE FROM cart WHERE user_id = $1 AND product_id = ANY($2::int[])",
+        [userId, selectedProductIds]
+      );
+    } else {
+      await client.query("DELETE FROM cart WHERE user_id = $1", [userId]);
+    }
 
     await client.query("COMMIT");
 

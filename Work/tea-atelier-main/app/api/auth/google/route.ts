@@ -3,15 +3,20 @@ import { OAuth2Client } from "google-auth-library";
 import { pool } from "@/lib/db";
 import { signToken } from "@/lib/auth-server";
 import { sendWelcomeEmail } from "@/lib/email";
+import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+
+export async function OPTIONS() {
+  return handleCorsOptions();
+}
 
 export async function POST(req: Request) {
   try {
     const { credential } = await req.json();
 
     if (!credential) {
-      return NextResponse.json({ error: "Missing Google credential." }, { status: 400 });
+      return addCorsHeaders(NextResponse.json({ error: "Missing Google credential." }, { status: 400 }));
     }
 
     const ticket = await client.verifyIdToken({
@@ -21,13 +26,13 @@ export async function POST(req: Request) {
 
     const payload = ticket.getPayload();
     if (!payload || !payload.email) {
-      return NextResponse.json({ error: "Invalid Google credential." }, { status: 401 });
+      return addCorsHeaders(NextResponse.json({ error: "Invalid Google credential." }, { status: 401 }));
     }
 
     const { email, given_name, family_name, sub: googleId, email_verified } = payload;
 
     if (!email_verified) {
-      return NextResponse.json({ error: "Google email not verified." }, { status: 401 });
+      return addCorsHeaders(NextResponse.json({ error: "Google email not verified." }, { status: 401 }));
     }
 
     const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
@@ -59,12 +64,12 @@ export async function POST(req: Request) {
     }
 
     if (user.role === "admin") {
-      return NextResponse.json({ error: "Administrators must sign in through the admin portal." }, { status: 403 });
+      return addCorsHeaders(NextResponse.json({ error: "Administrators must sign in through the admin portal." }, { status: 403 }));
     }
 
     const token = signToken({ userId: user.user_id, email: user.email, role: user.role });
 
-    return NextResponse.json({
+    return addCorsHeaders(NextResponse.json({
       token,
       user: {
         name: `${user.first_name} ${user.last_name}`,
@@ -74,9 +79,9 @@ export async function POST(req: Request) {
         phone: user.phone_number || null,
         role: user.role,
       },
-    });
+    }));
   } catch (error) {
     console.error("Google auth error:", error);
-    return NextResponse.json({ error: "Unable to sign in with Google." }, { status: 500 });
+    return addCorsHeaders(NextResponse.json({ error: "Unable to sign in with Google." }, { status: 500 }));
   }
 }

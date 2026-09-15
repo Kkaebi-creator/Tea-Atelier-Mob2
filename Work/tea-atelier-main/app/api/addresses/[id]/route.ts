@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { verifyToken } from "@/lib/auth-server";
+import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleCorsOptions();
+}
 
 export async function DELETE(
   req: Request,
@@ -10,7 +15,7 @@ export async function DELETE(
 
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
-  if (!token) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  if (!token) return addCorsHeaders(NextResponse.json({ error: "Unauthorized." }, { status: 401 }));
 
   try {
     const decoded = verifyToken(token);
@@ -26,9 +31,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Address not found." }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true });
+    return addCorsHeaders(NextResponse.json({ success: true }));
   } catch (error) {
     console.error("Delete address error:", error);
-    return NextResponse.json({ error: "Unable to delete address." }, { status: 500 });
+    return addCorsHeaders(NextResponse.json({ error: "Unable to delete address." }, { status: 500 }));
   }
 }
