@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">tea-atelier-mobile-new</string>
+    <string name="title_activity_main">tea-atelier-mobile-new</string>
+    <string name="package_name">com.teaatelier.mobiledist</string>
+    <string name="custom_url_scheme">com.teaatelier.mobiledist</string>
+</resources>
