@@ -1,11 +1,11 @@
 import React from "react";
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 
 const AboutPage: React.FC = () => (
   <IonPage className="tea-info-page">
     <IonHeader>
       <IonToolbar>
-        <IonButtons slot="start"><IonBackButton defaultHref="/shop" /></IonButtons>
+        <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
         <IonTitle>About the App</IonTitle>
       </IonToolbar>
     </IonHeader>

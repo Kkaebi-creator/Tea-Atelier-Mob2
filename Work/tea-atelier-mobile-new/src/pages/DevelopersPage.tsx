@@ -1,5 +1,5 @@
 import React from "react";
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 
 const developers = [
   { name: "Arce, Jose Luis Gabriel", image: "/images/developers/Josepic.jpg" },
@@ -13,7 +13,7 @@ const DevelopersPage: React.FC = () => (
   <IonPage className="tea-info-page">
     <IonHeader>
       <IonToolbar>
-        <IonButtons slot="start"><IonBackButton defaultHref="/shop" /></IonButtons>
+        <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
         <IonTitle>Developers</IonTitle>
       </IonToolbar>
     </IonHeader>

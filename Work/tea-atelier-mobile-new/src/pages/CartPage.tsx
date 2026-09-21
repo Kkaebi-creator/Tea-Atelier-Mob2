@@ -2,7 +2,7 @@ import React from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList,
   IonItem, IonLabel, IonButton, IonText, IonThumbnail, IonButtons,
-  IonBackButton, IonCheckbox, IonIcon, IonMenuButton,
+  IonCheckbox, IonIcon, IonMenuButton,
 } from "@ionic/react";
 import { removeCircleOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
@@ -45,7 +45,7 @@ const CartPage: React.FC = () => {
     <IonPage className="tea-cart-page">
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start"><IonBackButton defaultHref="/shop" /></IonButtons>
+          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
           <IonTitle>Your Cart</IonTitle>
         </IonToolbar>
       </IonHeader>

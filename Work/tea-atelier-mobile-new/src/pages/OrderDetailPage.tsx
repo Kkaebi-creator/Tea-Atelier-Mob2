@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
@@ -44,7 +44,7 @@ const OrderDetailPage: React.FC = () => {
     <IonPage className="tea-orders-page">
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start"><IonBackButton defaultHref="/orders" /></IonButtons>
+          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
           <IonTitle>Order Details</IonTitle>
         </IonToolbar>
       </IonHeader>

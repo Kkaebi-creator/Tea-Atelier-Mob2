@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
-  IonText, IonBackButton, IonButtons, IonToast,
+  IonText, IonButtons, IonMenuButton, IonToast,
 } from "@ionic/react";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../config/api";
@@ -76,7 +76,7 @@ const ProductDetailPage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/shop" />
+            <IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" />
           </IonButtons>
           <IonTitle>{product.name}</IonTitle>
         </IonToolbar>
