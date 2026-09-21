@@ -9,7 +9,7 @@ const Home: React.FC = () => {
     <IonPage className="tea-home-page">
       <IonContent fullscreen>
         <section className="tea-home-hero">
-          <div className="tea-home-topline"><span>Tea Atelier</span><span>Since 2024</span></div>
+          <div className="tea-home-topline"><span>Tea Atelier</span><span>Since 2026</span></div>
           <div className="tea-home-copy">
             <p className="tea-home-eyebrow">Small rituals. Better days.</p>
             <h1>Find your<br /><em>daily steep.</em></h1>

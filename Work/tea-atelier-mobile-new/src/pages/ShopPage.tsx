@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar,
-  IonGrid, IonRow, IonCol, IonCard, IonButton, IonText, IonBadge, IonButtons,
+  IonGrid, IonRow, IonCol, IonCard, IonButton, IonText, IonBadge, IonButtons, IonMenuButton,
   IonIcon,
   IonSelect, IonSelectOption,
 } from "@ionic/react";
@@ -9,7 +9,6 @@ import { cartOutline } from "ionicons/icons";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useCart } from "../context/CartContext";
-import MobileTabBar from "../components/MobileTabBar";
 
 type Product = {
   id: string;
@@ -66,6 +65,7 @@ const ShopPage: React.FC = () => {
     <IonPage className="tea-shop-page">
       <IonHeader className="shop-header">
         <IonToolbar>
+          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
           <IonTitle>Tea Atelier</IonTitle>
           <IonButtons slot="end">
             <IonButton routerLink="/cart" style={{ position: "relative" }}>
@@ -150,7 +150,6 @@ const ShopPage: React.FC = () => {
           )}
         </div>
       </IonContent>
-      <MobileTabBar />
     </IonPage>
   );
 };

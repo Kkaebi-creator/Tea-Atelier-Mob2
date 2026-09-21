@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonSpinner, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
+import TeaLoader from "../components/TeaLoader";
 
 type OrderDetail = {
   orderId: number;
@@ -48,7 +49,7 @@ const OrderDetailPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        {isLoading && <div className="tea-state"><IonSpinner name="crescent" /></div>}
+        {isLoading && <div className="tea-state"><TeaLoader size="page" label="Loading order" /></div>}
         {!isLoading && error && <div className="tea-state"><IonText color="danger"><p>{error}</p></IonText></div>}
         {!isLoading && order && (
           <div className="tea-page-inner">

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonItem, IonLabel, IonInput, IonButton, IonText, IonSpinner,
+  IonItem, IonLabel, IonInput, IonButton, IonText,
   IonRouterLink,
 } from "@ionic/react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import GoogleSignInButton from "../components/GoogleSignInButton";
+import TeaLoader from "../components/TeaLoader";
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -110,7 +111,7 @@ const LoginPage: React.FC = () => {
             )}
 
             <IonButton className="auth-button" expand="block" onClick={handleSubmit} disabled={isLoading}>
-              {isLoading ? <IonSpinner name="crescent" /> : "Sign In"}
+              {isLoading ? <TeaLoader /> : "Sign In"}
             </IonButton>
 
             <div className="tea-auth-divider"><span>or continue with</span></div>

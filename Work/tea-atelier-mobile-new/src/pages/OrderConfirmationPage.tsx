@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList,
-  IonItem, IonLabel, IonButton, IonSpinner, IonText, IonIcon, IonBadge,
+  IonItem, IonLabel, IonButton, IonText, IonIcon, IonBadge,
 } from "@ionic/react";
 import { checkmarkCircle } from "ionicons/icons";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
+import TeaLoader from "../components/TeaLoader";
 
 type OrderDetail = {
   orderId: number;
@@ -39,7 +40,7 @@ const OrderConfirmationPage: React.FC = () => {
   if (isLoading) return (
     <IonPage>
       <IonContent className="ion-padding ion-text-center">
-        <IonSpinner name="crescent" />
+        <TeaLoader size="page" label="Loading confirmation" />
       </IonContent>
     </IonPage>
   );

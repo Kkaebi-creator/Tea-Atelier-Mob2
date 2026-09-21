@@ -84,6 +84,262 @@ ion-title {
   color: var(--tea-text);
 }
 
+.tea-side-menu {
+  --width: min(86vw, 340px);
+  --background: var(--tea-bg);
+}
+
+.tea-side-menu ion-toolbar {
+  --background: var(--tea-green-deep);
+  --color: #ffffff;
+  box-shadow: none !important;
+}
+
+.tea-side-menu ion-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  letter-spacing: 0;
+}
+
+.tea-menu-brand {
+  align-items: center;
+  background: var(--tea-green-deep);
+  color: #ffffff;
+  display: flex;
+  gap: 12px;
+  padding: 14px 20px 26px;
+}
+
+.tea-menu-brand strong,
+.tea-menu-brand ion-note {
+  display: block;
+}
+
+.tea-menu-brand ion-note {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.78rem;
+  margin-top: 3px;
+}
+
+.tea-menu-mark,
+.tea-info-mark,
+.tea-developer-avatar {
+  align-items: center;
+  background: var(--tea-gold);
+  border-radius: 50%;
+  color: var(--tea-text);
+  display: inline-flex;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  justify-content: center;
+}
+
+.tea-menu-mark {
+  font-size: 0.92rem;
+  height: 42px;
+  width: 42px;
+}
+
+.tea-menu-list {
+  background: transparent;
+  margin: 18px 12px 0;
+}
+
+.tea-menu-secondary-list {
+  border-top: 1px solid var(--tea-border);
+  padding-top: 16px;
+}
+
+.tea-menu-section-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  margin: 0 14px 8px;
+  text-transform: uppercase;
+}
+
+.tea-menu-item {
+  --background: transparent;
+  --background-hover: rgba(125, 153, 130, 0.1);
+  --color: var(--tea-text-soft);
+  --padding-start: 14px;
+  --inner-padding-end: 12px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.tea-menu-item ion-icon {
+  color: var(--tea-text-soft) !important;
+  font-size: 21px;
+}
+
+.tea-menu-item.active {
+  --background: rgba(125, 153, 130, 0.18);
+  --color: var(--tea-green-deep);
+  transform: translateX(3px);
+}
+
+.tea-menu-item.active ion-icon {
+  color: var(--tea-green-deep) !important;
+}
+
+.tea-menu-footer {
+  color: var(--tea-text-soft);
+  font-size: 0.72rem;
+  margin: 30px 26px;
+}
+
+.tea-info-page ion-content {
+  --background: var(--tea-bg);
+}
+
+.tea-info-inner {
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 58px 22px 40px;
+}
+
+.tea-info-mark {
+  font-size: 1.5rem;
+  height: 74px;
+  margin-bottom: 28px;
+  width: 74px;
+}
+
+.tea-info-eyebrow {
+  color: var(--tea-green-deep);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.tea-info-inner h1 {
+  color: var(--tea-text);
+  font-family: Georgia, serif;
+  font-size: clamp(2.3rem, 9vw, 4.5rem);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 0.98;
+  margin: 12px 0 18px;
+}
+
+.tea-info-lead {
+  color: var(--tea-text-soft);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+.tea-info-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 42px;
+}
+
+.tea-info-grid > div {
+  background: var(--tea-card);
+  border: 1px solid var(--tea-border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.tea-info-grid strong {
+  color: var(--tea-green-deep);
+}
+
+.tea-info-grid p {
+  color: var(--tea-text-soft);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.tea-developer-list {
+  background: var(--tea-card);
+  border: 1px solid var(--tea-border);
+  border-radius: 18px;
+  margin-top: 30px;
+  overflow: hidden;
+}
+
+.tea-developer-list ion-item {
+  --background: var(--tea-card);
+  --padding-start: 16px;
+  margin: 0;
+  padding: 12px 0;
+}
+
+.tea-developer-avatar {
+  flex: 0 0 58px;
+  height: 48px;
+  margin-right: 14px;
+  object-fit: cover;
+  object-position: center;
+  overflow: hidden;
+  width: 58px;
+}
+
+img.tea-developer-avatar {
+  border: 2px solid rgba(197, 165, 114, 0.45);
+  border-radius: 50%;
+  height: 58px;
+  width: 58px;
+}
+
+.tea-developer-list h2 {
+  line-height: 1.25;
+}
+
+.tea-developer-list p {
+  color: var(--tea-text-soft);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+.tea-developer-list h2,
+.tea-developer-list p {
+  margin: 0;
+}
+
+.tea-developer-list p {
+  color: var(--tea-text-soft);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+.tea-developer-list a,
+.tea-project-link {
+  align-items: center;
+  color: var(--tea-green-deep);
+  display: inline-flex;
+  font-size: 0.8rem;
+  gap: 5px;
+  margin-top: 8px;
+  text-decoration: none;
+}
+
+.tea-project-link {
+  font-weight: 700;
+  margin-top: 24px;
+}
+
+@media (max-width: 560px) {
+  .tea-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 900px) {
+  .tea-side-menu {
+    --width: 300px;
+  }
+
+}
+
 ion-searchbar {
   --background: rgba(45, 37, 32, 0.06);
   --color: var(--tea-text);
@@ -334,6 +590,72 @@ ion-card-content {
   font-family: Georgia, serif;
   font-size: 0.95rem;
   margin-top: 8px;
+}
+
+.tea-loader {
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.tea-loader-orbit {
+  animation: tea-loader-spin 1.3s linear infinite;
+  border: 2px solid rgba(224, 199, 151, 0.35);
+  border-radius: 50%;
+  display: inline-block;
+  height: 22px;
+  position: relative;
+  width: 22px;
+}
+
+.tea-loader-leaf {
+  background: var(--tea-gold);
+  border-radius: 100% 0 100% 0;
+  height: 8px;
+  position: absolute;
+  width: 13px;
+}
+
+.tea-loader-leaf-one {
+  right: -4px;
+  top: 1px;
+  transform: rotate(35deg);
+}
+
+.tea-loader-leaf-two {
+  bottom: 1px;
+  left: -4px;
+  transform: rotate(215deg);
+}
+
+.tea-loader-inline .tea-loader-orbit {
+  height: 18px;
+  width: 18px;
+}
+
+.tea-loader-page {
+  flex-direction: column;
+  min-height: 100px;
+}
+
+.tea-loader-page .tea-loader-orbit {
+  height: 38px;
+  width: 38px;
+}
+
+.tea-loader-label {
+  color: var(--tea-text-soft);
+  font-size: 0.8rem;
+}
+
+ion-button .tea-loader-label {
+  color: inherit;
+}
+
+@keyframes tea-loader-spin {
+  to { transform: rotate(360deg); }
 }
 
 .tea-shop-page ion-content {

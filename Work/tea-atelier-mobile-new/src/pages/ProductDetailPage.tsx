@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
-  IonSpinner, IonText, IonBackButton, IonButtons, IonToast,
+  IonText, IonBackButton, IonButtons, IonToast,
 } from "@ionic/react";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import TeaLoader from "../components/TeaLoader";
 
 type Product = {
   id: string;
@@ -57,7 +58,7 @@ const ProductDetailPage: React.FC = () => {
   if (isLoading) return (
     <IonPage>
       <IonContent className="ion-padding ion-text-center">
-        <IonSpinner name="crescent" />
+        <TeaLoader size="page" label="Loading product" />
       </IonContent>
     </IonPage>
   );
@@ -99,7 +100,7 @@ const ProductDetailPage: React.FC = () => {
             onClick={handleAddToCart}
             style={{ marginTop: 18 }}
           >
-            {adding ? <IonSpinner name="crescent" /> : "Add to Cart"}
+            {adding ? <TeaLoader /> : "Add to Cart"}
           </IonButton>
         </div>
 

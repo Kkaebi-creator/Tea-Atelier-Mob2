@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
   IonContent, IonHeader, IonPage, IonRefresher, IonRefresherContent,
-  IonSpinner, IonText, IonTitle, IonToolbar,
+  IonText, IonTitle, IonToolbar, IonButtons, IonMenuButton,
 } from "@ionic/react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
-import MobileTabBar from "../components/MobileTabBar";
+import TeaLoader from "../components/TeaLoader";
 
 type OrderItem = {
   name: string;
@@ -61,6 +61,7 @@ const OrdersPage: React.FC = () => {
     <IonPage className="tea-orders-page">
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
           <IonTitle>My Orders</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -69,7 +70,7 @@ const OrdersPage: React.FC = () => {
           <IonRefresherContent />
         </IonRefresher>
         <div className="tea-page-inner">
-          {isLoading && <div className="tea-state"><IonSpinner name="crescent" /></div>}
+          {isLoading && <div className="tea-state"><TeaLoader size="page" label="Loading orders" /></div>}
           {!isLoading && error && (
             <div className="tea-state">
               <IonText color="danger"><p>{error}</p></IonText>
@@ -105,7 +106,6 @@ const OrdersPage: React.FC = () => {
           ))}
         </div>
       </IonContent>
-      <MobileTabBar />
     </IonPage>
   );
 };

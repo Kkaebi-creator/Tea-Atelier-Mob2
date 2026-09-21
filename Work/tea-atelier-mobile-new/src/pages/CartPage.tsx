@@ -2,14 +2,14 @@ import React from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList,
   IonItem, IonLabel, IonButton, IonText, IonThumbnail, IonButtons,
-  IonBackButton, IonSpinner, IonCheckbox, IonIcon,
+  IonBackButton, IonCheckbox, IonIcon, IonMenuButton,
 } from "@ionic/react";
 import { removeCircleOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import MobileTabBar from "../components/MobileTabBar";
+import TeaLoader from "../components/TeaLoader";
 
 const CartPage: React.FC = () => {
   const { items, isLoading, clearCart, updateQuantity, removeFromCart } = useCart();
@@ -30,7 +30,7 @@ const CartPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start"><IonBackButton defaultHref="/shop" /></IonButtons>
+          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
           <IonTitle>Cart</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -38,7 +38,6 @@ const CartPage: React.FC = () => {
         <IonText><p>Please sign in to view your cart.</p></IonText>
         <IonButton routerLink="/login">Sign In</IonButton>
       </IonContent>
-      <MobileTabBar />
     </IonPage>
   );
 
@@ -54,7 +53,7 @@ const CartPage: React.FC = () => {
         <div className="tea-card-panel">
           {isLoading && (
             <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
-              <IonSpinner name="crescent" />
+              <TeaLoader size="page" label="Loading cart" />
             </div>
           )}
 

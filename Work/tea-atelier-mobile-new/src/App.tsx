@@ -16,6 +16,9 @@ import OrdersPage from './pages/OrdersPage';
 import AccountPage from './pages/AccountPage';
 import Home from './pages/Home';
 import SplashScreen from './components/SplashScreen';
+import SideMenu from './components/SideMenu';
+import AboutPage from './pages/AboutPage';
+import DevelopersPage from './pages/DevelopersPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -79,9 +82,11 @@ const AuthRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
 };
 
 const AppRoutes: React.FC = () => (
-  <IonRouterOutlet>
+  <IonRouterOutlet id="main-content">
     <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
     <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
+    <Route path="/about" element={<AboutPage />} />
+    <Route path="/developers" element={<DevelopersPage />} />
     <Route path="/shop" element={<ProtectedRoute element={<ShopPage />} />} />
     <Route path="/product/:id" element={<ProtectedRoute element={<ProductDetailPage />} />} />
     <Route path="/cart" element={<ProtectedRoute element={<CartPage />} />} />
@@ -98,7 +103,7 @@ const App: React.FC = () => {
   const [showSplash, setShowSplash] = React.useState(true);
 
   React.useEffect(() => {
-    const timer = window.setTimeout(() => setShowSplash(false), 1200);
+    const timer = window.setTimeout(() => setShowSplash(false), 2000);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -108,6 +113,7 @@ const App: React.FC = () => {
       <AuthProvider>
         <IonReactRouter>
           <CartProvider>
+            <SideMenu />
             <AppRoutes />
           </CartProvider>
         </IonReactRouter>

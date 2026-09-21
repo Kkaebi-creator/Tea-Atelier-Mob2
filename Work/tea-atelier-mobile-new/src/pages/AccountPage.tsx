@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { IonAlert, IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonTitle, IonToolbar, IonSpinner } from "@ionic/react";
+import { IonAlert, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonMenuButton, IonPage, IonSegment, IonSegmentButton, IonText, IonTitle, IonToolbar } from "@ionic/react";
 import { logOutOutline, personCircleOutline } from "ionicons/icons";
 import { useNavigate } from "react-router-dom";
-import MobileTabBar from "../components/MobileTabBar";
 import { useAuth } from "../context/AuthContext";
 import { API_URL } from "../config/api";
+import TeaLoader from "../components/TeaLoader";
 
 const AccountPage: React.FC = () => {
   const { user, token, logout, updateUser } = useAuth();
@@ -80,6 +80,7 @@ const AccountPage: React.FC = () => {
     <IonPage className="tea-account-page">
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
           <IonTitle>Account</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -106,7 +107,7 @@ const AccountPage: React.FC = () => {
               <IonItem><IonLabel position="stacked">Last name</IonLabel><IonInput value={lastName} onIonChange={(e) => setLastName(e.detail.value || "")} /></IonItem>
               <IonItem><IonLabel position="stacked">Phone</IonLabel><IonInput type="tel" value={phone} onIonChange={(e) => setPhone(e.detail.value || "")} /></IonItem>
               <IonItem><IonLabel position="stacked">Email</IonLabel><IonInput value={user?.email || ""} readonly /></IonItem>
-              <IonButton expand="block" onClick={saveProfile} disabled={isSaving}>{isSaving ? <IonSpinner name="crescent" /> : "Save profile"}</IonButton>
+              <IonButton expand="block" onClick={saveProfile} disabled={isSaving}>{isSaving ? <TeaLoader /> : "Save profile"}</IonButton>
               {message && <IonText color="success"><p>{message}</p></IonText>}
               <h2 className="tea-account-subheading">Saved addresses</h2>
               {addresses.map((address) => <div className="tea-address-row" key={address.address_id}><span>{[address.address_line1, address.address_line2, address.address_line3].filter(Boolean).join(", ")}</span><IonButton fill="clear" color="danger" onClick={() => setAddressToDelete(address.address_id)}>Remove</IonButton></div>)}
@@ -139,7 +140,6 @@ const AccountPage: React.FC = () => {
         </div>
       </IonContent>
       <IonAlert isOpen={Boolean(addressToDelete)} header="Remove address?" message="This saved address will be removed from your account." buttons={[{ text: "Cancel", role: "cancel", handler: () => setAddressToDelete(null) }, { text: "Remove", role: "destructive", handler: deleteAddress }]} onDidDismiss={() => setAddressToDelete(null)} />
-      <MobileTabBar />
     </IonPage>
   );
 };

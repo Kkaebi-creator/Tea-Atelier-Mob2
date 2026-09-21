@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
-  IonLabel, IonInput, IonButton, IonText, IonSpinner, IonRadioGroup,
+  IonLabel, IonInput, IonButton, IonText, IonRadioGroup,
   IonRadio, IonListHeader, IonButtons, IonBackButton,
 } from "@ionic/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import TeaLoader from "../components/TeaLoader";
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -157,7 +158,7 @@ const CheckoutPage: React.FC = () => {
         </div>
 
         <IonButton expand="block" onClick={handleSubmit} disabled={isLoading} style={{ marginTop: 18 }}>
-          {isLoading ? <IonSpinner name="crescent" /> : "Place Order"}
+          {isLoading ? <TeaLoader /> : "Place Order"}
         </IonButton>
       </IonContent>
     </IonPage>
