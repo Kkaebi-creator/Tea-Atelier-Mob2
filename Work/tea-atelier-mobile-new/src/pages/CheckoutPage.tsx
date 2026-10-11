@@ -59,9 +59,12 @@ const CheckoutPage: React.FC = () => {
     }
     setIsLoading(true);
     try {
+      const checkoutRequestKey = typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const res = await fetch(`${API_URL}/api/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "X-Checkout-Request-Key": checkoutRequestKey },
         body: JSON.stringify({
           street: form.street,
           city: form.city,
@@ -71,6 +74,7 @@ const CheckoutPage: React.FC = () => {
           phone: form.phone,
           fullName: form.fullName,
           productIds: selectedProductIds,
+          checkoutRequestKey,
         }),
       });
       const data = await res.json();
