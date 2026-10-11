@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Browser } from "@capacitor/browser";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
   IonLabel, IonInput, IonButton, IonText, IonRadioGroup,
@@ -79,6 +80,11 @@ const CheckoutPage: React.FC = () => {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); return; }
+      if (data.checkoutUrl) {
+        await Browser.open({ url: data.checkoutUrl });
+        navigate(`/order-confirmation/${data.orderId}`, { replace: true });
+        return;
+      }
       if (selectedProductIds?.length && selectedProductIds.length < items.length) {
         await Promise.all(selectedProductIds.map((productId) => removeFromCart(productId)));
       } else {

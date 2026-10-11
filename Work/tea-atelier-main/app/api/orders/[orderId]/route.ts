@@ -15,10 +15,11 @@ export async function GET(
   if (!userId) return addCorsHeaders(NextResponse.json({ error: "Unauthorized" }, { status: 401 }));
 
   const { orderId } = await params;
+  await pool.query("ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status VARCHAR(20) DEFAULT 'UNPAID'");
 
   const orderResult = await pool.query(
-    `SELECT order_id, user_id, shipping_cost, total_amount, order_status,
-            created_at, payment_method, contact_phone, recipient_name
+        `SELECT order_id, user_id, shipping_cost, total_amount, order_status,
+          payment_status, created_at, payment_method, contact_phone, recipient_name
      FROM orders
      WHERE order_id = $1`,
     [orderId]
@@ -50,6 +51,7 @@ export async function GET(
     recipientName: order.recipient_name,
     orderStatus: order.order_status,
     paymentMethod: order.payment_method,
+    paymentStatus: order.payment_status || "UNPAID",
     createdAt: order.created_at,
     subtotal,
     deliveryFee: parseFloat(order.shipping_cost),

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { getUserId } from "@/lib/api-auth";
 import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
+import { createPayMongoCheckoutSession } from "@/lib/paymongo";
 
 export async function OPTIONS() {
   return handleCorsOptions();
@@ -77,6 +78,8 @@ export async function POST(req: Request) {
 
   try {
     await client.query("BEGIN");
+    await client.query("ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_status VARCHAR(20) DEFAULT 'UNPAID'");
+    await client.query("ALTER TABLE orders ADD COLUMN IF NOT EXISTS paymongo_checkout_session_id VARCHAR(120)");
 
     // Get the user's current cart, with live prices/stock based from products table
     const selectedProductIds = Array.isArray(productIds) && productIds.length > 0
@@ -134,6 +137,22 @@ export async function POST(req: Request) {
       [userId, addressId, shippingCost, totalAmount, paymentMethod || "cod", phone || null, fullName || null]
     );
     const orderId = orderResult.rows[0].order_id;
+    let checkoutUrl: string | null = null;
+
+    if (paymentMethod === "gcash") {
+      const userResult = await client.query("SELECT email FROM users WHERE user_id = $1", [userId]);
+      const checkout = await createPayMongoCheckoutSession({
+        orderId,
+        customerEmail: userResult.rows[0]?.email,
+        deliveryFee: shippingCost,
+        items: cartResult.rows.map((item) => ({ name: item.product_name, quantity: item.quantity, price: parseFloat(item.price) })),
+      });
+      checkoutUrl = checkout.checkoutUrl;
+      await client.query(
+        "UPDATE orders SET payment_status = 'PENDING', paymongo_checkout_session_id = $1 WHERE order_id = $2",
+        [checkout.id, orderId]
+      );
+    }
 
     // Create order_items and decrement stock for each cart item
     for (const item of cartResult.rows) {
@@ -166,6 +185,8 @@ export async function POST(req: Request) {
       subtotal: subtotal.toFixed(2),
       deliveryFee: shippingCost.toFixed(2),
       total: totalAmount.toFixed(2),
+      paymentStatus: paymentMethod === "gcash" ? "PENDING" : "UNPAID",
+      checkoutUrl,
     }));
   } catch (error) {
     await client.query("ROLLBACK");
