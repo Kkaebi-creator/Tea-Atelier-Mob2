@@ -30,16 +30,27 @@ const CheckoutPage: React.FC = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<{ address_id: string; address_line1: string; address_line2: string | null; address_line3: string | null }[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
 
   useEffect(() => {
     if (!token) return;
     fetch(`${API_URL}/api/addresses`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(async (response) => { if (response.ok) setAddresses((await response.json()).addresses); })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const savedAddresses = (await response.json()).addresses || [];
+        setAddresses(savedAddresses);
+        const preferred = savedAddresses.find((address: { default_address?: boolean }) => address.default_address) || savedAddresses[0];
+        if (preferred) {
+          setSelectedAddressId(preferred.address_id);
+          selectAddress(preferred.address_id, savedAddresses);
+        }
+      })
       .catch(() => undefined);
   }, [token]);
 
-  const selectAddress = (addressId: string) => {
-    const address = addresses.find((item) => item.address_id === addressId);
+  const selectAddress = (addressId: string, addressList = addresses) => {
+    setSelectedAddressId(addressId);
+    const address = addressList.find((item) => item.address_id === addressId);
     if (!address) return;
     const [city = "", province = ""] = (address.address_line2 || "").split(", ");
     setForm((current) => ({ ...current, street: address.address_line1, city, province }));
@@ -137,7 +148,7 @@ const CheckoutPage: React.FC = () => {
           ))}
 
           <h3 style={{ margin: "0 0 12px", color: "#1d1b1a" }}>Delivery Address</h3>
-          {addresses.length > 0 && <IonItem><IonLabel position="stacked">Use saved address</IonLabel><IonSelect placeholder="Select an address" onIonChange={(event) => selectAddress(event.detail.value)}><IonSelectOption value="">Enter a new address</IonSelectOption>{addresses.map((address) => <IonSelectOption value={address.address_id} key={address.address_id}>{[address.address_line1, address.address_line2, address.address_line3].filter(Boolean).join(", ")}</IonSelectOption>)}</IonSelect></IonItem>}
+          {addresses.length > 0 && <IonItem><IonLabel position="stacked">Use saved address</IonLabel><IonSelect value={selectedAddressId} placeholder="Select an address" onIonChange={(event) => selectAddress(event.detail.value)}><IonSelectOption value="">Enter a new address</IonSelectOption>{addresses.map((address) => <IonSelectOption value={address.address_id} key={address.address_id}>{[address.address_line1, address.address_line2, address.address_line3].filter(Boolean).join(", ")}</IonSelectOption>)}</IonSelect></IonItem>}
           <IonItem>
             <IonLabel position="stacked">Full Name</IonLabel>
             <IonInput value={form.fullName} onIonChange={set("fullName")} />
