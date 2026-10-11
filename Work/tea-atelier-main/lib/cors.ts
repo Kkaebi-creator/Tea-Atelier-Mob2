@@ -9,7 +9,7 @@ export function addCorsHeaders(response: NextResponse) {
   );
   response.headers.set(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization"
+    "Content-Type, Authorization, X-Checkout-Request-Key"
   );
   return response;
 }
@@ -20,7 +20,7 @@ export function handleCorsOptions() {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Checkout-Request-Key",
     },
   });
 }
