@@ -560,6 +560,7 @@ ion-card-content {
   inset: 0;
   justify-content: center;
   position: fixed;
+  pointer-events: none;
   z-index: 9999;
 }
 
@@ -846,6 +847,92 @@ ion-button .tea-loader-label {
   gap: 12px;
 }
 
+.tea-order-timeline {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 16px 0 10px;
+}
+
+.tea-timeline-step {
+  border-top: 3px solid rgba(45, 37, 32, 0.12);
+  color: var(--tea-text-soft);
+  font-size: 0.56rem;
+  font-weight: 800;
+  padding-top: 6px;
+  text-align: center;
+}
+
+.tea-timeline-step.complete {
+  border-color: var(--tea-green-deep);
+  color: var(--tea-green-deep);
+}
+
+.tea-order-product-block {
+  border-bottom: 1px solid rgba(45, 37, 32, 0.08);
+  padding: 8px 0 14px;
+}
+
+.tea-order-product-block:last-of-type {
+  border-bottom: 0;
+}
+
+.tea-review-preview {
+  background: rgba(197, 165, 114, 0.1);
+  border-radius: 12px;
+  margin: 8px 0;
+  padding: 9px 11px;
+}
+
+.tea-review-preview span {
+  color: var(--tea-gold);
+  font-size: 0.8rem;
+}
+
+.tea-review-preview p {
+  color: var(--tea-text-soft);
+  font-size: 0.78rem;
+  margin: 4px 0 0;
+}
+
+.tea-review-form {
+  border: 1px solid var(--tea-border);
+  border-radius: 14px;
+  margin-top: 8px;
+  padding: 10px;
+}
+
+.tea-star-picker {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.tea-star-picker button {
+  background: none;
+  border: 0;
+  color: rgba(45, 37, 32, 0.2);
+  font-size: 1.4rem;
+  padding: 3px;
+}
+
+.tea-star-picker button.selected {
+  color: var(--tea-gold);
+}
+
+.tea-order-actions {
+  border-top: 1px solid var(--tea-border);
+  margin-top: 18px;
+  padding-top: 14px;
+}
+
+.tea-order-actions small {
+  color: var(--tea-text-soft);
+  display: block;
+  font-size: 0.74rem;
+  margin-top: 5px;
+}
+
 .tea-order-label,
 .tea-order-date,
 .tea-account-name,
@@ -976,6 +1063,100 @@ ion-button .tea-loader-label {
   justify-content: space-between;
   gap: 10px;
   padding: 10px 0;
+}
+
+.tea-notification-card,
+.tea-message-card,
+.tea-settings-card {
+  background: var(--tea-card);
+  border: 1px solid var(--tea-border);
+  border-radius: 18px;
+  margin-bottom: 14px;
+  padding: 16px;
+}
+
+.tea-notification-card {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+}
+
+.tea-notification-card.read {
+  opacity: 0.58;
+}
+
+.tea-notification-read-all {
+  background: none;
+  border: 0;
+  color: var(--tea-green-deep);
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.tea-notification-dot {
+  background: var(--tea-green-deep);
+  border-radius: 50%;
+  flex: 0 0 10px;
+  height: 10px;
+  margin-top: 6px;
+  width: 10px;
+}
+
+.tea-notification-card p,
+.tea-message-card p,
+.tea-settings-card p {
+  color: var(--tea-text-soft);
+  line-height: 1.5;
+  margin: 6px 0;
+}
+
+.tea-notification-card small,
+.tea-message-card small {
+  color: var(--tea-text-soft);
+  font-size: 0.72rem;
+}
+
+.tea-message-card span,
+.tea-status-pill {
+  background: rgba(125, 153, 130, 0.14);
+  border-radius: 999px;
+  color: var(--tea-green-deep);
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 5px 9px;
+}
+
+.tea-settings-card h2 {
+  color: var(--tea-text);
+  margin: 0;
+}
+
+.tea-settings-heading {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.tea-status-pill:not(.verified) {
+  background: rgba(200, 90, 90, 0.12);
+  color: var(--tea-red);
+}
+
+.tea-2fa-setup {
+  max-width: 300px;
+}
+
+.tea-2fa-setup img {
+  background: #ffffff;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto 14px;
+  padding: 8px;
+  width: 190px;
 }
 
 .tea-panel-copy {

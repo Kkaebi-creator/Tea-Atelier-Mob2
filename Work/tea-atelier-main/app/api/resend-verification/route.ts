@@ -3,10 +3,13 @@ import { pool } from "@/lib/db";
 import { getUserId } from "@/lib/api-auth";
 import { sendVerificationEmail } from "@/lib/email";
 import crypto from "crypto";
+import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
+
+export async function OPTIONS() { return handleCorsOptions(); }
 
 export async function POST(req: Request) {
   const userId = getUserId(req);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId) return addCorsHeaders(NextResponse.json({ error: "Unauthorized" }, { status: 401 }));
 
   const userResult = await pool.query(
     "SELECT email, is_verified FROM users WHERE user_id = $1",
@@ -15,11 +18,11 @@ export async function POST(req: Request) {
   const user = userResult.rows[0];
 
   if (!user) {
-    return NextResponse.json({ error: "User not found." }, { status: 404 });
+    return addCorsHeaders(NextResponse.json({ error: "User not found." }, { status: 404 }));
   }
 
   if (user.is_verified) {
-    return NextResponse.json({ error: "Your email is already verified." }, { status: 400 });
+    return addCorsHeaders(NextResponse.json({ error: "Your email is already verified." }, { status: 400 }));
   }
 
   const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -34,8 +37,8 @@ export async function POST(req: Request) {
     await sendVerificationEmail(user.email, verificationToken);
   } catch (error) {
     console.error("Failed to resend verification email:", error);
-    return NextResponse.json({ error: "Unable to send email. Please try again later." }, { status: 500 });
+    return addCorsHeaders(NextResponse.json({ error: "Unable to send email. Please try again later." }, { status: 500 }));
   }
 
-  return NextResponse.json({ success: true });
+  return addCorsHeaders(NextResponse.json({ success: true }));
 }

@@ -40,7 +40,8 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event?: React.FormEvent) => {
+    event?.preventDefault();
     setError("");
     setIsLoading(true);
     try {
@@ -74,13 +75,14 @@ const LoginPage: React.FC = () => {
 
           {error && <IonText className="error-text">{error}</IonText>}
 
-          <div className="auth-form">
+          <form className="auth-form" onSubmit={handleSubmit}>
             <label className="field-label">Email</label>
             <IonItem className="soft-field">
               <IonInput
                 type="email"
                 value={email}
-                onIonChange={(e) => setEmail(e.detail.value!)}
+                onIonInput={(e) => setEmail(e.detail.value || "")}
+                autocomplete="email"
                 placeholder="you@example.com"
               />
             </IonItem>
@@ -90,7 +92,8 @@ const LoginPage: React.FC = () => {
               <IonInput
                 type="password"
                 value={password}
-                onIonChange={(e) => setPassword(e.detail.value!)}
+                onIonInput={(e) => setPassword(e.detail.value || "")}
+                autocomplete="current-password"
                 placeholder="••••••••"
               />
             </IonItem>
@@ -102,7 +105,7 @@ const LoginPage: React.FC = () => {
                   <IonInput
                     type="text"
                     value={totpCode}
-                    onIonChange={(e) => setTotpCode(e.detail.value!)}
+                    onIonInput={(e) => setTotpCode(e.detail.value || "")}
                     placeholder="6-digit code"
                     maxlength={6}
                   />
@@ -110,7 +113,7 @@ const LoginPage: React.FC = () => {
               </>
             )}
 
-            <IonButton className="auth-button" expand="block" onClick={handleSubmit} disabled={isLoading}>
+            <IonButton type="submit" className="auth-button" expand="block" disabled={isLoading}>
               {isLoading ? <TeaLoader /> : "Sign In"}
             </IonButton>
 
@@ -120,7 +123,7 @@ const LoginPage: React.FC = () => {
             <p className="auth-link">
               Don't have an account? <IonRouterLink routerLink="/register">Register</IonRouterLink>
             </p>
-          </div>
+          </form>
         </div>
       </IonContent>
     </IonPage>

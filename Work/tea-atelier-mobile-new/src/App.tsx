@@ -19,6 +19,10 @@ import SplashScreen from './components/SplashScreen';
 import SideMenu from './components/SideMenu';
 import AboutPage from './pages/AboutPage';
 import DevelopersPage from './pages/DevelopersPage';
+import NotificationsPage from './pages/NotificationsPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPage from './pages/PrivacyPage';
+import SettingsPage from './pages/SettingsPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -87,6 +91,10 @@ const AppRoutes: React.FC = () => (
     <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
     <Route path="/about" element={<AboutPage />} />
     <Route path="/developers" element={<DevelopersPage />} />
+    <Route path="/notifications" element={<ProtectedRoute element={<NotificationsPage />} />} />
+    <Route path="/contact" element={<ProtectedRoute element={<ContactPage />} />} />
+    <Route path="/privacy" element={<PrivacyPage />} />
+    <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} />} />
     <Route path="/shop" element={<ProtectedRoute element={<ShopPage />} />} />
     <Route path="/product/:id" element={<ProtectedRoute element={<ProductDetailPage />} />} />
     <Route path="/cart" element={<ProtectedRoute element={<CartPage />} />} />

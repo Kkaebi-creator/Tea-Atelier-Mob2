@@ -15,6 +15,10 @@ import {
   bagHandleOutline,
   cartOutline,
   informationCircleOutline,
+  mailOutline,
+  notificationsOutline,
+  lockClosedOutline,
+  shieldCheckmarkOutline,
   personOutline,
   receiptOutline,
   peopleOutline,
@@ -26,6 +30,7 @@ const modules = [
   { label: "Orders", href: "/orders", icon: receiptOutline },
   { label: "Cart", href: "/cart", icon: cartOutline },
   { label: "Account", href: "/account", icon: personOutline },
+  { label: "Notifications", href: "/notifications", icon: notificationsOutline },
 ];
 
 const SideMenu: React.FC = () => {
@@ -68,6 +73,21 @@ const SideMenu: React.FC = () => {
             <IonItem button detail={false} routerLink="/about" className={isActive("/about") ? "tea-menu-item active" : "tea-menu-item"}>
               <IonIcon slot="start" icon={informationCircleOutline} />
               <IonLabel>About the App</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle autoHide={false}>
+            <IonItem button detail={false} routerLink="/contact" className={isActive("/contact") ? "tea-menu-item active" : "tea-menu-item"}>
+              <IonIcon slot="start" icon={mailOutline} /><IonLabel>Contact Us</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle autoHide={false}>
+            <IonItem button detail={false} routerLink="/settings" className={isActive("/settings") ? "tea-menu-item active" : "tea-menu-item"}>
+              <IonIcon slot="start" icon={lockClosedOutline} /><IonLabel>Settings</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle autoHide={false}>
+            <IonItem button detail={false} routerLink="/privacy" className={isActive("/privacy") ? "tea-menu-item active" : "tea-menu-item"}>
+              <IonIcon slot="start" icon={shieldCheckmarkOutline} /><IonLabel>Privacy Policy</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>

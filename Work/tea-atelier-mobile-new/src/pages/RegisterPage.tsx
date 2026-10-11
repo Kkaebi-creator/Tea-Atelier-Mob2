@@ -40,7 +40,8 @@ const RegisterPage: React.FC = () => {
   const set = (field: string) => (e: CustomEvent) =>
     setForm((prev) => ({ ...prev, [field]: e.detail.value! }));
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event?: React.FormEvent) => {
+    event?.preventDefault();
     setError("");
     if (!form.firstName || !form.lastName || !form.email || !form.password) {
       setError("All fields are required.");
@@ -78,7 +79,7 @@ const RegisterPage: React.FC = () => {
 
           {error && <IonText className="error-text">{error}</IonText>}
 
-          <div className="auth-form">
+          <form className="auth-form" onSubmit={handleSubmit}>
             <label className="field-label">First Name</label>
             <IonItem className="soft-field">
               <IonInput value={form.firstName} onIonChange={set("firstName")} placeholder="First name" />
@@ -104,7 +105,7 @@ const RegisterPage: React.FC = () => {
               <IonInput type="password" value={form.password} onIonChange={set("password")} placeholder="Create a password (min 8 characters)" />
             </IonItem>
 
-            <IonButton className="auth-button" expand="block" onClick={handleSubmit} disabled={isLoading}>
+            <IonButton type="submit" className="auth-button" expand="block" disabled={isLoading}>
               {isLoading ? <TeaLoader /> : "Create Account"}
             </IonButton>
 
@@ -114,7 +115,7 @@ const RegisterPage: React.FC = () => {
             <p className="auth-link">
               Already have an account? <IonRouterLink routerLink="/login">Sign In</IonRouterLink>
             </p>
-          </div>
+          </form>
         </div>
       </IonContent>
     </IonPage>

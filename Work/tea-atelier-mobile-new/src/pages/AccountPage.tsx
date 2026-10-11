@@ -15,7 +15,6 @@ const AccountPage: React.FC = () => {
   const [phone, setPhone] = useState(user?.phone || "");
   const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [notifications, setNotifications] = useState(true);
   const [addresses, setAddresses] = useState<{ address_id: string; address_line1: string; address_line2: string | null; address_line3: string | null }[]>([]);
   const [addressLine1, setAddressLine1] = useState("");
   const [addressLine2, setAddressLine2] = useState("");
@@ -131,7 +130,8 @@ const AccountPage: React.FC = () => {
             <div className="tea-account-panel">
               <h2>Settings</h2>
               <IonList className="tea-account-list">
-                <IonItem lines="none"><IonLabel><h2>Order updates</h2><p>Receive updates about your orders</p></IonLabel><input className="tea-toggle" type="checkbox" checked={notifications} onChange={(event) => setNotifications(event.target.checked)} /></IonItem>
+                <IonItem lines="none" button routerLink="/notifications"><IonLabel><h2>Order updates</h2><p>View order progression and notifications</p></IonLabel></IonItem>
+                <IonItem lines="none" button routerLink="/settings"><IonLabel><h2>Security settings</h2><p>Email verification and two-factor authentication</p></IonLabel></IonItem>
                 <IonItem lines="none" button onClick={handleLogout}><IonIcon icon={logOutOutline} slot="start" color="danger" /><IonLabel color="danger">Sign out</IonLabel></IonItem>
               </IonList>
             </div>

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
   IonLabel, IonInput, IonButton, IonText, IonRadioGroup,
   IonRadio, IonListHeader, IonButtons, IonMenuButton,
+  IonSelect, IonSelectOption,
 } from "@ionic/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
@@ -27,6 +28,21 @@ const CheckoutPage: React.FC = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [addresses, setAddresses] = useState<{ address_id: string; address_line1: string; address_line2: string | null; address_line3: string | null }[]>([]);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch(`${API_URL}/api/addresses`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(async (response) => { if (response.ok) setAddresses((await response.json()).addresses); })
+      .catch(() => undefined);
+  }, [token]);
+
+  const selectAddress = (addressId: string) => {
+    const address = addresses.find((item) => item.address_id === addressId);
+    if (!address) return;
+    const [city = "", province = ""] = (address.address_line2 || "").split(", ");
+    setForm((current) => ({ ...current, street: address.address_line1, city, province }));
+  };
 
   const set = (field: string) => (e: CustomEvent) =>
     setForm((prev) => ({ ...prev, [field]: e.detail.value! }));
@@ -111,6 +127,7 @@ const CheckoutPage: React.FC = () => {
           ))}
 
           <h3 style={{ margin: "0 0 12px", color: "#1d1b1a" }}>Delivery Address</h3>
+          {addresses.length > 0 && <IonItem><IonLabel position="stacked">Use saved address</IonLabel><IonSelect placeholder="Select an address" onIonChange={(event) => selectAddress(event.detail.value)}><IonSelectOption value="">Enter a new address</IonSelectOption>{addresses.map((address) => <IonSelectOption value={address.address_id} key={address.address_id}>{[address.address_line1, address.address_line2, address.address_line3].filter(Boolean).join(", ")}</IonSelectOption>)}</IonSelect></IonItem>}
           <IonItem>
             <IonLabel position="stacked">Full Name</IonLabel>
             <IonInput value={form.fullName} onIonChange={set("fullName")} />
