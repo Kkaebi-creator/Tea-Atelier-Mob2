@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Route, useLocation } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, IonPage, IonContent, IonButton, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -85,7 +85,16 @@ const AuthRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
   return <>{element}</>;
 };
 
-const AppRoutes: React.FC = () => (
+const AppRoutes: React.FC = () => {
+  const { sessionError, retrySession, isLoading } = useAuth();
+  if (sessionError) return (
+    <IonPage><IonContent className="ion-padding ion-text-center">
+      <p role="alert">{sessionError}</p>
+      <IonButton onClick={() => void retrySession()} disabled={isLoading}>Try again</IonButton>
+    </IonContent></IonPage>
+  );
+  if (isLoading) return null;
+  return (
   <IonRouterOutlet id="main-content">
     <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
     <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
@@ -105,7 +114,8 @@ const AppRoutes: React.FC = () => (
     <Route path="/order-confirmation/:orderId" element={<ProtectedRoute element={<OrderConfirmationPage />} />} />
     <Route path="/" element={<Home />} />
   </IonRouterOutlet>
-);
+  );
+};
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = React.useState(true);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonItem, IonLabel, IonInput, IonButton, IonText,
+  IonItem, IonInput, IonButton, IonText,
   IonRouterLink,
 } from "@ionic/react";
 import { useNavigate } from "react-router-dom";

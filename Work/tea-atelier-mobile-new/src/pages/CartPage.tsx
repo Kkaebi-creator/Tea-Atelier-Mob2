@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList,
-  IonItem, IonLabel, IonButton, IonText, IonThumbnail, IonButtons,
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
+  IonButton, IonText, IonButtons,
   IonCheckbox, IonIcon, IonMenuButton,
 } from "@ionic/react";
 import { removeCircleOutline } from "ionicons/icons";
@@ -12,7 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import TeaLoader from "../components/TeaLoader";
 
 const CartPage: React.FC = () => {
-  const { items, isLoading, clearCart, updateQuantity, removeFromCart } = useCart();
+  const { items, isLoading, clearCart, updateQuantity, removeFromCart, error, refresh } = useCart();
   const { token } = useAuth();
   const navigate = useNavigate();
 
@@ -50,6 +50,7 @@ const CartPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        {error && <div role="alert"><IonText color="danger"><p>{error}</p></IonText><IonButton onClick={() => void refresh()}>Try again</IonButton></div>}
         <div className="tea-card-panel">
           {isLoading && (
             <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
@@ -57,7 +58,7 @@ const CartPage: React.FC = () => {
             </div>
           )}
 
-          {!isLoading && items.length === 0 && (
+          {!isLoading && !error && items.length === 0 && (
             <div className="ion-text-center">
               <IonText><p>Your cart is empty.</p></IonText>
               <IonButton routerLink="/shop">Continue Shopping</IonButton>
@@ -103,7 +104,7 @@ const CartPage: React.FC = () => {
             <IonButton expand="block" onClick={() => navigate("/checkout", { state: { selectedProductIds: selectedIds } })} disabled={selectedItems.length === 0} style={{ marginTop: 16 }}>
               Proceed to Checkout
             </IonButton>
-            <IonButton expand="block" fill="outline" color="danger" onClick={clearCart} style={{ marginTop: 8 }}>
+            <IonButton expand="block" fill="outline" color="danger" onClick={() => { void clearCart().catch(() => undefined); }} style={{ marginTop: 8 }}>
               Clear Cart
             </IonButton>
           </div>

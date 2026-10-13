@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { Preferences } from "@capacitor/preferences";
+import { fetchApi } from "../config/request";
 import { API_URL } from "../config/api";
 
 type User = {
@@ -16,6 +17,8 @@ type AuthContextType = {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  sessionError: string;
+  retrySession: () => Promise<void>;
   login: (token: string, user: User) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (updates: Partial<User>) => void;
@@ -28,27 +31,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
+  const [sessionError, setSessionError] = useState("");
+
+  const retrySession = useCallback(async () => {
+    setIsLoading(true);
+    setSessionError("");
+    try {
       const { value: storedToken } = await Preferences.get({ key: "auth_token" });
-      if (!storedToken) { setIsLoading(false); return; }
-      try {
-        const res = await fetch(`${API_URL}/api/whoami`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setToken(storedToken);
-          setUser(data.user);
-        } else {
-          await Preferences.remove({ key: "auth_token" });
-        }
-      } catch {
-        // network error — stay logged out
+      if (!storedToken) return;
+      const res = await fetchApi(`${API_URL}/api/whoami`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      });
+      if (res.status === 401 || res.status === 403) {
+        await Preferences.remove({ key: "auth_token" });
+        setToken(null);
+        setUser(null);
+      } else if (res.ok) {
+        const data = await res.json();
+        setToken(storedToken);
+        setUser(data.user);
+      } else {
+        throw new Error("Session service unavailable");
       }
+    } catch {
+      setSessionError("Unable to check your saved sign-in. Check your connection and try again.");
+    } finally {
       setIsLoading(false);
-    })();
+    }
   }, []);
+
+  useEffect(() => { void retrySession(); }, [retrySession]);
 
   const login = async (newToken: string, newUser: User) => {
     await Preferences.set({ key: "auth_token", value: newToken });
@@ -67,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, token, isLoading, sessionError, retrySession, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

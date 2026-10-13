@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Browser } from "@capacitor/browser";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
   IonLabel, IonInput, IonButton, IonText, IonRadioGroup,
-  IonRadio, IonListHeader, IonButtons, IonMenuButton,
+  IonRadio, IonButtons, IonMenuButton,
   IonSelect, IonSelectOption,
 } from "@ionic/react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { placeOrder } from "../config/checkout";
+import { fetchApi, ensureOk, requestError } from "../config/request";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -16,7 +17,7 @@ const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { token, user } = useAuth();
-  const { items, clearCart, removeFromCart, updateQuantity } = useCart();
+  const { items, refresh, updateQuantity } = useCart();
   const selectedProductIds = (location.state as { selectedProductIds?: string[] } | null)?.selectedProductIds;
   const checkoutItems = selectedProductIds?.length ? items.filter((item) => selectedProductIds.includes(item.product.id)) : items;
   const [form, setForm] = useState({
@@ -31,6 +32,26 @@ const CheckoutPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<{ address_id: string; address_line1: string; address_line2: string | null; address_line3: string | null }[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [settings, setSettings] = useState<{
+    shipping: Record<string, { enabled: boolean; feeCents: number }>;
+    freeShippingThresholdCents: number | null;
+    payments: Record<string, boolean>;
+  } | null>(null);
+  const [shippingMethod, setShippingMethod] = useState("standard");
+  const [settingsError, setSettingsError] = useState("");
+  const loadSettings = async () => {
+    setSettingsError("");
+    try {
+      const response = await fetchApi(`${API_URL}/api/settings`);
+      await ensureOk(response, "Unable to load checkout options.");
+      const { config } = await response.json();
+      if (!config?.shipping || !config?.payments) throw new Error("Checkout options are unavailable.");
+      setSettings(config);
+      setShippingMethod((current) => config.shipping[current]?.enabled ? current : Object.keys(config.shipping).find((key) => config.shipping[key].enabled) || "");
+      setForm((current) => ({ ...current, paymentMethod: config.payments[current.paymentMethod] ? current.paymentMethod : ["cod", "gcash"].find((key) => config.payments[key]) || "" }));
+    } catch (error) { setSettingsError(requestError(error, "Unable to load checkout options.")); }
+  };
+  useEffect(() => { void loadSettings(); }, []);
 
   useEffect(() => {
     if (!token) return;
@@ -60,7 +81,9 @@ const CheckoutPage: React.FC = () => {
     setForm((prev) => ({ ...prev, [field]: e.detail.value! }));
 
   const subtotal = checkoutItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
-  const deliveryFee = 99;
+  const shipping = settings?.shipping[shippingMethod];
+  const deliveryFee = settings?.freeShippingThresholdCents != null && subtotal * 100 >= settings.freeShippingThresholdCents
+    ? 0 : (shipping?.feeCents ?? 0) / 100;
   const total = subtotal + deliveryFee;
 
   const handleSubmit = async () => {
@@ -71,39 +94,19 @@ const CheckoutPage: React.FC = () => {
     }
     setIsLoading(true);
     try {
-      const checkoutRequestKey = typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const res = await fetch(`${API_URL}/api/orders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, "X-Checkout-Request-Key": checkoutRequestKey },
-        body: JSON.stringify({
-          street: form.street,
-          city: form.city,
-          province: form.province,
-          deliveryFee,
-          paymentMethod: form.paymentMethod,
-          phone: form.phone,
-          fullName: form.fullName,
-          productIds: selectedProductIds,
-          checkoutRequestKey,
-        }),
+      if (!token || !user || !shipping?.enabled || !settings?.payments[form.paymentMethod]) {
+        throw new Error("Select an available delivery and payment method.");
+      }
+      const data = await placeOrder(token, user.email, {
+        street: form.street, city: form.city, province: form.province,
+        shippingMethod, paymentMethod: form.paymentMethod,
+        phone: form.phone, fullName: form.fullName,
+        ...(selectedProductIds?.length ? { selectedProductIds } : {}),
       });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
-      if (data.checkoutUrl) {
-        await Browser.open({ url: data.checkoutUrl });
-        navigate(`/order-confirmation/${data.orderId}`, { replace: true });
-        return;
-      }
-      if (selectedProductIds?.length && selectedProductIds.length < items.length) {
-        await Promise.all(selectedProductIds.map((productId) => removeFromCart(productId)));
-      } else {
-        await clearCart();
-      }
+      await refresh();
       navigate(`/order-confirmation/${data.orderId}`, { replace: true });
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (error) {
+      setError(requestError(error, "Unable to place order."));
     } finally {
       setIsLoading(false);
     }
@@ -128,6 +131,8 @@ const CheckoutPage: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <div className="tea-card-panel">
+          {settingsError && <div role="alert"><p>{settingsError}</p><IonButton onClick={() => void loadSettings()}>Retry checkout options</IonButton></div>}
+          {!settings && !settingsError && <p>Loading checkout options…</p>}
           {error && <IonText color="danger"><p>{error}</p></IonText>}
 
           <h3 style={{ margin: "0 0 12px", color: "#1d1b1a" }}>Your Items</h3>
@@ -170,15 +175,18 @@ const CheckoutPage: React.FC = () => {
             <IonInput value={form.province} onIonChange={set("province")} placeholder="Metro Manila" />
           </IonItem>
 
+          <IonItem><IonLabel>Delivery</IonLabel><IonSelect value={shippingMethod} onIonChange={(event) => setShippingMethod(event.detail.value)}>
+            {Object.entries(settings?.shipping || {}).filter(([, option]) => option.enabled).map(([key]) => <IonSelectOption value={key} key={key}>{key === "express" ? "Express delivery" : "Standard delivery"}</IonSelectOption>)}
+          </IonSelect></IonItem>
           <h3 style={{ margin: "18px 0 12px", color: "#1d1b1a" }}>Payment Method</h3>
           <IonRadioGroup value={form.paymentMethod} onIonChange={set("paymentMethod")}>
             <IonItem>
               <IonLabel>Cash on Delivery</IonLabel>
-              <IonRadio slot="end" value="cod" />
+              <IonRadio slot="end" value="cod" disabled={!settings?.payments.cod} />
             </IonItem>
             <IonItem>
               <IonLabel>GCash</IonLabel>
-              <IonRadio slot="end" value="gcash" />
+              <IonRadio slot="end" value="gcash" disabled={!settings?.payments.gcash} />
             </IonItem>
           </IonRadioGroup>
         </div>
@@ -195,7 +203,7 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
 
-        <IonButton expand="block" onClick={handleSubmit} disabled={isLoading} style={{ marginTop: 18 }}>
+        <IonButton expand="block" onClick={handleSubmit} disabled={isLoading || !settings || !shipping?.enabled || !settings.payments[form.paymentMethod] || checkoutItems.length === 0} style={{ marginTop: 18 }}>
           {isLoading ? <TeaLoader /> : "Place Order"}
         </IonButton>
       </IonContent>

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton,
   IonText, IonButtons, IonMenuButton, IonToast,
 } from "@ionic/react";
 import { useParams } from "react-router-dom";
+import { fetchApi, ensureOk, requestError } from "../config/request";
 import { API_URL } from "../config/api";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -30,14 +31,24 @@ const ProductDetailPage: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const res = await fetch(`${API_URL}/api/products/${id}`);
+  const [error, setError] = useState("");
+
+  const load = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await fetchApi(`${API_URL}/api/products/${id}`);
+      await ensureOk(res, "Unable to load product.");
       const data = await res.json();
-      if (res.ok) setProduct(data.product);
+      setProduct(data.product);
+    } catch (error) {
+      setError(requestError(error, "Unable to load product."));
+    } finally {
       setIsLoading(false);
-    })();
+    }
   }, [id]);
+
+  useEffect(() => { void load(); }, [load]);
 
   const handleAddToCart = async () => {
     if (!token) { setToastMsg("Please sign in to add items to cart."); setShowToast(true); return; }
@@ -47,8 +58,8 @@ const ProductDetailPage: React.FC = () => {
       await addToCart(product.id);
       setToastMsg(`${product.name} added to cart!`);
       setShowToast(true);
-    } catch {
-      setToastMsg("Could not add to cart.");
+    } catch (error) {
+      setToastMsg(requestError(error, "Could not add to cart."));
       setShowToast(true);
     } finally {
       setAdding(false);
@@ -61,6 +72,13 @@ const ProductDetailPage: React.FC = () => {
         <TeaLoader size="page" label="Loading product" />
       </IonContent>
     </IonPage>
+  );
+
+  if (error) return (
+    <IonPage><IonContent className="ion-padding ion-text-center">
+      <p role="alert">{error}</p>
+      <IonButton onClick={() => void load()}>Try again</IonButton>
+    </IonContent></IonPage>
   );
 
   if (!product) return (
