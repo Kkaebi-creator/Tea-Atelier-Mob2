@@ -95,7 +95,7 @@ const AppRoutes: React.FC = () => {
   );
   if (isLoading) return null;
   return (
-  <IonRouterOutlet id="main-content">
+  <IonRouterOutlet>
     <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
     <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
     <Route path="/about" element={<AboutPage />} />
@@ -132,7 +132,9 @@ const App: React.FC = () => {
         <IonReactRouter>
           <CartProvider>
             <SideMenu />
-            <AppRoutes />
+            <div id="main-content" className="ion-page">
+              <AppRoutes />
+            </div>
           </CartProvider>
         </IonReactRouter>
       </AuthProvider>

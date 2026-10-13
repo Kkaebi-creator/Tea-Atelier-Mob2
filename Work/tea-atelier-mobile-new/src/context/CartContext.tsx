@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { fetchApi, ensureOk, requestError } from "../config/request";
 import { API_URL } from "../config/api";
 import { useAuth } from "./AuthContext";
@@ -39,12 +39,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const authHeaders = () => ({ Authorization: `Bearer ${token}` });
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     if (!token) { setItems([]); setError(""); return; }
     setIsLoading(true);
     setError("");
     try {
-      const res = await fetchApi(`${API_URL}/api/cart`, { headers: authHeaders() });
+      const res = await fetchApi(`${API_URL}/api/cart`, { headers: { Authorization: `Bearer ${token}` } });
       await ensureOk(res, "Unable to load cart.");
       setItems(await res.json());
     } catch (error) {
@@ -52,9 +52,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token]);
 
-  useEffect(() => { refresh(); }, [token]);
+  useEffect(() => { void refresh(); }, [refresh]);
 
   const cartRequest = async (url: string, options: RequestInit) => {
     setError("");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem,
   IonLabel, IonInput, IonButton, IonText, IonRadioGroup,
@@ -30,8 +30,11 @@ const CheckoutPage: React.FC = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [addresses, setAddresses] = useState<{ address_id: string; address_line1: string; address_line2: string | null; address_line3: string | null }[]>([]);
+  const [addresses, setAddresses] = useState<{ address_id: number | string; address_line1: string; address_line2: string | null; address_line3: string | null }[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [addressesLoading, setAddressesLoading] = useState(true);
+  const [addressesError, setAddressesError] = useState("");
+  const addressChoiceMade = useRef(false);
   const [settings, setSettings] = useState<{
     shipping: Record<string, { enabled: boolean; feeCents: number }>;
     freeShippingThresholdCents: number | null;
@@ -39,7 +42,7 @@ const CheckoutPage: React.FC = () => {
   } | null>(null);
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [settingsError, setSettingsError] = useState("");
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     setSettingsError("");
     try {
       const response = await fetchApi(`${API_URL}/api/settings`);
@@ -50,35 +53,37 @@ const CheckoutPage: React.FC = () => {
       setShippingMethod((current) => config.shipping[current]?.enabled ? current : Object.keys(config.shipping).find((key) => config.shipping[key].enabled) || "");
       setForm((current) => ({ ...current, paymentMethod: config.payments[current.paymentMethod] ? current.paymentMethod : ["cod", "gcash"].find((key) => config.payments[key]) || "" }));
     } catch (error) { setSettingsError(requestError(error, "Unable to load checkout options.")); }
-  };
-  useEffect(() => { void loadSettings(); }, []);
+  }, []);
+  useEffect(() => { void loadSettings(); }, [loadSettings]);
 
-  useEffect(() => {
-    if (!token) return;
-    fetch(`${API_URL}/api/addresses`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(async (response) => {
-        if (!response.ok) return;
-        const savedAddresses = (await response.json()).addresses || [];
-        setAddresses(savedAddresses);
-        const preferred = savedAddresses.find((address: { default_address?: boolean }) => address.default_address) || savedAddresses[0];
-        if (preferred) {
-          setSelectedAddressId(preferred.address_id);
-          selectAddress(preferred.address_id, savedAddresses);
-        }
-      })
-      .catch(() => undefined);
+  const loadAddresses = useCallback(async () => {
+    setAddressesLoading(true);
+    setAddressesError("");
+    try {
+      if (!token) return;
+      const response = await fetchApi(`${API_URL}/api/addresses`, { headers: { Authorization: `Bearer ${token}` } });
+      await ensureOk(response, "Unable to load saved addresses.");
+      const savedAddresses = (await response.json()).addresses || [];
+      setAddresses(savedAddresses);
+      const preferred = savedAddresses.find((address: { default_address?: boolean }) => address.default_address) || savedAddresses[0];
+      if (preferred && !addressChoiceMade.current) setSelectedAddressId(String(preferred.address_id));
+    } catch (error) {
+      setAddressesError(requestError(error, "Unable to load saved addresses."));
+    } finally { setAddressesLoading(false); }
   }, [token]);
+  useEffect(() => { void loadAddresses(); }, [loadAddresses]);
 
-  const selectAddress = (addressId: string, addressList = addresses) => {
-    setSelectedAddressId(addressId);
-    const address = addressList.find((item) => item.address_id === addressId);
-    if (!address) return;
-    const [city = "", province = ""] = (address.address_line2 || "").split(", ");
-    setForm((current) => ({ ...current, street: address.address_line1, city, province }));
+  const chooseAddress = (value: string) => {
+    addressChoiceMade.current = true;
+    setSelectedAddressId(value);
   };
 
-  const set = (field: string) => (e: CustomEvent) =>
+  const selectedAddress = addresses.find((address) => String(address.address_id) === selectedAddressId);
+
+  const set = (field: string) => (e: CustomEvent) => {
+    if (["street", "city", "province"].includes(field)) addressChoiceMade.current = true;
     setForm((prev) => ({ ...prev, [field]: e.detail.value! }));
+  };
 
   const subtotal = checkoutItems.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
   const shipping = settings?.shipping[shippingMethod];
@@ -88,7 +93,7 @@ const CheckoutPage: React.FC = () => {
 
   const handleSubmit = async () => {
     setError("");
-    if (!form.street || !form.city || !form.province) {
+    if (!selectedAddressId && (!form.street.trim() || !form.city.trim() || !form.province.trim())) {
       setError("All address fields are required.");
       return;
     }
@@ -97,8 +102,13 @@ const CheckoutPage: React.FC = () => {
       if (!token || !user || !shipping?.enabled || !settings?.payments[form.paymentMethod]) {
         throw new Error("Select an available delivery and payment method.");
       }
+      if (selectedAddressId && (!selectedAddress || !Number.isSafeInteger(Number(selectedAddressId)) || Number(selectedAddressId) <= 0)) {
+        throw new Error("Choose a valid saved address or enter a new address.");
+      }
       const data = await placeOrder(token, user.email, {
-        street: form.street, city: form.city, province: form.province,
+        ...(selectedAddressId
+          ? { savedAddressId: Number(selectedAddressId) }
+          : { street: form.street.trim(), city: form.city.trim(), province: form.province.trim() }),
         shippingMethod, paymentMethod: form.paymentMethod,
         phone: form.phone, fullName: form.fullName,
         ...(selectedProductIds?.length ? { selectedProductIds } : {}),
@@ -153,7 +163,7 @@ const CheckoutPage: React.FC = () => {
           ))}
 
           <h3 style={{ margin: "0 0 12px", color: "#1d1b1a" }}>Delivery Address</h3>
-          {addresses.length > 0 && <IonItem><IonLabel position="stacked">Use saved address</IonLabel><IonSelect value={selectedAddressId} placeholder="Select an address" onIonChange={(event) => selectAddress(event.detail.value)}><IonSelectOption value="">Enter a new address</IonSelectOption>{addresses.map((address) => <IonSelectOption value={address.address_id} key={address.address_id}>{[address.address_line1, address.address_line2, address.address_line3].filter(Boolean).join(", ")}</IonSelectOption>)}</IonSelect></IonItem>}
+          {addresses.length > 0 && <IonItem><IonLabel position="stacked">Use saved address</IonLabel><IonSelect value={selectedAddressId} placeholder="Select an address" onIonChange={(event) => chooseAddress(String(event.detail.value ?? ""))}><IonSelectOption value="">Enter a new address</IonSelectOption>{addresses.map((address) => <IonSelectOption value={String(address.address_id)} key={address.address_id}>{[address.address_line1, address.address_line2, address.address_line3].filter(Boolean).join(", ")}</IonSelectOption>)}</IonSelect></IonItem>}
           <IonItem>
             <IonLabel position="stacked">Full Name</IonLabel>
             <IonInput value={form.fullName} onIonChange={set("fullName")} />
@@ -162,18 +172,26 @@ const CheckoutPage: React.FC = () => {
             <IonLabel position="stacked">Phone</IonLabel>
             <IonInput type="tel" value={form.phone} onIonChange={set("phone")} />
           </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Street Address</IonLabel>
-            <IonInput value={form.street} onIonChange={set("street")} placeholder="123 Mabini St." />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">City / Municipality</IonLabel>
-            <IonInput value={form.city} onIonChange={set("city")} placeholder="Quezon City" />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Province</IonLabel>
-            <IonInput value={form.province} onIonChange={set("province")} placeholder="Metro Manila" />
-          </IonItem>
+          {addressesError && <div role="alert"><p>{addressesError}</p><IonButton fill="outline" onClick={() => void loadAddresses()}>Retry saved addresses</IonButton></div>}
+          {addressesLoading ? <p>Loading saved addresses…</p> : selectedAddress ? (
+            <div className="tea-address-preview">
+              <p>{[selectedAddress.address_line1, selectedAddress.address_line2, selectedAddress.address_line3].filter(Boolean).join(", ")}</p>
+              <IonButton fill="clear" onClick={() => chooseAddress("")}>Enter a new address</IonButton>
+            </div>
+          ) : <>
+            <IonItem>
+              <IonLabel position="stacked">Street Address</IonLabel>
+              <IonInput value={form.street} onIonChange={set("street")} placeholder="123 Mabini St." />
+            </IonItem>
+            <IonItem>
+              <IonLabel position="stacked">City / Municipality</IonLabel>
+              <IonInput value={form.city} onIonChange={set("city")} placeholder="Quezon City" />
+            </IonItem>
+            <IonItem>
+              <IonLabel position="stacked">Province</IonLabel>
+              <IonInput value={form.province} onIonChange={set("province")} placeholder="Metro Manila" />
+            </IonItem>
+          </>}
 
           <IonItem><IonLabel>Delivery</IonLabel><IonSelect value={shippingMethod} onIonChange={(event) => setShippingMethod(event.detail.value)}>
             {Object.entries(settings?.shipping || {}).filter(([, option]) => option.enabled).map(([key]) => <IonSelectOption value={key} key={key}>{key === "express" ? "Express delivery" : "Standard delivery"}</IonSelectOption>)}
@@ -203,7 +221,7 @@ const CheckoutPage: React.FC = () => {
           </div>
         </div>
 
-        <IonButton expand="block" onClick={handleSubmit} disabled={isLoading || !settings || !shipping?.enabled || !settings.payments[form.paymentMethod] || checkoutItems.length === 0} style={{ marginTop: 18 }}>
+        <IonButton expand="block" onClick={handleSubmit} disabled={isLoading || addressesLoading || !settings || !shipping?.enabled || !settings.payments[form.paymentMethod] || checkoutItems.length === 0} style={{ marginTop: 18 }}>
           {isLoading ? <TeaLoader /> : "Place Order"}
         </IonButton>
       </IonContent>

@@ -39,14 +39,43 @@ export async function placeOrder(token: string, account: string, payload: Record
   return { orderId };
 }
 
-export async function openPaymentSource(token: string, orderId: number, type: string): Promise<{ checkoutUrl?: string; paymentStatus?: string }> {
+export type PaymentStatus = 'pending' | 'processing' | 'paid' | 'failed' | 'cancelled' | 'unknown';
+
+export function readPaymentStatus(value: unknown): PaymentStatus {
+  const status = typeof value === 'string' ? value.trim().toLowerCase() : '';
+  return ['pending', 'processing', 'paid', 'failed', 'cancelled'].includes(status)
+    ? status as PaymentStatus : 'unknown';
+}
+
+export function resolvePaymentStatus(stored: unknown, verified?: PaymentStatus | null): PaymentStatus {
+  const status = readPaymentStatus(stored);
+  if (status === 'paid' || verified === 'paid') return 'paid';
+  if (status === 'cancelled' || verified === 'cancelled') return 'cancelled';
+  return verified ?? status;
+}
+
+export async function openPaymentSource(token: string, orderId: number, type: string): Promise<{ checkoutUrl?: string; paymentStatus?: PaymentStatus }> {
   const response = await fetchApi(`${API_URL}/api/payments/paymongo/source`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify({ orderId, type }),
   });
-  await ensureOk(response, 'Unable to start payment.');
-  const result = await response.json();
-  if (!result.checkoutUrl && !['paid', 'processing', 'cancelled'].includes(result.paymentStatus)) throw new Error('Payment link is unavailable. Please try again.');
-  return result;
+  const result = await response.json().catch(() => null);
+  const status = readPaymentStatus(result?.paymentStatus);
+  // The backend uses 409 for an existing paid, processing or cancelled payment.
+  // These are confirmed state changes, not permission to start another attempt.
+  if (response.status === 409 && ['paid', 'processing', 'cancelled'].includes(status)) {
+    return { paymentStatus: status };
+  }
+  if (!response.ok) {
+    throw new Error(typeof result?.error === 'string' ? result.error : 'Unable to start payment.');
+  }
+  if (['paid', 'processing', 'cancelled'].includes(status)) return { paymentStatus: status };
+  if (typeof result?.checkoutUrl !== 'string' || !result.checkoutUrl) {
+    throw new Error('Payment link is unavailable. Please check payment status.');
+  }
+  return {
+    checkoutUrl: result.checkoutUrl,
+    ...(status !== 'unknown' ? { paymentStatus: status } : {}),
+  };
 }
