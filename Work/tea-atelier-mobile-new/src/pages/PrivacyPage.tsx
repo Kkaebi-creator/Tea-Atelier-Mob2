@@ -9,40 +9,45 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
+import PageIntro from "../components/PageIntro";
+
 const PrivacyPage: React.FC = () => (
   <IonPage className="tea-info-page">
     <IonHeader>
       <IonToolbar>
         <IonButtons slot="start">
-          <IonMenuButton menu="tea-navigation" />
+          <IonMenuButton
+            menu="tea-navigation"
+            aria-label="Open navigation menu"
+          />
         </IonButtons>
         <IonTitle>Privacy Policy</IonTitle>
       </IonToolbar>
     </IonHeader>
     <IonContent>
       <div className="tea-info-inner">
-        <p className="tea-info-eyebrow">Your privacy matters</p>
-        <h1>Privacy, plainly stated.</h1>
-        <p className="tea-info-lead">
-          Tea Atelier uses your account information to authenticate you, process
-          orders, save delivery details, and provide order updates.
-        </p>
-        <div className="tea-policy-section">
+        <PageIntro
+          eyebrow="Your privacy matters"
+          title="Privacy, plainly stated."
+          description="Tea Atelier uses your account information to authenticate you, process orders, save delivery details, and provide order updates."
+        />
+        <div className="tea-settings-card">
           <h2>Information we use</h2>
           <p>
             We use your name, email, phone number, delivery address, cart, and
             order information to provide the shopping service.
           </p>
         </div>
-        <div className="tea-policy-section">
+        <div className="tea-settings-card">
           <h2>Storage and security</h2>
           <p>
-            Your session is stored securely on your device using Capacitor
-            Preferences. Authentication and account security are handled by the
-            Tea Atelier service.
+            The app saves sign-in session information on this device using
+            Capacitor Preferences. You can clear your session by signing out.
+            Authentication and account security are handled by the Tea Atelier
+            service.
           </p>
         </div>
-        <div className="tea-policy-section">
+        <div className="tea-settings-card">
           <h2>Your choices</h2>
           <p>
             You can update your profile, manage saved addresses, enable

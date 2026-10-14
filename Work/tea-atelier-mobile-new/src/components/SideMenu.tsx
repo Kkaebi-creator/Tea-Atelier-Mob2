@@ -1,5 +1,7 @@
 import React from "react";
 import {
+  IonButton,
+  IonButtons,
   IonContent,
   IonIcon,
   IonItem,
@@ -12,6 +14,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import {
+  closeOutline,
   bagHandleOutline,
   cartOutline,
   informationCircleOutline,
@@ -54,7 +57,14 @@ const SideMenu: React.FC = () => {
       className="tea-side-menu"
     >
       <IonToolbar>
-        <IonTitle>Tea Atelier</IonTitle>
+        <IonTitle>Explore the atelier</IonTitle>
+        <IonButtons slot="end">
+          <IonMenuToggle menu="tea-navigation" autoHide={false}>
+            <IonButton fill="clear" aria-label="Close navigation menu">
+              <IonIcon icon={closeOutline} />
+            </IonButton>
+          </IonMenuToggle>
+        </IonButtons>
       </IonToolbar>
       <IonContent>
         <div className="tea-menu-brand">
@@ -66,7 +76,7 @@ const SideMenu: React.FC = () => {
         </div>
 
         <IonList inset className="tea-menu-list">
-          <IonNote className="tea-menu-section-label">Modules</IonNote>
+          <IonNote className="tea-menu-section-label">Your atelier</IonNote>
           {modules.map((module) => (
             <IonMenuToggle key={module.href} autoHide={false}>
               <IonItem
@@ -87,7 +97,7 @@ const SideMenu: React.FC = () => {
         </IonList>
 
         <IonList inset className="tea-menu-list tea-menu-secondary-list">
-          <IonNote className="tea-menu-section-label">More</IonNote>
+          <IonNote className="tea-menu-section-label">Discover</IonNote>
           <IonMenuToggle autoHide={false}>
             <IonItem
               button
@@ -152,7 +162,7 @@ const SideMenu: React.FC = () => {
               }
             >
               <IonIcon slot="start" icon={peopleOutline} />
-              <IonLabel>Developers</IonLabel>
+              <IonLabel>The team</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>

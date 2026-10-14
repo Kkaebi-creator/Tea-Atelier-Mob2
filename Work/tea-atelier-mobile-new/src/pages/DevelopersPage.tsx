@@ -12,6 +12,8 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
+import PageIntro from "../components/PageIntro";
+
 const developers = [
   { name: "Arce, Jose Luis Gabriel", image: "/images/developers/Josepic.jpg" },
   {
@@ -36,17 +38,16 @@ const DevelopersPage: React.FC = () => (
             aria-label="Open navigation menu"
           />
         </IonButtons>
-        <IonTitle>Developers</IonTitle>
+        <IonTitle>The Team</IonTitle>
       </IonToolbar>
     </IonHeader>
     <IonContent>
       <div className="tea-info-inner">
-        <p className="tea-info-eyebrow">The people behind the pour</p>
-        <h1>Built with care.</h1>
-        <p className="tea-info-lead">
-          Tea Atelier is a student-built commerce experience designed to make
-          discovering and ordering tea feel calm and approachable.
-        </p>
+        <PageIntro
+          eyebrow="The people behind the pour"
+          title="Built with care."
+          description="Tea Atelier is a student-built commerce experience designed to make discovering and ordering tea feel calm and approachable."
+        />
         <IonList className="tea-developer-list">
           {developers.map((developer) => (
             <IonItem lines="none" key={developer.name}>
@@ -55,7 +56,7 @@ const DevelopersPage: React.FC = () => (
                 src={developer.image}
                 alt={developer.name}
               />
-              <IonLabel>
+              <IonLabel className="ion-text-wrap">
                 <h2>{developer.name}</h2>
               </IonLabel>
             </IonItem>

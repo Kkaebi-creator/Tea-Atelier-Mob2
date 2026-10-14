@@ -24,6 +24,7 @@ import AccountPage from "./pages/AccountPage";
 import Home from "./pages/Home";
 import SplashScreen from "./components/SplashScreen";
 import SideMenu from "./components/SideMenu";
+import AppNavigation from "./components/AppNavigation";
 import AboutPage from "./pages/AboutPage";
 import DevelopersPage from "./pages/DevelopersPage";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -179,6 +180,32 @@ const AppRoutes: React.FC = () => {
   );
 };
 
+const AppShell: React.FC = () => {
+  const { token, isLoading, sessionError } = useAuth();
+  const { pathname } = useLocation();
+  const showNavigation =
+    !!token &&
+    !isLoading &&
+    !sessionError &&
+    pathname !== "/" &&
+    pathname !== "/login" &&
+    pathname !== "/register" &&
+    pathname !== "/checkout" &&
+    !pathname.startsWith("/order-confirmation/");
+  return (
+    <>
+      <SideMenu />
+      <div
+        id="main-content"
+        className={`ion-page ${showNavigation ? "tea-has-dock" : ""}`}
+      >
+        <AppRoutes />
+        {showNavigation && <AppNavigation />}
+      </div>
+    </>
+  );
+};
+
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = React.useState(true);
 
@@ -194,10 +221,7 @@ const App: React.FC = () => {
         <IonReactRouter>
           <PaymentReturnListener />
           <CartProvider>
-            <SideMenu />
-            <div id="main-content" className="ion-page">
-              <AppRoutes />
-            </div>
+            <AppShell />
           </CartProvider>
         </IonReactRouter>
       </AuthProvider>

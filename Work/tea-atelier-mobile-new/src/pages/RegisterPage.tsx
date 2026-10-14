@@ -5,7 +5,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonItem,
   IonInput,
   IonButton,
   IonText,
@@ -93,58 +92,68 @@ const RegisterPage: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <div className="auth-container">
-          <h2 className="auth-title">Tea Atelier</h2>
+          <p className="tea-auth-brand">Tea Atelier</p>
+          <div className="tea-auth-intro">
+            <p className="tea-info-eyebrow">Small rituals. Beautiful tea.</p>
+            <h1>A little beginning.</h1>
+            <p>Make yourself at home in the atelier.</p>
+          </div>
 
           {error && <IonText className="error-text">{error}</IonText>}
 
           <form className="auth-form" onSubmit={handleSubmit}>
-            <label className="field-label">First Name</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="First Name"
+                labelPlacement="stacked"
                 value={form.firstName}
                 onIonChange={set("firstName")}
                 placeholder="First name"
               />
-            </IonItem>
+            </div>
 
-            <label className="field-label">Last Name</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="Last Name"
+                labelPlacement="stacked"
                 value={form.lastName}
                 onIonChange={set("lastName")}
                 placeholder="Last name"
               />
-            </IonItem>
+            </div>
 
-            <label className="field-label">Email</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="Email"
+                labelPlacement="stacked"
                 type="email"
                 value={form.email}
                 onIonChange={set("email")}
                 placeholder="you@example.com"
               />
-            </IonItem>
+            </div>
 
-            <label className="field-label">Phone (Optional)</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="Phone (Optional)"
+                labelPlacement="stacked"
                 type="tel"
                 value={form.phoneNumber}
                 onIonChange={set("phoneNumber")}
                 placeholder="+1 234 567 8900"
               />
-            </IonItem>
+            </div>
 
-            <label className="field-label">Password</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="Password"
+                labelPlacement="stacked"
                 type="password"
                 value={form.password}
                 onIonChange={set("password")}
                 placeholder="Create a password (min 8 characters)"
               />
-            </IonItem>
+            </div>
 
             <IonButton
               type="submit"

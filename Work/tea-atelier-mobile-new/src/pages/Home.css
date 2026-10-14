@@ -1,127 +1,134 @@
-.tea-home-page ion-content {
-  --background: #efe9e0;
-}
-
 .tea-home-hero {
-  background:
-    linear-gradient(135deg, rgba(49, 65, 48, 0.92), rgba(106, 132, 112, 0.78)),
-    radial-gradient(
-      circle at 82% 20%,
-      rgba(222, 196, 145, 0.7),
-      transparent 26%
-    ),
-    #314130;
-  color: #fbf7ef;
-  min-height: 78vh;
-  overflow: hidden;
-  padding: 28px 24px 54px;
-  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px 20px;
 }
-
-.tea-home-hero::after {
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 50%;
-  content: "";
-  height: 340px;
-  position: absolute;
-  right: -120px;
-  top: 90px;
-  transform: rotate(22deg);
-  width: 260px;
-}
-
-.tea-home-topline,
-.tea-home-eyebrow,
-.tea-home-signin,
-.tea-home-note span {
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
 .tea-home-topline {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  opacity: 0.8;
+  gap: 12px;
+  margin-bottom: 36px;
 }
-
-.tea-home-copy {
-  max-width: 460px;
-  padding-top: 18vh;
-  position: relative;
-  z-index: 1;
+.tea-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--tea-display);
+  font-size: 24px;
 }
-
-.tea-home-eyebrow {
-  color: #dcc395;
-  margin: 0 0 14px;
+.tea-wordmark ion-icon {
+  color: var(--tea-green-deep);
+  font-size: 22px;
 }
-
+.tea-home-edition {
+  color: var(--tea-text-soft);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
 .tea-home-copy h1 {
-  font-size: clamp(3.2rem, 13vw, 6.5rem);
-  font-weight: 500;
-  letter-spacing: -0.06em;
-  line-height: 0.92;
   margin: 0;
+  font-size: clamp(3rem, 12vw, 5.2rem);
+  line-height: 1.04;
 }
-
 .tea-home-copy h1 em {
-  color: #e0c797;
-  font-family: Georgia, serif;
-  font-weight: 400;
+  color: var(--tea-green-deep);
 }
-
 .tea-home-description {
-  color: rgba(251, 247, 239, 0.78);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin: 24px 0;
-  max-width: 330px;
+  color: var(--tea-text-soft);
+  font-size: 13px;
+  line-height: 1.75;
+  max-width: 370px;
+  margin: 20px 0 24px;
 }
-
 .tea-home-copy ion-button {
-  --background: #e0c797;
-  --color: #314130;
-  --background-activated: #c5a572;
-  text-transform: none;
+  margin: 0;
+  --border-radius: 30px;
 }
-
 .tea-home-signin {
-  color: rgba(251, 247, 239, 0.65);
-  margin-top: 20px;
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  margin: 20px 0 26px;
 }
-
 .tea-home-signin a {
-  color: #fbf7ef;
-  font-weight: 700;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
-
-.tea-home-stamp {
-  bottom: 42px;
-  color: rgba(255, 255, 255, 0.28);
-  font-size: 0.7rem;
-  letter-spacing: 0.24em;
-  line-height: 1.4;
+.tea-home-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px 24px 100px 24px;
+  height: 290px;
+  margin-top: 28px;
+}
+.tea-home-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 57%;
+  display: block;
+}
+.tea-home-photo::after {
+  content: "";
   position: absolute;
-  right: 24px;
-  text-align: center;
-  transform: rotate(-12deg);
+  inset: 50% 0 0;
+  background: linear-gradient(transparent, #1f262166);
+  pointer-events: none;
 }
-
+.tea-home-photo-caption {
+  position: absolute;
+  z-index: 1;
+  bottom: 24px;
+  left: 24px;
+  font-family: var(--tea-display);
+  font-size: 23px;
+  font-style: italic;
+  color: #fffaf3;
+}
 .tea-home-note {
-  background: #efe9e0;
-  color: #314130;
-  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 22px 24px 36px;
 }
-
-.tea-home-note span {
-  color: #8c795e;
+.tea-home-note > span:first-child {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--tea-green-deep);
 }
-
 .tea-home-note p {
-  font-family: Georgia, serif;
-  font-size: 1.5rem;
-  line-height: 1.25;
-  margin: 12px 0 0;
-  max-width: 360px;
+  font-family: var(--tea-display);
+  font-size: 27px;
+  line-height: 1.2;
+  margin: 12px 0;
+}
+.tea-home-note-small {
+  font-size: 11px;
+  color: var(--tea-text-soft);
+  line-height: 1.65;
+  display: block;
+  max-width: 320px;
+}
+@media (min-width: 768px) {
+  .tea-home-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+    padding-top: 36px;
+  }
+  .tea-home-topline {
+    grid-column: 1 / -1;
+  }
+  .tea-home-photo {
+    margin-top: 0;
+    height: 470px;
+  }
+  .tea-home-copy {
+    padding-top: 48px;
+  }
+  .tea-home-note {
+    padding-top: 40px;
+  }
 }

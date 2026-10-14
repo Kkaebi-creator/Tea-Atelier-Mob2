@@ -5,7 +5,6 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonItem,
   IonInput,
   IonButton,
   IonText,
@@ -87,45 +86,53 @@ const LoginPage: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <div className="auth-container">
-          <h2 className="auth-title">Tea Atelier</h2>
+          <p className="tea-auth-brand">Tea Atelier</p>
+          <div className="tea-auth-intro">
+            <p className="tea-info-eyebrow">Small rituals. Beautiful tea.</p>
+            <h1>Welcome back.</h1>
+            <p>Your favorite rituals are right where you left them.</p>
+          </div>
 
           {error && <IonText className="error-text">{error}</IonText>}
 
           <form className="auth-form" onSubmit={handleSubmit}>
-            <label className="field-label">Email</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="Email"
+                labelPlacement="stacked"
                 type="email"
                 value={email}
                 onIonInput={(e) => setEmail(e.detail.value || "")}
                 autocomplete="email"
                 placeholder="you@example.com"
               />
-            </IonItem>
+            </div>
 
-            <label className="field-label">Password</label>
-            <IonItem className="soft-field">
+            <div className="tea-field">
               <IonInput
+                label="Password"
+                labelPlacement="stacked"
                 type="password"
                 value={password}
                 onIonInput={(e) => setPassword(e.detail.value || "")}
                 autocomplete="current-password"
                 placeholder="••••••••"
               />
-            </IonItem>
+            </div>
 
             {requiresTotp && (
               <>
-                <label className="field-label">Authenticator Code</label>
-                <IonItem className="soft-field">
+                <div className="tea-field">
                   <IonInput
+                    label="Authenticator Code"
+                    labelPlacement="stacked"
                     type="text"
                     value={totpCode}
                     onIonInput={(e) => setTotpCode(e.detail.value || "")}
                     placeholder="6-digit code"
                     maxlength={6}
                   />
-                </IonItem>
+                </div>
               </>
             )}
 

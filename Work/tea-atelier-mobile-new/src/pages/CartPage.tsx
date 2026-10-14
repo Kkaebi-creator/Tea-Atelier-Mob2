@@ -1,3 +1,4 @@
+import PageIntro from "../components/PageIntro";
 import React from "react";
 import {
   IonPage,
@@ -86,6 +87,11 @@ const CartPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        <PageIntro
+          eyebrow="Your selection"
+          title="A cup worth keeping."
+          description="Choose the items you’d like to bring home."
+        />
         {error && (
           <div role="alert">
             <IonText color="danger">
@@ -115,6 +121,7 @@ const CartPage: React.FC = () => {
           {items.length > 0 && (
             <div className="tea-cart-select-all">
               <IonCheckbox
+                aria-label="Select all items"
                 checked={allSelected}
                 onIonChange={(event) =>
                   setSelectedIds(
@@ -130,6 +137,7 @@ const CartPage: React.FC = () => {
           {items.map((item) => (
             <div className="tea-item-row" key={item.product.id}>
               <IonCheckbox
+                aria-label={`Select ${item.product.name}`}
                 checked={selectedIds.includes(item.product.id)}
                 onIonChange={(event) =>
                   setSelectedIds((current) =>

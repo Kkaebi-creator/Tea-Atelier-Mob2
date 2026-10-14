@@ -1,425 +1,199 @@
-:root {
-  --tea-bg: #f5f1ed;
-  --tea-bg-2: #ede7e0;
-  --tea-panel: #fdfbf8;
-  --tea-panel-strong: #f9f5f0;
-  --tea-card: #ffffff;
-  --tea-text: #2d2520;
-  --tea-text-soft: #6b6460;
-  --tea-green: #7d9982;
-  --tea-green-deep: #6a8470;
-  --tea-gold: #c5a572;
-  --tea-red: #c85a5a;
-  --tea-border: rgba(45, 37, 32, 0.08);
-  --tea-shadow: rgba(0, 0, 0, 0.08);
+@import "./fonts.css";
 
+:root {
+  --tea-bg: #fdf6ed;
+  --tea-bg-2: #f2eadf;
+  --tea-panel: #fffaf3;
+  --tea-panel-strong: #f6efe5;
+  --tea-card: #fffdf9;
+  --tea-text: #1f2621;
+  --tea-text-soft: #687067;
+  --tea-green: #778873;
+  --tea-green-deep: #52664e;
+  --tea-gold: #b19360;
+  --tea-red: #a6473d;
+  --tea-border: #e6ded2;
+  --tea-shadow: 0 8px 24px rgba(42, 49, 37, 0.045);
+  --tea-display: "Fraunces", Georgia, serif;
+  --tea-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ion-font-family: var(--tea-body);
   --ion-background-color: var(--tea-bg);
-  --ion-background-color-rgb: 245, 241, 237;
+  --ion-background-color-rgb: 253, 246, 237;
   --ion-text-color: var(--tea-text);
-  --ion-text-color-rgb: 45, 37, 32;
+  --ion-text-color-rgb: 31, 38, 33;
   --ion-border-color: var(--tea-border);
   --ion-item-background: transparent;
-  --ion-toolbar-background: var(--tea-panel);
+  --ion-toolbar-background: var(--tea-bg);
   --ion-toolbar-border-color: transparent;
   --ion-card-background: var(--tea-card);
   --ion-card-color: var(--tea-text);
-  --ion-color-primary: var(--tea-green);
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-step-50: #ede7e0;
-  --ion-color-step-100: #e6dfd6;
-  --ion-color-step-150: #dfd8cd;
-  --ion-color-step-200: #d8d0c3;
-  --ion-color-step-250: #d1c8ba;
-  --ion-color-step-300: #cac0b0;
-
-  --ion-icon-color: var(--tea-text);
+  --ion-color-primary: #52664e;
+  --ion-color-primary-rgb: 82, 102, 78;
+  --ion-color-primary-contrast: #fff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #485a45;
+  --ion-color-primary-tint: #637560;
+  --ion-color-success: #52664e;
+  --ion-color-success-rgb: 82, 102, 78;
+  --ion-color-success-contrast: #fff;
+  --ion-color-warning: #e6c88c;
+  --ion-color-warning-rgb: 230, 200, 140;
+  --ion-color-warning-contrast: #493b20;
+  --ion-color-danger: #a6473d;
+  --ion-color-danger-rgb: 166, 71, 61;
+  --ion-color-danger-contrast: #fff;
 }
-
-ion-icon {
-  color: var(--tea-text) !important;
+* {
+  box-sizing: border-box;
 }
-
-ion-button ion-icon {
-  color: inherit;
-}
-
 html,
 body,
 #root,
 ion-app {
-  background: var(--tea-bg) !important;
-  color: var(--tea-text) !important;
+  background: var(--tea-bg);
+  color: var(--tea-text);
+  font-family: var(--tea-body);
 }
-
-ion-page {
-  background: var(--tea-bg) !important;
-  color: var(--tea-text) !important;
+body {
+  -webkit-font-smoothing: antialiased;
 }
-
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+h1,
+h2,
+h3 {
+  font-family: var(--tea-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.14;
+}
+h1 {
+  font-size: 2.35rem;
+}
+h2 {
+  font-size: 1.65rem;
+}
+h3 {
+  font-size: 1.35rem;
+}
+p {
+  line-height: 1.65;
+}
+a {
+  color: var(--tea-green-deep);
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid var(--tea-green);
+  outline-offset: 3px;
+}
+img {
+  max-width: 100%;
+}
+.ion-page {
+  background: var(--tea-bg);
+}
 ion-content {
   --background: var(--tea-bg);
-  --padding-top: 0;
-  --padding-bottom: 0;
 }
-
-ion-header,
-ion-toolbar,
-ion-header::after {
-  --background: var(--tea-panel);
-  background: var(--tea-panel) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-  border: none !important;
-}
-
-ion-toolbar {
-  --border-width: 0;
-  --min-height: 72px;
-  padding-inline: 16px;
-}
-
-ion-title {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  color: var(--tea-text);
-}
-
-.tea-side-menu {
-  --width: min(86vw, 340px);
-  --background: var(--tea-bg);
-}
-
-.tea-side-menu ion-toolbar {
-  --background: var(--tea-green-deep);
-  --color: #ffffff;
+ion-header {
   box-shadow: none !important;
 }
-
-.tea-side-menu ion-title {
-  color: #ffffff;
-  font-size: 1.1rem;
-  letter-spacing: 0;
+ion-header::after {
+  display: none;
 }
-
-.tea-menu-brand {
-  align-items: center;
-  background: var(--tea-green-deep);
-  color: #ffffff;
-  display: flex;
-  gap: 12px;
-  padding: 14px 20px 26px;
-}
-
-.tea-menu-brand strong,
-.tea-menu-brand ion-note {
-  display: block;
-}
-
-.tea-menu-brand ion-note {
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 0.78rem;
-  margin-top: 3px;
-}
-
-.tea-menu-mark,
-.tea-info-mark,
-.tea-developer-avatar {
-  align-items: center;
-  background: var(--tea-gold);
-  border-radius: 50%;
-  color: var(--tea-text);
-  display: inline-flex;
-  font-family: Georgia, serif;
-  font-weight: 700;
-  justify-content: center;
-}
-
-.tea-menu-mark {
-  font-size: 0.92rem;
-  height: 42px;
-  width: 42px;
-}
-
-.tea-menu-list {
-  background: transparent;
-  margin: 18px 12px 0;
-}
-
-.tea-menu-secondary-list {
-  border-top: 1px solid var(--tea-border);
-  padding-top: 16px;
-}
-
-.tea-menu-section-label {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  margin: 0 14px 8px;
-  text-transform: uppercase;
-}
-
-.tea-menu-item {
-  --background: transparent;
-  --background-hover: rgba(125, 153, 130, 0.1);
-  --color: var(--tea-text-soft);
-  --padding-start: 14px;
-  --inner-padding-end: 12px;
-  border-radius: 12px;
-  margin-bottom: 4px;
-  transition:
-    background 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.tea-menu-item ion-icon {
-  color: var(--tea-text-soft) !important;
-  font-size: 21px;
-}
-
-.tea-menu-item.active {
-  --background: rgba(125, 153, 130, 0.18);
-  --color: var(--tea-green-deep);
-  transform: translateX(3px);
-}
-
-.tea-menu-item.active ion-icon {
-  color: var(--tea-green-deep) !important;
-}
-
-.tea-menu-footer {
-  color: var(--tea-text-soft);
-  font-size: 0.72rem;
-  margin: 30px 26px;
-}
-
-.tea-info-page ion-content {
+ion-toolbar {
   --background: var(--tea-bg);
+  --border-width: 0;
+  --min-height: 62px;
+  padding-inline: 8px;
 }
-
-.tea-info-inner {
-  margin: 0 auto;
-  max-width: 720px;
-  padding: 58px 22px 40px;
+ion-header ion-toolbar:first-child {
+  border-bottom: 1px solid var(--tea-border);
 }
-
-.tea-info-mark {
-  font-size: 1.5rem;
-  height: 74px;
-  margin-bottom: 28px;
-  width: 74px;
-}
-
-.tea-info-eyebrow {
-  color: var(--tea-green-deep);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.tea-info-inner h1 {
-  color: var(--tea-text);
-  font-family: Georgia, serif;
-  font-size: clamp(2.3rem, 9vw, 4.5rem);
+ion-title {
+  font-family: var(--tea-display);
+  font-size: 1.32rem;
   font-weight: 400;
-  letter-spacing: -0.05em;
-  line-height: 0.98;
-  margin: 12px 0 18px;
+  letter-spacing: -0.035em;
+  color: var(--tea-text);
 }
-
-.tea-info-lead {
-  color: var(--tea-text-soft);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  max-width: 540px;
+ion-icon {
+  color: inherit;
 }
-
-.tea-info-grid {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 42px;
-}
-
-.tea-info-grid > div {
-  background: var(--tea-card);
-  border: 1px solid var(--tea-border);
-  border-radius: 16px;
-  padding: 18px;
-}
-
-.tea-info-grid strong {
-  color: var(--tea-green-deep);
-}
-
-.tea-info-grid p {
-  color: var(--tea-text-soft);
-  font-size: 0.86rem;
-  line-height: 1.5;
-  margin-bottom: 0;
-}
-
-.tea-developer-list {
-  background: var(--tea-card);
-  border: 1px solid var(--tea-border);
-  border-radius: 18px;
-  margin-top: 30px;
-  overflow: hidden;
-}
-
-.tea-developer-list ion-item {
-  --background: var(--tea-card);
-  --padding-start: 16px;
-  margin: 0;
-  padding: 12px 0;
-}
-
-.tea-developer-avatar {
-  flex: 0 0 58px;
-  height: 48px;
-  margin-right: 14px;
-  object-fit: cover;
-  object-position: center;
-  overflow: hidden;
-  width: 58px;
-}
-
-img.tea-developer-avatar {
-  border: 2px solid rgba(197, 165, 114, 0.45);
-  border-radius: 50%;
-  height: 58px;
-  width: 58px;
-}
-
-.tea-developer-list h2 {
-  line-height: 1.25;
-}
-
-.tea-developer-list p {
-  color: var(--tea-text-soft);
-  font-size: 0.82rem;
-  margin-top: 4px;
-}
-
-.tea-developer-list h2,
-.tea-developer-list p {
+ion-buttons ion-button {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  height: 44px;
+  min-width: 44px;
   margin: 0;
 }
-
-.tea-developer-list p {
-  color: var(--tea-text-soft);
-  font-size: 0.82rem;
-  margin-top: 4px;
+ion-buttons ion-icon {
+  font-size: 23px;
 }
-
-.tea-developer-list a,
-.tea-project-link {
-  align-items: center;
-  color: var(--tea-green-deep);
-  display: inline-flex;
-  font-size: 0.8rem;
-  gap: 5px;
-  margin-top: 8px;
-  text-decoration: none;
-}
-
-.tea-project-link {
-  font-weight: 700;
-  margin-top: 24px;
-}
-
-@media (max-width: 560px) {
-  .tea-info-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (min-width: 900px) {
-  .tea-side-menu {
-    --width: 300px;
-  }
-}
-
-ion-searchbar {
-  --background: rgba(45, 37, 32, 0.06);
+ion-menu-button {
   --color: var(--tea-text);
-  --placeholder-color: rgba(45, 37, 32, 0.5);
-  --icon-color: rgba(45, 37, 32, 0.6);
-  --clear-button-color: rgba(45, 37, 32, 0.6);
-  --box-shadow: none;
-  border-radius: 16px;
-  margin: 0 14px 8px;
-  padding: 0;
+  min-width: 44px;
 }
-
-ion-searchbar .searchbar-input-container {
-  border-radius: 16px;
-}
-
-.tea-sort-toolbar {
-  --background: var(--tea-panel);
-  min-height: 54px;
-  padding: 0 14px 10px;
-}
-
-.tea-sort-control {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.tea-sort-label {
-  color: var(--tea-text-soft);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.tea-sort-select {
-  --background: #fbf7ef;
-  --border-color: rgba(45, 37, 32, 0.2);
-  --border-radius: 999px;
-  --color: var(--tea-text);
-  --padding-start: 11px;
-  --padding-end: 7px;
-  border: 1px solid rgba(45, 37, 32, 0.2);
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  min-height: 38px;
-  min-width: 142px;
-}
-
 ion-button {
   --border-radius: 14px;
   --box-shadow: none;
-  --border: none;
-  --padding-top: 18px;
-  --padding-bottom: 18px;
-  --padding-start: 18px;
-  --padding-end: 18px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  height: 54px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --background: var(--tea-green-deep);
+  --background-hover: #45583f;
+  --background-activated: #45583f;
+  --color: #fff;
+  height: 48px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
-
-ion-button:not([fill="outline"]) {
-  --background: var(--tea-green);
-  --background-activated: var(--tea-green-deep);
-  --background-hover: var(--tea-green-deep);
-  --color: #ffffff;
-}
-
 ion-button[fill="outline"] {
   --background: transparent;
-  --color: var(--tea-green);
-  --border-color: rgba(125, 153, 130, 0.5);
+  --background-hover: #eaf0e6;
+  --background-activated: #eaf0e6;
+  --color: var(--tea-green-deep);
+  --border-color: #c4d0bf;
+  --border-width: 1px;
 }
-
+ion-button[fill="clear"] {
+  --background: transparent;
+  --background-hover: #eef0e7;
+  --background-activated: #e4eadf;
+  --color: var(--tea-green-deep);
+}
+ion-button[color="danger"][fill="outline"],
+ion-button[color="danger"][fill="clear"] {
+  --color: var(--tea-red);
+  --border-color: #dfc5bd;
+}
+ion-button[size="small"] {
+  height: 40px;
+  font-size: 12px;
+}
+ion-button:focus-visible::part(native) {
+  outline: 3px solid var(--tea-green);
+  outline-offset: -3px;
+}
+ion-badge {
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 9px;
+}
 ion-item {
   --background: transparent;
   --color: var(--tea-text);
@@ -428,422 +202,722 @@ ion-item {
   --inner-padding-end: 0;
   --inner-border-width: 0;
   --highlight-height: 0;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
-
 ion-label {
   color: var(--tea-text) !important;
+  font-size: 13px;
 }
-
+ion-label[position="stacked"] {
+  font-size: 12px !important;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
 ion-input,
 ion-textarea {
-  --background: rgba(45, 37, 32, 0.04);
-  --color: var(--tea-text);
-  --placeholder-color: rgba(45, 37, 32, 0.5);
-  border-radius: 14px;
-  min-height: 52px;
-  padding: 14px 16px !important;
-  border: 1px solid rgba(45, 37, 32, 0.08);
-}
-
-ion-input::part(native),
-ion-textarea::part(native) {
-  background: transparent;
-}
-
-ion-card {
   --background: var(--tea-card);
   --color: var(--tea-text);
-  border-radius: 22px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid rgba(45, 37, 32, 0.06);
+  --placeholder-color: #7d847a;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 13px;
+  --padding-bottom: 13px;
+  border: 1px solid var(--tea-border);
+  border-radius: 12px;
+  min-height: 48px;
+  padding: 0 !important;
+  font-size: 14px;
 }
-
-ion-card-title,
-ion-card-subtitle,
-ion-card-content {
-  color: var(--tea-text) !important;
+ion-input:focus-within,
+ion-textarea:focus-within {
+  border-color: var(--tea-green);
+  box-shadow: 0 0 0 3px #77887316;
 }
-
-.tea-auth-page ion-content,
-.tea-auth-page ion-page {
-  --background: var(--tea-bg) !important;
-  background: var(--tea-bg) !important;
-}
-
-.tea-auth-page .auth-container {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 24px 20px 40px;
-}
-
-.tea-auth-page .auth-title {
-  color: var(--tea-text);
-  font-weight: 700;
-  font-size: clamp(2.1rem, 5vw, 3.1rem);
-  letter-spacing: -0.06em;
-  text-align: center;
-  margin: 20px 0 30px;
-}
-
-.tea-auth-page .auth-form {
-  margin-top: 18px;
-}
-
-.tea-auth-page .error-text {
-  color: var(--tea-red);
-  font-weight: 600;
-  margin: 0 0 16px;
-}
-
-.tea-auth-page .field-label {
-  color: rgba(45, 37, 32, 0.8);
-  display: block;
-  margin: 22px 0 10px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.tea-auth-page .soft-field {
-  margin-bottom: 14px;
-}
-
-.tea-auth-page .soft-field ion-input {
-  background: rgba(45, 37, 32, 0.04);
-  border: 1px solid rgba(45, 37, 32, 0.08);
-}
-
-.tea-auth-page .auth-button {
-  margin-top: 18px;
-}
-
-.tea-auth-page .auth-link {
-  text-align: center;
-  color: rgba(45, 37, 32, 0.8);
-  margin-top: 22px;
-}
-
-.tea-auth-page .auth-link a,
-.tea-auth-page .auth-link ion-router-link {
-  color: var(--tea-text);
-  font-weight: 700;
-}
-
-.tea-auth-divider {
-  align-items: center;
-  color: var(--tea-text-soft);
-  display: flex;
-  font-size: 0.75rem;
-  gap: 12px;
-  justify-content: center;
-  margin: 22px 0 14px;
-}
-
-.tea-auth-divider::before,
-.tea-auth-divider::after {
-  background: var(--tea-border);
-  content: "";
-  flex: 1;
-  height: 1px;
-}
-
-.tea-google-button {
+ion-select {
   min-height: 44px;
+  font-size: 13px;
 }
-
-.tea-splash-screen {
-  align-items: center;
-  background: #314130;
-  color: #fbf7ef;
-  display: flex;
-  flex-direction: column;
-  inset: 0;
-  justify-content: center;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
+ion-checkbox {
+  --size: 22px;
+  --border-radius: 6px;
+  --border-color: #a6b09f;
+  --checkbox-background-checked: var(--tea-green-deep);
+  --border-color-checked: var(--tea-green-deep);
+  flex-shrink: 0;
 }
-
-.tea-splash-mark {
-  align-items: center;
-  border: 1px solid rgba(224, 199, 151, 0.7);
-  border-radius: 50%;
-  color: #e0c797;
-  display: flex;
-  font-family: Georgia, serif;
-  font-size: 1.4rem;
-  height: 76px;
-  justify-content: center;
-  letter-spacing: 0.08em;
-  margin-bottom: 20px;
-  width: 76px;
+ion-segment {
+  --background: #ece7dc;
+  padding: 4px;
+  border-radius: 13px;
 }
-
-.tea-splash-kicker {
-  font-size: 1.3rem;
-  letter-spacing: 0.16em;
-  margin: 0;
-  text-transform: uppercase;
+ion-segment-button {
+  --color: var(--tea-text-soft);
+  --color-checked: var(--tea-text);
+  --indicator-color: var(--tea-card);
+  --indicator-height: 100%;
+  --indicator-box-shadow: 0 2px 8px #1f26210a;
+  --border-radius: 10px;
+  --indicator-border-radius: 10px;
+  min-height: 42px;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
 }
-
-.tea-splash-caption {
-  color: rgba(251, 247, 239, 0.62);
-  font-family: Georgia, serif;
-  font-size: 0.95rem;
-  margin-top: 8px;
+ion-searchbar {
+  --background: var(--tea-card);
+  --color: var(--tea-text);
+  --placeholder-color: #7d847a;
+  --icon-color: var(--tea-green);
+  --clear-button-color: var(--tea-text-soft);
+  --box-shadow: none;
+  --border-radius: 14px;
+  padding: 0;
+  margin: 0 0 16px;
+  min-height: 48px;
 }
-
-.tea-loader {
-  align-items: center;
-  display: inline-flex;
-  gap: 10px;
-  justify-content: center;
-  vertical-align: middle;
+ion-searchbar .searchbar-input-container {
+  border: 1px solid var(--tea-border);
+  border-radius: 14px;
 }
-
-.tea-loader-orbit {
-  animation: tea-loader-spin 1.3s linear infinite;
-  border: 2px solid rgba(224, 199, 151, 0.35);
-  border-radius: 50%;
-  display: inline-block;
-  height: 22px;
-  position: relative;
-  width: 22px;
+ion-searchbar .searchbar-input {
+  font-size: 13px !important;
 }
-
-.tea-loader-leaf {
-  background: var(--tea-gold);
-  border-radius: 100% 0 100% 0;
-  height: 8px;
-  position: absolute;
-  width: 13px;
+ion-alert {
+  --background: var(--tea-card);
+  --max-width: 360px;
 }
-
-.tea-loader-leaf-one {
-  right: -4px;
-  top: 1px;
-  transform: rotate(35deg);
+ion-alert .alert-wrapper,
+ion-popover::part(content) {
+  border-radius: 20px;
 }
-
-.tea-loader-leaf-two {
-  bottom: 1px;
-  left: -4px;
-  transform: rotate(215deg);
+ion-alert .alert-title {
+  font-family: var(--tea-display);
 }
-
-.tea-loader-inline .tea-loader-orbit {
-  height: 18px;
-  width: 18px;
+ion-toast {
+  --background: var(--tea-text);
+  --color: var(--tea-bg);
+  --border-radius: 14px;
 }
-
-.tea-loader-page {
-  flex-direction: column;
-  min-height: 100px;
-}
-
-.tea-loader-page .tea-loader-orbit {
-  height: 38px;
-  width: 38px;
-}
-
-.tea-loader-label {
-  color: var(--tea-text-soft);
-  font-size: 0.8rem;
-}
-
-ion-button .tea-loader-label {
-  color: inherit;
-}
-
-@keyframes tea-loader-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.tea-shop-page ion-content {
-  --background: var(--tea-bg);
-  background: var(--tea-bg);
-}
-
-.tea-shop-page .shop-inner {
+.tea-page-inner,
+.shop-inner {
   max-width: 760px;
   margin: 0 auto;
-  padding: 0 12px 28px;
+  padding: 22px 20px 28px;
 }
-
-.tea-shop-page .shop-header {
-  background: var(--tea-panel);
-  border-bottom: 1px solid rgba(45, 37, 32, 0.06);
+.tea-info-eyebrow {
+  color: var(--tea-green-deep);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 10px;
 }
-
-.tea-shop-page .shop-title {
-  color: var(--tea-text);
-  font-weight: 700;
-  font-size: clamp(1.5rem, 4vw, 2.1rem);
-  letter-spacing: -0.05em;
+.tea-page-intro {
+  margin-bottom: 24px;
+}
+.tea-page-intro h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 7.5vw, 2.7rem);
+}
+.tea-page-description,
+.tea-panel-copy {
+  color: var(--tea-text-soft);
+  font-size: 13px;
   margin: 0;
 }
-
-.tea-shop-page .product-grid {
+.tea-card-panel,
+.tea-order-card,
+.tea-account-panel,
+.tea-message-card,
+.tea-settings-card {
+  background: var(--tea-card);
+  border: 1px solid var(--tea-border);
+  border-radius: 20px;
+  padding: 20px;
+  color: var(--tea-text);
+  box-shadow: var(--tea-shadow);
+}
+section.tea-card-panel {
+  margin-top: 18px;
+}
+.tea-card-panel h3,
+.tea-account-panel h2 {
+  margin-top: 0;
+}
+.tea-card-panel p,
+.tea-account-panel p {
+  font-size: 13px;
+}
+.tea-card-panel > article {
+  padding: 14px 0;
+  border-top: 1px solid var(--tea-border);
+}
+.tea-card-panel h4 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.tea-card-panel label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+}
+.tea-card-panel ion-select {
+  width: 100%;
+  background: var(--tea-bg);
+  border: 1px solid var(--tea-border);
+  border-radius: 12px;
+  padding: 0 12px;
+}
+.tea-card-panel ion-textarea {
+  margin: 10px 0;
+}
+[role="alert"] {
+  overflow-wrap: anywhere;
+}
+p[role="alert"],
+.error-text {
+  color: var(--tea-red);
+}
+.tea-state {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--tea-text-soft);
+  font-size: 14px;
+}
+.tea-state h2 {
+  color: var(--tea-text);
+  margin: 0 0 10px;
+}
+.tea-state p {
+  max-width: 360px;
+  margin: 0 auto 18px;
+}
+/* Keep the Ionic outlet stable; reserve actual space for the app dock. */
+.tea-has-dock > ion-router-outlet {
+  bottom: calc(88px + env(safe-area-inset-bottom));
+}
+.tea-bottom-nav {
+  position: absolute;
+  z-index: 15;
+  left: 50%;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(calc(100% - 24px), 540px);
+  height: 64px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: stretch;
+  background: #fffdf9;
+  border: 1px solid var(--tea-border);
+  border-radius: 22px;
+  padding: 5px 8px;
+  box-shadow: 0 6px 28px #26321f12;
+}
+.tea-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 15px;
+  color: #71786e;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  min-width: 0;
+}
+.tea-nav-item.selected {
+  color: var(--tea-green-deep);
+  background: #edf1e8;
+}
+.tea-nav-icon {
+  position: relative;
+  display: flex;
+}
+.tea-nav-icon ion-icon {
+  font-size: 23px;
+}
+.tea-nav-badge {
+  position: absolute;
+  top: -5px;
+  left: 16px;
+  min-width: 16px;
+  height: 16px;
+  padding: 1px 4px;
+  background: var(--tea-green-deep);
+  color: #fff;
+  border: 2px solid var(--tea-card);
+  border-radius: 20px;
+  font-size: 8px;
+  text-align: center;
+}
+/* Drawer for support and secondary destinations. */
+.tea-side-menu {
+  --width: min(86vw, 340px);
+  --background: var(--tea-bg);
+}
+.tea-side-menu ion-toolbar {
+  --background: var(--tea-bg);
   padding-top: 12px;
 }
-
-.tea-shop-page .tea-product-card {
-  background: var(--tea-card);
-  border-radius: 22px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(45, 37, 32, 0.06);
-  min-height: 100%;
+.tea-side-menu ion-title {
+  font-size: 25px;
+}
+.tea-menu-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--tea-border);
+}
+.tea-menu-brand strong {
+  display: block;
+  font-family: var(--tea-display);
+  font-size: 22px;
+  font-weight: 400;
+}
+.tea-menu-brand ion-note {
+  display: block;
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  margin-top: 5px;
+}
+.tea-menu-mark,
+.tea-info-mark,
+.tea-developer-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9eee2;
+  color: var(--tea-green-deep);
+  border-radius: 50%;
+  font-family: var(--tea-display);
+}
+.tea-menu-mark {
+  width: 46px;
+  height: 46px;
+  font-size: 18px;
+}
+.tea-menu-list {
+  background: transparent;
+  margin: 18px 14px 0;
+}
+.tea-menu-secondary-list {
+  border-top: 1px solid var(--tea-border);
+  padding-top: 20px;
+}
+.tea-menu-section-label {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tea-text-soft);
+  margin: 0 14px 8px;
+}
+.tea-menu-item {
+  --background: transparent;
+  --background-hover: #edf1e8;
+  --color: var(--tea-text-soft);
+  --padding-start: 14px;
+  --inner-padding-end: 12px;
+  border-radius: 12px;
+  margin: 0 0 3px;
+  min-height: 48px;
+}
+.tea-menu-item.active {
+  --background: #e7edde;
+  --color: var(--tea-green-deep);
+}
+.tea-menu-item ion-icon {
+  font-size: 21px;
+  margin-right: 14px;
+}
+.tea-menu-item ion-label {
+  font-size: 13px;
+}
+.tea-menu-footer {
+  color: var(--tea-text-soft);
+  font-size: 10px;
+  margin: 26px 28px;
+}
+/* Collection */
+.shop-inner {
+  padding-top: 24px;
+}
+.tea-shop-welcome {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.tea-shop-welcome h1 {
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  margin: 0;
+  line-height: 1.05;
+}
+.tea-shop-welcome em {
+  color: var(--tea-green-deep);
+  font-style: italic;
+}
+.tea-shop-welcome p:not(.tea-info-eyebrow) {
+  font-size: 11px;
+  color: var(--tea-text-soft);
+  margin: 12px 0 0;
+}
+.tea-shop-welcome img {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50px 50px 14px 14px;
+}
+.tea-category-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 0 4px;
+  margin-bottom: 18px;
+}
+.tea-category-strip::-webkit-scrollbar {
+  display: none;
+}
+.tea-category-strip button {
+  flex-shrink: 0;
+  border: 1px solid var(--tea-border);
+  border-radius: 30px;
+  min-height: 40px;
+  background: transparent;
+  padding: 9px 16px;
+  color: var(--tea-text-soft);
+  font-size: 12px;
+}
+.tea-category-strip button.selected {
+  background: var(--tea-green-deep);
+  border-color: var(--tea-green-deep);
+  color: #fff;
+}
+.tea-collection-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: var(--tea-text-soft);
+  font-size: 11px;
+}
+.tea-sort-select {
+  font-size: 11px;
+  min-height: 38px;
+  max-width: 160px;
+  --placeholder-opacity: 1;
+}
+.product-grid,
+.tea-shop-page ion-grid {
+  padding: 0;
+  --ion-grid-column-padding: 6px;
+}
+.tea-shop-page ion-row {
+  margin: 0 -6px;
+}
+.tea-product-card {
+  margin: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--tea-border);
+  box-shadow: none;
+  background: var(--tea-card);
+  color: var(--tea-text);
+  cursor: pointer;
+}
+.tea-product-image-wrap {
+  position: relative;
   overflow: hidden;
 }
-
-.tea-product-skeleton {
-  animation: tea-pulse 1.4s ease-in-out infinite;
-  background: linear-gradient(110deg, #e7e0d8 30%, #f3eee8 45%, #e7e0d8 60%);
-  background-size: 200% 100%;
-  border-radius: 22px;
-  height: 300px;
-}
-
-@keyframes tea-pulse {
-  to {
-    background-position-x: -200%;
-  }
-}
-
-.tea-shop-page .tea-product-image {
+.tea-product-image {
   width: 100%;
-  height: 170px;
+  aspect-ratio: 1 / 1.17;
   object-fit: cover;
   display: block;
-  background: #e8e3de;
+  background: var(--tea-bg-2);
+  transition: transform 200ms ease;
 }
-
-.tea-shop-page .tea-product-body {
-  padding: 12px 12px 14px;
+.tea-product-card:hover .tea-product-image {
+  transform: scale(1.025);
+}
+.tea-product-category {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 8px;
+  border-radius: 20px;
+  background: #fffaf3ed;
+  color: var(--tea-text);
+  font-size: 8px;
+  max-width: calc(100% - 20px);
+}
+.tea-product-body {
+  padding: 13px 12px 5px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  background: var(--tea-card);
+  gap: 11px;
+  flex: 1;
 }
-
-.tea-shop-page .tea-product-name {
-  font-size: 0.95rem;
-  font-weight: 700;
+.tea-product-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+  min-height: 36px;
+}
+.tea-product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.tea-product-price {
+  font-family: var(--tea-display);
+  font-size: 18px;
   color: var(--tea-text);
+}
+.tea-product-stock {
+  font-size: 8px;
+  color: var(--tea-green-deep);
+  white-space: nowrap;
+}
+.tea-product-stock::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.tea-product-stock.out {
+  color: var(--tea-red);
+}
+.tea-product-cta {
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-radius: 0;
+  margin: auto 0 0;
+  border-top: 1px solid var(--tea-border);
+  font-size: 10px !important;
+  height: 42px !important;
+}
+.tea-product-cta::part(native) {
+  justify-content: space-between;
+}
+.tea-product-cta ion-icon {
+  font-size: 16px;
+}
+.tea-product-skeleton {
+  height: 275px;
+  border-radius: 16px;
+  background: linear-gradient(110deg, #e9e4da 30%, #f6f1e8 45%, #e9e4da 60%);
+  background-size: 200% 100%;
+  animation: tea-pulse 1.4s ease-in-out infinite;
+}
+.tea-collection-footer {
+  margin: 28px 0 6px;
+  text-align: center;
+  font-family: var(--tea-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--tea-text-soft);
+}
+.tea-header-cart {
+  position: relative;
+}
+.tea-header-cart ion-badge {
+  position: absolute;
+  top: 4px;
+  right: 1px;
+  padding: 3px 5px;
+  font-size: 8px;
+  background: var(--tea-green-deep);
+  color: #fff;
+}
+/* Cart, checkout and payment */
+.tea-cart-page ion-content,
+.tea-checkout-page ion-content,
+.tea-confirm-page ion-content {
+  --padding-start: max(18px, calc((100vw - 760px) / 2));
+  --padding-end: max(18px, calc((100vw - 760px) / 2));
+  --padding-bottom: 28px;
+  --padding-top: 24px;
+}
+.tea-item-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--tea-border);
+}
+.tea-item-row:last-child {
+  border-bottom: none;
+}
+.tea-item-thumb {
+  width: 66px;
+  height: 78px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--tea-bg-2);
+  flex-shrink: 0;
+}
+.tea-item-copy {
+  flex: 1;
+  min-width: 0;
+}
+.tea-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.45;
+}
+.tea-item-sub {
+  font-size: 10px;
+  color: var(--tea-text-soft);
+  margin: 5px 0 0;
+}
+.tea-quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 8px;
+  border: 1px solid var(--tea-border);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 12px;
+}
+.tea-quantity-control ion-button {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --border-radius: 0;
+  min-width: 34px;
+  height: 34px;
   margin: 0;
 }
-
-.tea-shop-page .tea-product-meta {
+.tea-quantity-control span {
+  min-width: 16px;
+  text-align: center;
+}
+.tea-cart-select-all {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tea-border);
+  font-size: 12px;
+}
+.tea-cart-page .tea-item-row {
+  align-items: flex-start;
+}
+.tea-cart-page .tea-item-row > ion-checkbox {
+  margin-top: 24px;
+}
+.tea-cart-page .tea-item-row > ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  min-width: 28px;
+}
+.tea-summary-box {
+  background: #f5f1e8;
+  border: 1px solid var(--tea-border);
+  border-radius: 14px;
+  padding: 16px 16px 4px;
+}
+.tea-summary-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.tea-shop-page .tea-product-price {
-  font-weight: 700;
-  color: var(--tea-text);
-}
-
-.tea-shop-page .tea-product-stock {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 6px 8px;
-  border-radius: 999px;
-  background: rgba(125, 153, 130, 0.12);
-  color: var(--tea-green-deep);
-}
-
-.tea-shop-page .tea-product-stock.out {
-  background: rgba(200, 90, 90, 0.12);
-  color: var(--tea-red);
-}
-
-.tea-shop-page .tea-product-cta {
-  --background: var(--tea-green);
-  --background-activated: var(--tea-green-deep);
-  --border-radius: 12px;
-  margin-top: 2px;
-  height: 42px;
-}
-
-.tea-cart-page ion-content,
-.tea-checkout-page ion-content,
-.tea-detail-page ion-content,
-.tea-confirm-page ion-content,
-.tea-orders-page ion-content,
-.tea-account-page ion-content {
-  --background: var(--tea-bg);
-  background: var(--tea-bg);
-}
-
-.tea-tab-bar {
-  --background: var(--tea-panel);
-  --border: 1px solid rgba(45, 37, 32, 0.08);
-  height: 68px;
-  padding: 5px 8px max(5px, env(safe-area-inset-bottom));
-  box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.06);
-}
-
-.tea-tab-bar ion-tab-button {
-  --color: var(--tea-text-soft);
-  --color-selected: var(--tea-green-deep);
-  min-width: 0;
-  position: relative;
-}
-
-.tea-tab-bar ion-icon {
-  font-size: 21px;
-}
-
-.tea-tab-bar ion-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.tea-tab-bar ion-badge {
-  position: absolute;
-  top: 2px;
-  margin-left: 22px;
-  font-size: 0.62rem;
-}
-
-.tea-page-inner {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 20px 16px 28px;
-}
-
-.tea-state {
-  padding: 70px 20px;
-  text-align: center;
+  gap: 12px;
+  margin-bottom: 13px;
+  font-size: 12px;
   color: var(--tea-text-soft);
 }
-
-.tea-state h2 {
+.tea-summary-row.total {
+  border-top: 1px solid var(--tea-border);
+  padding-top: 14px;
+  font-size: 14px;
   color: var(--tea-text);
-  margin: 0 0 8px;
 }
-
+.tea-summary-row.total .tea-amount {
+  font-family: var(--tea-display);
+  font-size: 24px;
+  font-weight: 400;
+}
+.tea-amount {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tea-address-preview {
+  background: #f1f4eb;
+  border: 1px solid #dce4d3;
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin: 12px 0 20px;
+}
+.tea-checkout-page h3:not(:first-child) {
+  margin-top: 24px !important;
+}
+.tea-confirm-page h2 {
+  font-family: var(--tea-display);
+  font-weight: 400;
+}
+.tea-checkout-progress {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--tea-text-soft);
+  font-size: 10px;
+  margin: 0 0 24px;
+}
+.tea-checkout-progress span:first-child {
+  color: var(--tea-green-deep);
+}
+.tea-checkout-progress i {
+  flex: 1;
+  height: 1px;
+  background: var(--tea-border);
+}
+.tea-product-hero {
+  width: 100%;
+  max-width: 760px;
+  height: 340px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+  border-radius: 0 0 28px 28px;
+}
+.tea-detail-page .ion-padding {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.tea-detail-page .tea-card-panel h2 {
+  font-size: 32px;
+  font-weight: 400;
+}
+/* Orders and service */
 .tea-order-card {
-  background: var(--tea-card);
-  border: 1px solid rgba(45, 37, 32, 0.06);
-  border-radius: 18px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  margin-bottom: 14px;
-  padding: 16px;
+  margin-bottom: 16px;
 }
-
 .tea-order-card-clickable {
   cursor: pointer;
+  transition: border-color 180ms ease;
 }
-
+.tea-order-card-clickable:hover {
+  border-color: var(--tea-green);
+}
 .tea-order-card-header,
 .tea-order-item,
 .tea-order-total {
@@ -852,445 +926,584 @@ ion-button .tea-loader-label {
   justify-content: space-between;
   gap: 12px;
 }
-
+.tea-order-label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.tea-order-date,
+.tea-account-email {
+  margin: 5px 0 0;
+  font-size: 10px;
+  color: var(--tea-text-soft);
+}
+.tea-order-status,
+.tea-status-pill,
+.tea-message-card > span {
+  display: inline-block;
+  background: #edf2e7;
+  color: var(--tea-green-deep);
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 6px 9px;
+}
+.tea-order-items {
+  border-top: 1px solid var(--tea-border);
+  border-bottom: 1px solid var(--tea-border);
+  padding: 14px 0;
+  margin: 16px 0 14px;
+}
+.tea-order-item,
+.tea-order-total {
+  font-size: 12px;
+  color: var(--tea-text-soft);
+  line-height: 1.6;
+}
+.tea-order-total strong {
+  font-family: var(--tea-display);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--tea-text);
+}
 .tea-order-timeline {
   display: grid;
-  gap: 5px;
   grid-template-columns: repeat(4, 1fr);
-  margin: 16px 0 10px;
+  gap: 5px;
+  margin: 24px 0 12px;
 }
-
 .tea-timeline-step {
-  border-top: 3px solid rgba(45, 37, 32, 0.12);
-  color: var(--tea-text-soft);
-  font-size: 0.56rem;
-  font-weight: 800;
-  padding-top: 6px;
+  border-top: 2px solid var(--tea-border);
+  padding-top: 8px;
+  font-size: 8px;
   text-align: center;
+  color: var(--tea-text-soft);
 }
-
 .tea-timeline-step.complete {
-  border-color: var(--tea-green-deep);
+  border-color: var(--tea-green);
   color: var(--tea-green-deep);
 }
-
-.tea-order-product-block {
-  border-bottom: 1px solid rgba(45, 37, 32, 0.08);
-  padding: 8px 0 14px;
-}
-
-.tea-order-product-block:last-of-type {
-  border-bottom: 0;
-}
-
-.tea-review-preview {
-  background: rgba(197, 165, 114, 0.1);
-  border-radius: 12px;
-  margin: 8px 0;
-  padding: 9px 11px;
-}
-
-.tea-review-preview span {
-  color: var(--tea-gold);
-  font-size: 0.8rem;
-}
-
-.tea-review-preview p {
-  color: var(--tea-text-soft);
-  font-size: 0.78rem;
-  margin: 4px 0 0;
-}
-
-.tea-review-form {
-  border: 1px solid var(--tea-border);
-  border-radius: 14px;
-  margin-top: 8px;
-  padding: 10px;
-}
-
 .tea-star-picker {
   display: flex;
-  gap: 2px;
-  margin-bottom: 6px;
+  gap: 5px;
+  margin-bottom: 8px;
 }
-
 .tea-star-picker button {
-  background: none;
+  min-height: 40px;
+  min-width: 40px;
   border: 0;
-  color: rgba(45, 37, 32, 0.2);
-  font-size: 1.4rem;
-  padding: 3px;
+  border-radius: 8px;
+  background: var(--tea-bg);
+  color: #9a9c91;
+  font-size: 24px;
 }
-
 .tea-star-picker button.selected {
-  color: var(--tea-gold);
+  color: #98702f;
+  background: #f3ead6;
 }
-
-.tea-order-actions {
-  border-top: 1px solid var(--tea-border);
-  margin-top: 18px;
-  padding-top: 14px;
+.tea-account-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--tea-border);
 }
-
-.tea-order-actions small {
-  color: var(--tea-text-soft);
-  display: block;
-  font-size: 0.74rem;
-  margin-top: 5px;
+.tea-account-hero ion-icon {
+  font-size: 56px;
+  color: var(--tea-green);
 }
-
-.tea-order-label,
-.tea-order-date,
-.tea-account-name,
-.tea-account-email {
+.tea-account-name {
+  font-family: var(--tea-display);
+  font-size: 24px;
   margin: 0;
 }
-
-.tea-order-label {
-  color: var(--tea-text);
-  font-weight: 800;
-}
-
-.tea-order-date,
-.tea-account-email {
-  color: var(--tea-text-soft);
-  font-size: 0.8rem;
-  margin-top: 4px;
-}
-
-.tea-order-status {
-  background: rgba(125, 153, 130, 0.14);
-  border-radius: 999px;
-  color: var(--tea-green-deep);
-  font-size: 0.72rem;
-  font-weight: 800;
-  padding: 6px 9px;
-  text-transform: capitalize;
-}
-
-.tea-order-items {
-  border-bottom: 1px solid rgba(45, 37, 32, 0.08);
-  border-top: 1px solid rgba(45, 37, 32, 0.08);
-  margin: 14px 0 12px;
-  padding: 10px 0;
-}
-
-.tea-order-item {
-  color: var(--tea-text-soft);
-  font-size: 0.86rem;
-  padding: 4px 0;
-}
-
-.tea-order-item strong,
-.tea-order-total strong {
-  color: var(--tea-text);
-}
-
-.tea-order-total {
-  color: var(--tea-text-soft);
-  font-size: 0.84rem;
-}
-
-.tea-account-hero {
-  align-items: center;
-  background: var(--tea-card);
-  border: 1px solid rgba(45, 37, 32, 0.06);
-  border-radius: 20px;
-  display: flex;
-  gap: 14px;
-  margin-bottom: 16px;
-  padding: 20px 18px;
-}
-
-.tea-account-hero ion-icon {
-  color: var(--tea-green-deep) !important;
-  font-size: 48px;
-}
-
-.tea-account-name {
-  color: var(--tea-text);
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
 .tea-account-list {
   background: var(--tea-card);
-  border: 1px solid rgba(45, 37, 32, 0.06);
+  border: 1px solid var(--tea-border);
   border-radius: 18px;
-  margin: 0 0 18px;
   overflow: hidden;
+  margin: 0 0 18px;
 }
-
 .tea-account-list ion-item {
-  --background: var(--tea-card);
   --padding-start: 16px;
   --inner-padding-end: 16px;
   margin: 0;
-  min-height: 68px;
+  min-height: 64px;
 }
-
-.tea-account-list h2,
+.tea-account-list h2 {
+  font-family: var(--tea-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
 .tea-account-list p {
-  margin: 0;
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  margin-top: 4px;
 }
-
 .tea-account-segment {
-  --background: var(--tea-card);
-  border: 1px solid rgba(45, 37, 32, 0.06);
-  border-radius: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
-
 .tea-account-panel {
-  background: var(--tea-card);
-  border: 1px solid rgba(45, 37, 32, 0.06);
-  border-radius: 18px;
   margin-bottom: 18px;
-  padding: 18px 16px;
 }
-
-.tea-account-panel h2 {
-  color: var(--tea-text);
-  margin: 0 0 6px;
-}
-
 .tea-account-subheading {
-  border-top: 1px solid rgba(45, 37, 32, 0.08);
-  margin-top: 22px !important;
-  padding-top: 18px;
+  border-top: 1px solid var(--tea-border);
+  padding-top: 20px;
+  margin-top: 24px;
 }
-
 .tea-address-row {
-  align-items: center;
-  border-bottom: 1px solid rgba(45, 37, 32, 0.08);
-  color: var(--tea-text);
   display: flex;
-  font-size: 0.86rem;
+  gap: 12px;
   justify-content: space-between;
-  gap: 10px;
-  padding: 10px 0;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--tea-border);
+  font-size: 12px;
 }
-
-.tea-notification-card,
-.tea-message-card,
-.tea-settings-card {
-  background: var(--tea-card);
-  border: 1px solid var(--tea-border);
-  border-radius: 18px;
-  margin-bottom: 14px;
-  padding: 16px;
+.tea-address-row > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
-
 .tea-notification-card {
+  display: flex;
   align-items: flex-start;
-  display: flex;
   gap: 12px;
-}
-
-.tea-notification-card.read {
-  opacity: 0.58;
-}
-
-.tea-notification-read-all {
-  background: none;
-  border: 0;
-  color: var(--tea-green-deep);
-  font-size: 0.78rem;
-  font-weight: 800;
-  margin: 0 0 12px;
-  padding: 0;
-}
-
-.tea-notification-dot {
-  background: var(--tea-green-deep);
-  border-radius: 50%;
-  flex: 0 0 10px;
-  height: 10px;
-  margin-top: 6px;
-  width: 10px;
-}
-
-.tea-notification-card p,
-.tea-message-card p,
-.tea-settings-card p {
-  color: var(--tea-text-soft);
-  line-height: 1.5;
-  margin: 6px 0;
-}
-
-.tea-notification-card small,
-.tea-message-card small {
-  color: var(--tea-text-soft);
-  font-size: 0.72rem;
-}
-
-.tea-message-card span,
-.tea-status-pill {
-  background: rgba(125, 153, 130, 0.14);
-  border-radius: 999px;
-  color: var(--tea-green-deep);
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 5px 9px;
-}
-
-.tea-settings-card h2 {
-  color: var(--tea-text);
-  margin: 0;
-}
-
-.tea-settings-heading {
-  align-items: center;
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-}
-
-.tea-status-pill:not(.verified) {
-  background: rgba(200, 90, 90, 0.12);
-  color: var(--tea-red);
-}
-
-.tea-2fa-setup {
-  max-width: 300px;
-}
-
-.tea-2fa-setup img {
-  background: #ffffff;
-  border-radius: 12px;
-  display: block;
-  margin: 0 auto 14px;
-  padding: 8px;
-  width: 190px;
-}
-
-.tea-panel-copy {
-  color: var(--tea-text-soft);
-  font-size: 0.86rem;
-  margin: 0 0 14px;
-}
-
-.tea-toggle {
-  accent-color: var(--tea-green-deep);
-  height: 20px;
-  width: 20px;
-}
-
-.tea-cart-select-all {
-  align-items: center;
-  border-bottom: 1px solid rgba(45, 37, 32, 0.08);
-  display: flex;
-  gap: 10px;
-  padding: 0 0 12px;
-}
-
-.tea-quantity-control {
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  margin-top: 4px;
-}
-
-.tea-quantity-control ion-button {
-  --padding-start: 7px;
-  --padding-end: 7px;
-  height: 30px;
-  margin: 0;
-  min-width: 30px;
-}
-
-.tea-account-list p {
-  color: var(--tea-text-soft);
-  font-size: 0.82rem;
-  margin-top: 4px;
-}
-
-.tea-card-panel {
+  border: 1px solid #d7e0cf;
   background: var(--tea-card);
-  border-radius: 22px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(45, 37, 32, 0.06);
+  border-radius: 18px;
   padding: 18px 16px;
-  color: var(--tea-text);
-}
-
-.tea-summary-box {
-  background: rgba(45, 37, 32, 0.04);
-  border-radius: 16px;
-  padding: 14px 14px 8px;
-  border: 1px solid rgba(45, 37, 32, 0.06);
-}
-
-.tea-summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--tea-text);
   margin-bottom: 12px;
-  font-size: 0.95rem;
 }
-
-.tea-summary-row.total {
-  font-weight: 800;
-  font-size: 1.05rem;
-  border-top: 1px solid rgba(29, 27, 26, 0.12);
-  padding-top: 12px;
-}
-
-.tea-amount {
-  font-weight: 700;
-}
-
-.tea-item-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(29, 27, 26, 0.08);
-}
-
-.tea-item-row:last-child {
-  border-bottom: none;
-}
-
-.tea-item-thumb {
-  width: 62px;
-  height: 62px;
-  border-radius: 14px;
-  object-fit: cover;
-  background: #dfe7d8;
-}
-
-.tea-item-copy {
+.tea-notification-card > div {
   flex: 1;
   min-width: 0;
 }
-
-.tea-item-name {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--tea-text);
+.tea-notification-card.read {
+  background: #f7f3eb;
+  border-color: var(--tea-border);
 }
-
-.tea-item-sub {
-  margin: 4px 0 0;
-  font-size: 0.76rem;
+.tea-notification-dot {
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  margin-top: 6px;
+  background: var(--tea-green-deep);
+  border-radius: 50%;
+}
+.tea-notification-card.read .tea-notification-dot {
+  background: transparent;
+  border: 1px solid #aeb6a5;
+}
+.tea-notification-card p,
+.tea-message-card p,
+.tea-settings-card p {
+  font-size: 12px;
   color: var(--tea-text-soft);
+  margin: 6px 0;
 }
-
-.tea-qty-chip {
-  background: rgba(137, 167, 141, 0.14);
+.tea-notification-card .tea-order-label,
+.tea-message-card .tea-order-label {
+  color: var(--tea-text);
+  font-weight: 600;
+}
+.tea-notification-card small,
+.tea-message-card small {
+  color: var(--tea-text-soft);
+  font-size: 10px;
+}
+.tea-message-card,
+.tea-settings-card {
+  margin-bottom: 14px;
+}
+.tea-message-card > div[aria-label] {
+  border-left: 2px solid var(--tea-green);
+  background: #f0f3e8;
+  padding: 14px;
+  margin-top: 16px;
+  border-radius: 0 10px 10px 0;
+}
+.tea-message-card h3 {
+  font-size: 17px;
+}
+.tea-settings-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tea-status-pill:not(.verified) {
+  background: #f3e4db;
+  color: #924636;
+}
+.tea-2fa-setup {
+  max-width: 300px;
+}
+.tea-2fa-setup img {
+  display: block;
+  background: #fff;
+  padding: 8px;
+  width: 190px;
+  border-radius: 12px;
+  margin: 0 auto 16px;
+}
+.tea-toggle {
+  accent-color: var(--tea-green-deep);
+  width: 20px;
+  height: 20px;
+}
+/* Sign in and informational pages */
+.auth-container {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 24px 24px 36px;
+}
+.tea-auth-brand {
   color: var(--tea-green-deep);
-  font-weight: 700;
-  border-radius: 999px;
-  padding: 6px 10px;
+  font-family: var(--tea-display);
+  font-size: 22px;
+  margin: 0 0 20px;
+}
+.tea-auth-intro {
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 26px;
+  min-height: 152px;
+  background: linear-gradient(90deg, #1f3025cf, #1f302533), url("/images/atelier/tea-leaves.jpg") center 45% / cover;
+  color: #fffaf3;
+}
+.tea-auth-intro .tea-info-eyebrow {
+  color: #d6ddc9;
+}
+.tea-auth-intro h1 {
+  font-size: 35px;
+  margin: 0 0 8px;
+}
+.tea-auth-intro p:last-child {
+  font-size: 11px;
+  color: #e1e5d9;
+  margin: 0;
+}
+.field-label {
+  display: block;
+  margin: 18px 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.auth-button {
+  margin-top: 16px;
+}
+.auth-link {
+  text-align: center;
+  font-size: 12px;
+  color: var(--tea-text-soft);
+  margin-top: 24px;
+}
+.auth-link a,
+.auth-link ion-router-link {
+  color: var(--tea-green-deep);
+  font-weight: 600;
+}
+.tea-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  margin: 22px 0 16px;
+}
+.tea-auth-divider::before,
+.tea-auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--tea-border);
+}
+.tea-google-button {
+  min-height: 44px;
+}
+.tea-info-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 36px 24px;
+}
+.tea-info-mark {
+  width: 64px;
+  height: 64px;
+  font-size: 24px;
+  margin-bottom: 18px;
+}
+.tea-info-inner h1 {
+  font-size: 42px;
+  margin: 8px 0 20px;
+}
+.tea-info-lead {
+  color: var(--tea-text-soft);
+  font-size: 15px;
+  line-height: 1.75;
+}
+.tea-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 30px;
+}
+.tea-info-grid > div {
+  background: var(--tea-card);
+  padding: 18px;
+  border: 1px solid var(--tea-border);
+  border-radius: 16px;
+  font-size: 12px;
+}
+.tea-info-grid strong {
+  color: var(--tea-green-deep);
+}
+.tea-developer-list {
+  background: var(--tea-card);
+  border: 1px solid var(--tea-border);
+  border-radius: 18px;
+  margin-top: 28px;
+  overflow: hidden;
+}
+.tea-developer-list ion-item {
+  --padding-start: 16px;
+  margin: 0;
+  padding: 12px 0;
+}
+.tea-developer-avatar {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  margin-right: 14px;
+  object-fit: cover;
+}
+.tea-developer-list h2 {
+  font-family: var(--tea-body);
+  font-size: 14px;
+  font-weight: 600;
+}
+.tea-developer-list p {
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  margin: 4px 0;
+}
+.tea-developer-list a,
+.tea-project-link {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--tea-green-deep);
+  font-size: 11px;
+  text-decoration: none;
+  margin-top: 8px;
+}
+.tea-project-link {
+  margin-top: 24px;
+}
+/* Loading states */
+.tea-splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: var(--tea-bg);
+  color: var(--tea-text);
+  pointer-events: none;
+}
+.tea-splash-mark {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #bac6b0;
+  color: var(--tea-green-deep);
+  border-radius: 50%;
+  font-family: var(--tea-display);
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.tea-splash-kicker {
+  font-family: var(--tea-display);
+  font-size: 32px;
+  margin: 0;
+}
+.tea-splash-caption {
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  margin-top: 12px;
+}
+.tea-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  vertical-align: middle;
+}
+.tea-loader-orbit {
+  display: inline-block;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #ccd5c1;
+  border-radius: 50%;
+  animation: tea-loader-spin 1.3s linear infinite;
+}
+.tea-loader-leaf {
+  position: absolute;
+  width: 11px;
+  height: 7px;
+  background: var(--tea-green);
+  border-radius: 100% 0 100% 0;
+}
+.tea-loader-leaf-one {
+  right: -4px;
+  top: 1px;
+  transform: rotate(35deg);
+}
+.tea-loader-leaf-two {
+  bottom: 1px;
+  left: -4px;
+  transform: rotate(215deg);
+}
+.tea-loader-page {
+  flex-direction: column;
+  min-height: 100px;
+}
+.tea-loader-page .tea-loader-orbit {
+  width: 36px;
+  height: 36px;
+}
+.tea-loader-label {
+  color: var(--tea-text-soft);
+  font-size: 12px;
+}
+ion-button .tea-loader-label {
+  color: inherit;
+}
+@keyframes tea-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes tea-pulse {
+  to {
+    background-position-x: -200%;
+  }
+}
+@media (min-width: 768px) {
+  .shop-inner {
+    padding-top: 36px;
+  }
+  .tea-shop-welcome {
+    grid-template-columns: 1fr 150px;
+  }
+  .tea-shop-welcome img {
+    width: 150px;
+    height: 175px;
+    border-radius: 75px 75px 16px 16px;
+  }
+  .tea-shop-welcome h1 {
+    font-size: 44px;
+  }
+  .tea-product-name {
+    font-size: 14px;
+  }
+  .tea-product-price {
+    font-size: 22px;
+  }
+  .tea-product-stock {
+    font-size: 10px;
+  }
+}
+@media (max-width: 360px) {
+  .tea-page-inner,
+  .shop-inner {
+    padding-inline: 16px;
+  }
+  .tea-card-panel,
+  .tea-order-card,
+  .tea-account-panel {
+    padding: 16px;
+  }
+  .tea-shop-welcome {
+    grid-template-columns: 1fr 78px;
+  }
+  .tea-shop-welcome img {
+    width: 78px;
+    height: 122px;
+  }
+  .tea-shop-welcome h1 {
+    font-size: 30px;
+  }
+  .tea-item-thumb {
+    width: 52px;
+    height: 64px;
+  }
+  .tea-item-row {
+    gap: 8px;
+  }
+  .tea-cart-page .tea-item-row > ion-checkbox {
+    --size: 19px;
+  }
+  .tea-product-body {
+    padding-inline: 10px;
+  }
+}
+@media (max-width: 560px) {
+  .tea-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-height: 480px) {
+  .tea-has-dock > ion-router-outlet {
+    bottom: 0;
+  }
+  .tea-bottom-nav {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-@media (min-width: 768px) {
-  .tea-auth-page .auth-container,
-  .tea-shop-page .shop-inner {
-    max-width: 980px;
-  }
+/* Modern Ionic labels keep field names and values aligned across platforms. */
+.tea-field {
+  margin: 16px 0;
+}
+.tea-field ion-input,
+.tea-field ion-textarea {
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+.tea-field .label-text-wrapper {
+  font-size: 16px;
+  color: var(--tea-text-soft);
+  margin-bottom: 6px;
+}
+.tea-field .native-input,
+.tea-field .native-textarea {
+  font-size: 14px;
+}
+.tea-shop-page ion-searchbar {
+  padding: 0;
+  --box-shadow: none;
+}
+.tea-shop-page ion-searchbar .searchbar-input {
+  box-shadow: none;
+  border-radius: 14px;
 }

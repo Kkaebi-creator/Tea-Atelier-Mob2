@@ -1,3 +1,4 @@
+import PageIntro from "../components/PageIntro";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IonButton,
@@ -140,8 +141,11 @@ export default function NotificationsPage() {
       </IonHeader>
       <IonContent>
         <div className="tea-page-inner">
-          <p className="tea-info-eyebrow">Recent notifications</p>
-          <h1>Stay in the loop.</h1>
+          <PageIntro
+            eyebrow="Your atelier"
+            title="Your updates."
+            description="Recent news from your orders and the Tea Atelier team."
+          />
           <IonButton
             fill="outline"
             disabled={loading || saving}

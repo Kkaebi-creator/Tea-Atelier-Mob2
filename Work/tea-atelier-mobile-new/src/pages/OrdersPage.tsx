@@ -1,3 +1,4 @@
+import PageIntro from "../components/PageIntro";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IonButton,
@@ -113,6 +114,11 @@ export default function OrdersPage() {
           <IonRefresherContent />
         </IonRefresher>
         <div className="tea-page-inner">
+          <PageIntro
+            eyebrow="Your atelier"
+            title="Your orders."
+            description="Track deliveries and revisit your favorites."
+          />
           <IonButton
             fill="outline"
             disabled={loading}

@@ -5,7 +5,6 @@ import {
   IonContent,
   IonHeader,
   IonInput,
-  IonItem,
   IonLabel,
   IonMenuButton,
   IonPage,
@@ -181,14 +180,21 @@ const ContactPage: React.FC = () => {
               className="tea-account-panel"
               onSubmit={(event) => void submit(event)}
             >
-              <p className="tea-info-eyebrow">Get in touch</p>
-              <h1>We would love to hear from you.</h1>
+              <div className="tea-page-intro">
+                <p className="tea-info-eyebrow">A conversation over tea</p>
+                <h1>We’re here to help.</h1>
+                <p className="tea-page-description">
+                  Questions about your order or finding your next favorite? Send
+                  us a note.
+                </p>
+              </div>
               <p>
                 Sending as {user?.name} ({user?.email}).
               </p>
-              <IonItem>
-                <IonLabel position="stacked">Subject</IonLabel>
+              <div className="tea-field">
                 <IonInput
+                  label="Subject"
+                  labelPlacement="stacked"
                   aria-label="Subject"
                   value={form.subject}
                   maxlength={255}
@@ -197,10 +203,11 @@ const ContactPage: React.FC = () => {
                     edit("subject", event.detail.value || "")
                   }
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Message</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonTextarea
+                  label="Message"
+                  labelPlacement="stacked"
                   aria-label="Message"
                   rows={6}
                   value={form.message}
@@ -210,7 +217,7 @@ const ContactPage: React.FC = () => {
                     edit("message", event.detail.value || "")
                   }
                 />
-              </IonItem>
+              </div>
               <IonButton
                 type="submit"
                 expand="block"

@@ -1,3 +1,4 @@
+import PageIntro from "../components/PageIntro";
 import React, { useState } from "react";
 import {
   IonAlert,
@@ -142,6 +143,11 @@ const AccountPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <div className="tea-page-inner">
+          <PageIntro
+            eyebrow="Your atelier"
+            title="Make yourself at home."
+            description="Your details, saved addresses, and little preferences."
+          />
           <div className="tea-account-hero">
             <IonIcon icon={personCircleOutline} />
             <div>
@@ -173,32 +179,39 @@ const AccountPage: React.FC = () => {
               <p className="tea-panel-copy">
                 Keep your delivery information up to date.
               </p>
-              <IonItem>
-                <IonLabel position="stacked">First name</IonLabel>
+              <div className="tea-field">
                 <IonInput
+                  label="First name"
+                  labelPlacement="stacked"
                   value={firstName}
                   onIonChange={(e) => setFirstName(e.detail.value || "")}
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Last name</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonInput
+                  label="Last name"
+                  labelPlacement="stacked"
                   value={lastName}
                   onIonChange={(e) => setLastName(e.detail.value || "")}
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Phone</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonInput
+                  label="Phone"
+                  labelPlacement="stacked"
                   type="tel"
                   value={phone}
                   onIonChange={(e) => setPhone(e.detail.value || "")}
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Email</IonLabel>
-                <IonInput value={user?.email || ""} readonly />
-              </IonItem>
+              </div>
+              <div className="tea-field">
+                <IonInput
+                  label="Email"
+                  labelPlacement="stacked"
+                  value={user?.email || ""}
+                  readonly
+                />
+              </div>
               <IonButton
                 expand="block"
                 onClick={saveProfile}
@@ -232,28 +245,31 @@ const AccountPage: React.FC = () => {
                   </IonButton>
                 </div>
               ))}
-              <IonItem>
-                <IonLabel position="stacked">Address line 1</IonLabel>
+              <div className="tea-field">
                 <IonInput
+                  label="Address line 1"
+                  labelPlacement="stacked"
                   value={addressLine1}
                   onIonChange={(e) => setAddressLine1(e.detail.value || "")}
                   placeholder="House number and street"
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">City / municipality</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonInput
+                  label="City / municipality"
+                  labelPlacement="stacked"
                   value={addressLine2}
                   onIonChange={(e) => setAddressLine2(e.detail.value || "")}
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Province</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonInput
+                  label="Province"
+                  labelPlacement="stacked"
                   value={addressLine3}
                   onIonChange={(e) => setAddressLine3(e.detail.value || "")}
                 />
-              </IonItem>
+              </div>
               <IonButton expand="block" fill="outline" onClick={addAddress}>
                 Add address
               </IonButton>

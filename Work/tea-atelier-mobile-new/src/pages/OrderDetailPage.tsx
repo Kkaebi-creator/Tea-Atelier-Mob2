@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import { ensureOk, fetchApi, requestError } from "../config/request";
+import PageIntro from "../components/PageIntro";
 import TeaLoader from "../components/TeaLoader";
 import OrderReviews from "../components/OrderReviews";
 import OrderReturns from "../components/OrderReturns";
@@ -81,98 +82,118 @@ export default function OrderDetailPage() {
           <IonTitle>Order Details</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
-        {loading && <TeaLoader size="page" label="Loading order" />}
-        {error && (
-          <div role="alert">
-            <p>{error}</p>
-            <IonButton onClick={() => void load()}>Retry order</IonButton>
-          </div>
-        )}
-        {!loading && order && token && (
-          <div className="tea-page-inner">
-            <div className="tea-order-card">
-              <div className="tea-order-card-header">
-                <div>
-                  <p className="tea-order-label">Order #{order.orderId}</p>
-                  <p className="tea-order-date">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <span className="tea-order-status">{order.orderStatus}</span>
-              </div>
-              {steps.includes(order.orderStatus) && (
-                <div className="tea-order-timeline">
-                  {steps.map((step) => (
-                    <span
-                      key={step}
-                      className={
-                        steps.indexOf(step) <= steps.indexOf(order.orderStatus)
-                          ? "tea-timeline-step complete"
-                          : "tea-timeline-step"
-                      }
-                    >
-                      {step}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {order.items.map((item) => (
-                <div className="tea-item-row" key={item.productId}>
-                  {item.image && (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="tea-item-thumb"
-                    />
-                  )}
-                  <div className="tea-item-copy">
-                    <p className="tea-item-name">{item.name}</p>
-                    <p>
-                      {item.quantity} × ₱{item.price.toFixed(2)}
-                    </p>
-                    <IonButton
-                      size="small"
-                      fill="clear"
-                      routerLink={`/product/${item.productId}`}
-                    >
-                      View product and reviews
-                    </IonButton>
-                  </div>
-                  <strong>₱{(item.quantity * item.price).toFixed(2)}</strong>
-                </div>
-              ))}
-              <div className="tea-summary-box">
-                <div className="tea-summary-row">
-                  <span>Subtotal</span>
-                  <span>₱{order.subtotal.toFixed(2)}</span>
-                </div>
-                <div className="tea-summary-row">
-                  <span>Delivery</span>
-                  <span>₱{order.deliveryFee.toFixed(2)}</span>
-                </div>
-                <div className="tea-summary-row total">
-                  <span>Total</span>
-                  <span>₱{order.total.toFixed(2)}</span>
-                </div>
-              </div>
-              <p>
-                Payment: {order.paymentMethod.toUpperCase()} · Deliver to{" "}
-                {order.recipientName}
-              </p>
-              {["gcash", "grabpay"].includes(order.paymentMethod) && (
-                <IonButton
-                  fill="outline"
-                  routerLink={`/order-confirmation/${order.orderId}`}
-                >
-                  View payment status
-                </IonButton>
-              )}
+      <IonContent>
+        <div className="tea-page-inner">
+          {loading && <TeaLoader size="page" label="Loading order" />}
+          {error && (
+            <div role="alert" className="tea-state">
+              <p>{error}</p>
+              <IonButton onClick={() => void load()}>Retry order</IonButton>
             </div>
-            <OrderReviews orderId={order.orderId} token={token} />
-            <OrderReturns orderId={order.orderId} token={token} />
-          </div>
-        )}
+          )}
+          {!loading && order && token && (
+            <div>
+              <PageIntro
+                eyebrow="Your atelier orders"
+                title="Every step of your order."
+                description="Follow its progress, view payment details, and find reviews and support below."
+              />
+              <div className="tea-order-card">
+                <div className="tea-order-card-header">
+                  <div>
+                    <p className="tea-order-label">Order #{order.orderId}</p>
+                    <p className="tea-order-date">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <span className="tea-order-status">{order.orderStatus}</span>
+                </div>
+                {steps.includes(order.orderStatus) && (
+                  <div
+                    className="tea-order-timeline"
+                    role="list"
+                    aria-label="Order progress"
+                  >
+                    {steps.map((step) => (
+                      <span
+                        key={step}
+                        role="listitem"
+                        aria-current={
+                          step === order.orderStatus ? "step" : undefined
+                        }
+                        className={
+                          steps.indexOf(step) <=
+                          steps.indexOf(order.orderStatus)
+                            ? "tea-timeline-step complete"
+                            : "tea-timeline-step"
+                        }
+                      >
+                        {step}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {order.items.map((item) => (
+                  <div className="tea-item-row" key={item.productId}>
+                    {item.image && (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="tea-item-thumb"
+                      />
+                    )}
+                    <div className="tea-item-copy">
+                      <p className="tea-item-name">{item.name}</p>
+                      <p>
+                        {item.quantity} × ₱{item.price.toFixed(2)}
+                      </p>
+                      <IonButton
+                        size="small"
+                        fill="clear"
+                        routerLink={`/product/${item.productId}`}
+                      >
+                        View product and reviews
+                      </IonButton>
+                    </div>
+                    <strong>₱{(item.quantity * item.price).toFixed(2)}</strong>
+                  </div>
+                ))}
+                <div className="tea-summary-box">
+                  <div className="tea-summary-row">
+                    <span>Subtotal</span>
+                    <span>₱{order.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="tea-summary-row">
+                    <span>Delivery</span>
+                    <span>₱{order.deliveryFee.toFixed(2)}</span>
+                  </div>
+                  <div className="tea-summary-row total">
+                    <span>Total</span>
+                    <span className="tea-amount">
+                      ₱{order.total.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+                <div className="tea-policy-section">
+                  <p className="tea-panel-copy">Payment method</p>
+                  <p>{order.paymentMethod.toUpperCase()}</p>
+                  <p className="tea-panel-copy">Deliver to</p>
+                  <p>{order.recipientName}</p>
+                </div>
+                {["gcash", "grabpay"].includes(order.paymentMethod) && (
+                  <IonButton
+                    fill="outline"
+                    routerLink={`/order-confirmation/${order.orderId}`}
+                  >
+                    View payment status
+                  </IonButton>
+                )}
+              </div>
+              <OrderReviews orderId={order.orderId} token={token} />
+              <OrderReturns orderId={order.orderId} token={token} />
+            </div>
+          )}
+        </div>
       </IonContent>
     </IonPage>
   );

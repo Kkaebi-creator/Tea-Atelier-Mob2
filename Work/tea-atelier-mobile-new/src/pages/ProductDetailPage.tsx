@@ -128,12 +128,7 @@ const ProductDetailPage: React.FC = () => {
         <img
           src={product.image}
           alt={product.name}
-          style={{
-            width: "100%",
-            maxHeight: 300,
-            objectFit: "cover",
-            display: "block",
-          }}
+          className="tea-product-hero"
         />
         <div className="ion-padding">
           <div className="tea-card-panel" style={{ marginTop: 16 }}>

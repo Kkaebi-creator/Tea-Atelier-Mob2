@@ -6,8 +6,6 @@ import {
   IonContent,
   IonHeader,
   IonInput,
-  IonItem,
-  IonLabel,
   IonMenuButton,
   IonPage,
   IonText,
@@ -16,6 +14,7 @@ import {
 } from "@ionic/react";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
+import PageIntro from "../components/PageIntro";
 import TeaLoader from "../components/TeaLoader";
 
 const SettingsPage: React.FC = () => {
@@ -154,23 +153,29 @@ const SettingsPage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonMenuButton menu="tea-navigation" />
+            <IonMenuButton
+              menu="tea-navigation"
+              aria-label="Open navigation menu"
+            />
           </IonButtons>
           <IonTitle>Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <div className="tea-page-inner">
-          <p className="tea-info-eyebrow">Account preferences</p>
-          <h1>Settings</h1>
+          <PageIntro
+            eyebrow="Account preferences"
+            title="Make it yours."
+            description="Manage email verification, account security, and your session on this device."
+          />
           {message && (
             <IonText color="success">
-              <p>{message}</p>
+              <p role="status">{message}</p>
             </IonText>
           )}
           {error && (
             <IonText color="danger">
-              <p>{error}</p>
+              <p role="alert">{error}</p>
             </IonText>
           )}
           {isLoading ? (
@@ -247,17 +252,20 @@ const SettingsPage: React.FC = () => {
                       src={qrCode}
                       alt="Scan this QR code with your authenticator app"
                     />
-                    <IonItem>
-                      <IonLabel position="stacked">Authenticator code</IonLabel>
+                    <div className="tea-field">
                       <IonInput
+                        label="Authenticator code"
+                        labelPlacement="stacked"
                         inputMode="numeric"
+                        autocomplete="one-time-code"
                         maxlength={6}
                         value={code}
                         onIonChange={(event) =>
                           setCode(event.detail.value || "")
                         }
+                        placeholder="6-digit code"
                       />
-                    </IonItem>
+                    </div>
                     <IonButton
                       expand="block"
                       onClick={confirmTwoFactor}

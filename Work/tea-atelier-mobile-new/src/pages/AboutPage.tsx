@@ -9,6 +9,8 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
+import PageIntro from "../components/PageIntro";
+
 const AboutPage: React.FC = () => (
   <IonPage className="tea-info-page">
     <IonHeader>
@@ -19,18 +21,21 @@ const AboutPage: React.FC = () => (
             aria-label="Open navigation menu"
           />
         </IonButtons>
-        <IonTitle>About the App</IonTitle>
+        <IonTitle>About Tea Atelier</IonTitle>
       </IonToolbar>
     </IonHeader>
     <IonContent>
       <div className="tea-info-inner">
-        <div className="tea-info-mark">TA</div>
-        <p className="tea-info-eyebrow">Tea Atelier · Since 2026</p>
-        <h1>A quieter way to shop for tea.</h1>
-        <p className="tea-info-lead">
-          Tea Atelier brings a considered collection of teas into one simple
-          mobile experience.
-        </p>
+        <PageIntro
+          eyebrow="Our atelier"
+          title="A quieter way to shop for tea."
+          description="Tea Atelier brings a considered collection of teas into one simple mobile experience."
+        />
+        <div className="tea-auth-intro">
+          <p className="tea-info-eyebrow">Small rituals. Beautiful tea.</p>
+          <h2>Find your daily steep.</h2>
+          <p>Discover, order, and keep track of your favorites.</p>
+        </div>
         <div className="tea-info-grid">
           <div>
             <strong>Discover</strong>

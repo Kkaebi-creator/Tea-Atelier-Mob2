@@ -316,7 +316,7 @@ const OrderConfirmationPage: React.FC = () => {
   const busy = checkingPayment || openingPayment;
 
   return (
-    <IonPage className="tea-confirm-page">
+    <IonPage className={`tea-confirm-page tea-payment-${displayedStatus}`}>
       <IonHeader>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>

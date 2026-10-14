@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { App as NativeApp } from "@capacitor/app";
 import { Browser } from "@capacitor/browser";
@@ -7,6 +7,8 @@ import { paymentReturnPath } from "../config/paymentReturn";
 
 export default function PaymentReturnListener() {
   const navigate = useNavigate();
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     let disposed = false;
@@ -15,7 +17,7 @@ export default function PaymentReturnListener() {
     const open = (url: string) => {
       const path = paymentReturnPath(url);
       if (!path || disposed) return;
-      navigate(path, { replace: true });
+      navigateRef.current(path, { replace: true });
       // Also recheck if the confirmation page was already open for this order.
       window.dispatchEvent(new Event("tea-payment-return"));
       // Browser.close is unsupported on some Android versions.
@@ -41,6 +43,6 @@ export default function PaymentReturnListener() {
       disposed = true;
       if (removeListener) void removeListener();
     };
-  }, [navigate]);
+  }, []);
   return null;
 }

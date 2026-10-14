@@ -1,3 +1,4 @@
+import PageIntro from "../components/PageIntro";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   IonPage,
@@ -225,6 +226,18 @@ const CheckoutPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        <PageIntro
+          eyebrow="The final details"
+          title="Almost tea time."
+          description="Choose where your selection is going and how you’d like to pay."
+        />
+        <div className="tea-checkout-progress" aria-label="Checkout steps">
+          <span>01 · Delivery</span>
+          <i />
+          <span>02 · Payment</span>
+          <i />
+          <span>03 · Confirm</span>
+        </div>
         <div className="tea-card-panel">
           {settingsError && (
             <div role="alert">
@@ -315,18 +328,23 @@ const CheckoutPage: React.FC = () => {
               </IonSelect>
             </IonItem>
           )}
-          <IonItem>
-            <IonLabel position="stacked">Full Name</IonLabel>
-            <IonInput value={form.fullName} onIonChange={set("fullName")} />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Phone</IonLabel>
+          <div className="tea-field">
             <IonInput
+              label="Full Name"
+              labelPlacement="stacked"
+              value={form.fullName}
+              onIonChange={set("fullName")}
+            />
+          </div>
+          <div className="tea-field">
+            <IonInput
+              label="Phone"
+              labelPlacement="stacked"
               type="tel"
               value={form.phone}
               onIonChange={set("phone")}
             />
-          </IonItem>
+          </div>
           {addressesError && (
             <div role="alert">
               <p>{addressesError}</p>
@@ -354,30 +372,33 @@ const CheckoutPage: React.FC = () => {
             </div>
           ) : (
             <>
-              <IonItem>
-                <IonLabel position="stacked">Street Address</IonLabel>
+              <div className="tea-field">
                 <IonInput
+                  label="Street Address"
+                  labelPlacement="stacked"
                   value={form.street}
                   onIonChange={set("street")}
                   placeholder="123 Mabini St."
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">City / Municipality</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonInput
+                  label="City / Municipality"
+                  labelPlacement="stacked"
                   value={form.city}
                   onIonChange={set("city")}
                   placeholder="Quezon City"
                 />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Province</IonLabel>
+              </div>
+              <div className="tea-field">
                 <IonInput
+                  label="Province"
+                  labelPlacement="stacked"
                   value={form.province}
                   onIonChange={set("province")}
                   placeholder="Metro Manila"
                 />
-              </IonItem>
+              </div>
             </>
           )}
 
