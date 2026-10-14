@@ -747,7 +747,8 @@ p[role="alert"],
   color: #fff;
 }
 /* Cart, checkout and payment */
-.tea-cart-page ion-content,
+/* Guest Cart has its own inner gutters; pad the signed-in cart here. */
+.tea-cart-page ion-content.ion-padding,
 .tea-checkout-page ion-content,
 .tea-confirm-page ion-content {
   --padding-start: max(18px, calc((100vw - 760px) / 2));
@@ -1153,11 +1154,18 @@ p[role="alert"],
   width: 20px;
   height: 20px;
 }
+/* Form wrappers own the gutters; avoid adding Ionic content padding too. */
+.tea-auth-page ion-content {
+  --padding-start: 0px;
+  --padding-end: 0px;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+}
 /* Sign in and informational pages */
 .auth-container {
-  max-width: 460px;
+  max-width: 560px;
   margin: 0 auto;
-  padding: 24px 24px 36px;
+  padding: 20px 18px 24px;
 }
 .tea-auth-brand {
   color: var(--tea-green-deep);
@@ -1192,7 +1200,7 @@ p[role="alert"],
   font-weight: 500;
 }
 .auth-button {
-  margin-top: 16px;
+  margin: 16px 0 0;
 }
 .auth-link {
   text-align: center;
