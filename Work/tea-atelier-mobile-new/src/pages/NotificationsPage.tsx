@@ -1,3 +1,4 @@
+import PageFrame from "../components/PageFrame";
 import PageIntro from "../components/PageIntro";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -6,7 +7,6 @@ import {
   IonContent,
   IonHeader,
   IonMenuButton,
-  IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -21,7 +21,11 @@ type Notification = {
   created_at: string;
   read_at: string | null;
 };
-export default function NotificationsPage() {
+export default function NotificationsPage({
+  embedded = false,
+}: {
+  embedded?: boolean;
+}) {
   const { token } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -127,7 +131,7 @@ export default function NotificationsPage() {
     }
   };
   return (
-    <IonPage className="tea-info-page">
+    <PageFrame embedded={embedded} className="tea-info-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -225,6 +229,6 @@ export default function NotificationsPage() {
             ))}
         </div>
       </IonContent>
-    </IonPage>
+    </PageFrame>
   );
 }

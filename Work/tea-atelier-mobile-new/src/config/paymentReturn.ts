@@ -42,7 +42,7 @@ export function postLoginPath(state: unknown): string {
 }
 
 // Authentication always has a way back to a guest-accessible screen.
-// Never send a guest straight back to a protected payment/security route.
+// Never send a guest straight back to a protected payment or order-detail route.
 export function authBackPath(state: unknown): string {
   const pathname = (state as { from?: { pathname?: unknown } } | null)?.from
     ?.pathname;
@@ -53,6 +53,9 @@ export function authBackPath(state: unknown): string {
       "/cart",
       "/orders",
       "/account",
+      "/contact",
+      "/settings",
+      "/notifications",
       "/about",
       "/privacy",
       "/developers",

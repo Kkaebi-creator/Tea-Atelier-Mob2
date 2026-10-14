@@ -1,3 +1,4 @@
+import PageFrame from "../components/PageFrame";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IonButton,
@@ -7,7 +8,6 @@ import {
   IonInput,
   IonLabel,
   IonMenuButton,
-  IonPage,
   IonSegment,
   IonSegmentButton,
   IonText,
@@ -29,7 +29,9 @@ type Message = {
   repliedAt?: string | null;
 };
 
-const ContactPage: React.FC = () => {
+const ContactPage: React.FC<{ embedded?: boolean }> = ({
+  embedded = false,
+}) => {
   const { token, user } = useAuth();
   const [tab, setTab] = useState("contact");
   const [form, setForm] = useState({ subject: "", message: "" });
@@ -149,7 +151,7 @@ const ContactPage: React.FC = () => {
   };
 
   return (
-    <IonPage className="tea-info-page">
+    <PageFrame embedded={embedded} className="tea-info-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -320,7 +322,7 @@ const ContactPage: React.FC = () => {
           )}
         </div>
       </IonContent>
-    </IonPage>
+    </PageFrame>
   );
 };
 export default ContactPage;

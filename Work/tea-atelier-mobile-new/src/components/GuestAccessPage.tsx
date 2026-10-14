@@ -13,12 +13,39 @@ import {
   bagHandleOutline,
   personOutline,
   receiptOutline,
+  mailOutline,
+  settingsOutline,
+  notificationsOutline,
 } from "ionicons/icons";
 import { useNavigate } from "react-router-dom";
 import PageFrame from "./PageFrame";
 import PageIntro from "./PageIntro";
 import "./GuestAccessPage.css";
 const sections = {
+  contact: {
+    title: "Contact Us",
+    heading: "A little help, when you need it.",
+    description:
+      "Sign in to send the atelier a message and keep your conversation and replies together.",
+    icon: mailOutline,
+    path: "/contact",
+  },
+  settings: {
+    title: "Settings",
+    heading: "Your account, your preferences.",
+    description:
+      "Sign in to manage email verification, two-factor authentication, and your session.",
+    icon: settingsOutline,
+    path: "/settings",
+  },
+  notifications: {
+    title: "Notifications",
+    heading: "Keep up with your atelier.",
+    description:
+      "Sign in to see your order updates and manage which notifications you've read.",
+    icon: notificationsOutline,
+    path: "/notifications",
+  },
   cart: {
     title: "Your Cart",
     heading: "A place for your next favorites.",

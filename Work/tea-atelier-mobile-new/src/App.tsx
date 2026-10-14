@@ -93,6 +93,12 @@ const ProtectedRoute: React.FC<{
       [
         "/",
         "/shop",
+        "/cart",
+        "/orders",
+        "/account",
+        "/contact",
+        "/settings",
+        "/notifications",
         "/login",
         "/register",
         "/about",
@@ -160,16 +166,31 @@ const AppRoutes: React.FC = () => {
       <Route path="/developers" element={<DevelopersPage />} />
       <Route
         path="/notifications"
-        element={<ProtectedRoute element={<NotificationsPage />} />}
+        element={
+          <ProtectedRoute
+            guestSection="notifications"
+            element={<NotificationsPage embedded />}
+          />
+        }
       />
       <Route
         path="/contact"
-        element={<ProtectedRoute element={<ContactPage />} />}
+        element={
+          <ProtectedRoute
+            guestSection="contact"
+            element={<ContactPage embedded />}
+          />
+        }
       />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route
         path="/settings"
-        element={<ProtectedRoute element={<SettingsPage />} />}
+        element={
+          <ProtectedRoute
+            guestSection="settings"
+            element={<SettingsPage embedded />}
+          />
+        }
       />
       <Route path="/shop" element={<ShopPage />} />
       <Route path="/product/:id" element={<ProductDetailPage />} />

@@ -1,3 +1,4 @@
+import PageFrame from "../components/PageFrame";
 import React, { useEffect, useState } from "react";
 import {
   IonAlert,
@@ -7,7 +8,6 @@ import {
   IonHeader,
   IonInput,
   IonMenuButton,
-  IonPage,
   IonText,
   IonTitle,
   IonToolbar,
@@ -17,7 +17,9 @@ import { useAuth } from "../context/AuthContext";
 import PageIntro from "../components/PageIntro";
 import TeaLoader from "../components/TeaLoader";
 
-const SettingsPage: React.FC = () => {
+const SettingsPage: React.FC<{ embedded?: boolean }> = ({
+  embedded = false,
+}) => {
   const { token, user, logout } = useAuth();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [qrCode, setQrCode] = useState("");
@@ -149,7 +151,7 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <IonPage className="tea-info-page">
+    <PageFrame embedded={embedded} className="tea-info-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -301,7 +303,7 @@ const SettingsPage: React.FC = () => {
         ]}
         onDidDismiss={() => setShowDisable(false)}
       />
-    </IonPage>
+    </PageFrame>
   );
 };
 
