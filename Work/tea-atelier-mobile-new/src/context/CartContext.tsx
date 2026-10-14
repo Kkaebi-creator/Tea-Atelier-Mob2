@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import { fetchApi, ensureOk, requestError } from "../config/request";
 import { API_URL } from "../config/api";
 import { useAuth } from "./AuthContext";
@@ -40,11 +47,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const authHeaders = () => ({ Authorization: `Bearer ${token}` });
 
   const refresh = useCallback(async () => {
-    if (!token) { setItems([]); setError(""); return; }
+    if (!token) {
+      setItems([]);
+      setError("");
+      return;
+    }
     setIsLoading(true);
     setError("");
     try {
-      const res = await fetchApi(`${API_URL}/api/cart`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetchApi(`${API_URL}/api/cart`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       await ensureOk(res, "Unable to load cart.");
       setItems(await res.json());
     } catch (error) {
@@ -54,7 +67,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [token]);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
   const cartRequest = async (url: string, options: RequestInit) => {
     setError("");
@@ -80,14 +95,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = async () => {
     if (!token) return;
-    await cartRequest(`${API_URL}/api/cart`, { method: "DELETE", headers: authHeaders() });
+    await cartRequest(`${API_URL}/api/cart`, {
+      method: "DELETE",
+      headers: authHeaders(),
+    });
     setItems([]);
   };
 
   const updateQuantity = async (productId: string, quantity: number) => {
     if (!token || quantity < 1) return;
     const previous = items;
-    setItems((current) => current.map((item) => item.product.id === productId ? { ...item, quantity } : item));
+    setItems((current) =>
+      current.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item,
+      ),
+    );
     try {
       await cartRequest(`${API_URL}/api/cart/${productId}`, {
         method: "PATCH",
@@ -102,9 +124,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeFromCart = async (productId: string) => {
     if (!token) return;
     const previous = items;
-    setItems((current) => current.filter((item) => item.product.id !== productId));
+    setItems((current) =>
+      current.filter((item) => item.product.id !== productId),
+    );
     try {
-      await cartRequest(`${API_URL}/api/cart/${productId}`, { method: "DELETE", headers: authHeaders() });
+      await cartRequest(`${API_URL}/api/cart/${productId}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
     } catch {
       setItems(previous);
     }
@@ -113,7 +140,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, itemCount, isLoading, error, addToCart, updateQuantity, removeFromCart, clearCart, refresh }}>
+    <CartContext.Provider
+      value={{
+        items,
+        itemCount,
+        isLoading,
+        error,
+        addToCart,
+        updateQuantity,
+        removeFromCart,
+        clearCart,
+        refresh,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

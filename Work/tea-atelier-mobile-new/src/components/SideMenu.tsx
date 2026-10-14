@@ -30,7 +30,11 @@ const modules = [
   { label: "Orders", href: "/orders", icon: receiptOutline },
   { label: "Cart", href: "/cart", icon: cartOutline },
   { label: "Account", href: "/account", icon: personOutline },
-  { label: "Notifications", href: "/notifications", icon: notificationsOutline },
+  {
+    label: "Notifications",
+    href: "/notifications",
+    icon: notificationsOutline,
+  },
 ];
 
 const SideMenu: React.FC = () => {
@@ -38,11 +42,17 @@ const SideMenu: React.FC = () => {
 
   const isActive = (href: string) =>
     href === "/shop"
-      ? location.pathname === "/shop" || location.pathname.startsWith("/product/")
+      ? location.pathname === "/shop" ||
+        location.pathname.startsWith("/product/")
       : location.pathname === href || location.pathname.startsWith(`${href}/`);
 
   return (
-    <IonMenu contentId="main-content" menuId="tea-navigation" type="overlay" className="tea-side-menu">
+    <IonMenu
+      contentId="main-content"
+      menuId="tea-navigation"
+      type="overlay"
+      className="tea-side-menu"
+    >
       <IonToolbar>
         <IonTitle>Tea Atelier</IonTitle>
       </IonToolbar>
@@ -59,7 +69,16 @@ const SideMenu: React.FC = () => {
           <IonNote className="tea-menu-section-label">Modules</IonNote>
           {modules.map((module) => (
             <IonMenuToggle key={module.href} autoHide={false}>
-              <IonItem button detail={false} routerLink={module.href} className={isActive(module.href) ? "tea-menu-item active" : "tea-menu-item"}>
+              <IonItem
+                button
+                detail={false}
+                routerLink={module.href}
+                className={
+                  isActive(module.href)
+                    ? "tea-menu-item active"
+                    : "tea-menu-item"
+                }
+              >
                 <IonIcon slot="start" icon={module.icon} />
                 <IonLabel>{module.label}</IonLabel>
               </IonItem>
@@ -70,28 +89,68 @@ const SideMenu: React.FC = () => {
         <IonList inset className="tea-menu-list tea-menu-secondary-list">
           <IonNote className="tea-menu-section-label">More</IonNote>
           <IonMenuToggle autoHide={false}>
-            <IonItem button detail={false} routerLink="/about" className={isActive("/about") ? "tea-menu-item active" : "tea-menu-item"}>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/about"
+              className={
+                isActive("/about") ? "tea-menu-item active" : "tea-menu-item"
+              }
+            >
               <IonIcon slot="start" icon={informationCircleOutline} />
               <IonLabel>About the App</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
-            <IonItem button detail={false} routerLink="/contact" className={isActive("/contact") ? "tea-menu-item active" : "tea-menu-item"}>
-              <IonIcon slot="start" icon={mailOutline} /><IonLabel>Contact Us</IonLabel>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/contact"
+              className={
+                isActive("/contact") ? "tea-menu-item active" : "tea-menu-item"
+              }
+            >
+              <IonIcon slot="start" icon={mailOutline} />
+              <IonLabel>Contact Us</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
-            <IonItem button detail={false} routerLink="/settings" className={isActive("/settings") ? "tea-menu-item active" : "tea-menu-item"}>
-              <IonIcon slot="start" icon={lockClosedOutline} /><IonLabel>Settings</IonLabel>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/settings"
+              className={
+                isActive("/settings") ? "tea-menu-item active" : "tea-menu-item"
+              }
+            >
+              <IonIcon slot="start" icon={lockClosedOutline} />
+              <IonLabel>Settings</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
-            <IonItem button detail={false} routerLink="/privacy" className={isActive("/privacy") ? "tea-menu-item active" : "tea-menu-item"}>
-              <IonIcon slot="start" icon={shieldCheckmarkOutline} /><IonLabel>Privacy Policy</IonLabel>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/privacy"
+              className={
+                isActive("/privacy") ? "tea-menu-item active" : "tea-menu-item"
+              }
+            >
+              <IonIcon slot="start" icon={shieldCheckmarkOutline} />
+              <IonLabel>Privacy Policy</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
-            <IonItem button detail={false} routerLink="/developers" className={isActive("/developers") ? "tea-menu-item active" : "tea-menu-item"}>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/developers"
+              className={
+                isActive("/developers")
+                  ? "tea-menu-item active"
+                  : "tea-menu-item"
+              }
+            >
               <IonIcon slot="start" icon={peopleOutline} />
               <IonLabel>Developers</IonLabel>
             </IonItem>

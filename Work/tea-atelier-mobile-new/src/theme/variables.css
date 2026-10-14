@@ -167,7 +167,10 @@ ion-title {
   --inner-padding-end: 12px;
   border-radius: 12px;
   margin-bottom: 4px;
-  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
 .tea-menu-item ion-icon {
@@ -337,7 +340,6 @@ img.tea-developer-avatar {
   .tea-side-menu {
     --width: 300px;
   }
-
 }
 
 ion-searchbar {
@@ -405,14 +407,14 @@ ion-button {
   height: 54px;
 }
 
-ion-button:not([fill='outline']) {
+ion-button:not([fill="outline"]) {
   --background: var(--tea-green);
   --background-activated: var(--tea-green-deep);
   --background-hover: var(--tea-green-deep);
   --color: #ffffff;
 }
 
-ion-button[fill='outline'] {
+ion-button[fill="outline"] {
   --background: transparent;
   --color: var(--tea-green);
   --border-color: rgba(125, 153, 130, 0.5);
@@ -656,7 +658,9 @@ ion-button .tea-loader-label {
 }
 
 @keyframes tea-loader-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .tea-shop-page ion-content {
@@ -707,7 +711,9 @@ ion-button .tea-loader-label {
 }
 
 @keyframes tea-pulse {
-  to { background-position-x: -200%; }
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .tea-shop-page .tea-product-image {
@@ -1288,4 +1294,3 @@ ion-button .tea-loader-label {
     max-width: 980px;
   }
 }
-

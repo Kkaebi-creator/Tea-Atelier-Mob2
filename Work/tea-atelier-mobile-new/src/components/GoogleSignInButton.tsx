@@ -4,17 +4,27 @@ type GoogleCredentialResponse = { credential: string };
 type GoogleApi = {
   accounts: {
     id: {
-      initialize: (options: { client_id: string; callback: (response: GoogleCredentialResponse) => void }) => void;
-      renderButton: (element: HTMLElement, options: { theme: string; size: string; width: number }) => void;
+      initialize: (options: {
+        client_id: string;
+        callback: (response: GoogleCredentialResponse) => void;
+      }) => void;
+      renderButton: (
+        element: HTMLElement,
+        options: { theme: string; size: string; width: number },
+      ) => void;
     };
   };
 };
 
 declare global {
-  interface Window { google?: GoogleApi; }
+  interface Window {
+    google?: GoogleApi;
+  }
 }
 
-const GoogleSignInButton: React.FC<{ onCredential: (credential: string) => void }> = ({ onCredential }) => {
+const GoogleSignInButton: React.FC<{
+  onCredential: (credential: string) => void;
+}> = ({ onCredential }) => {
   const buttonRef = useRef<HTMLDivElement>(null);
   const callbackRef = useRef(onCredential);
   callbackRef.current = onCredential;
@@ -25,7 +35,10 @@ const GoogleSignInButton: React.FC<{ onCredential: (credential: string) => void 
 
     const render = () => {
       if (!window.google || !buttonRef.current) return;
-      window.google.accounts.id.initialize({ client_id: clientId, callback: ({ credential }) => callbackRef.current(credential) });
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: ({ credential }) => callbackRef.current(credential),
+      });
       window.google.accounts.id.renderButton(buttonRef.current, {
         theme: "outline",
         size: "large",

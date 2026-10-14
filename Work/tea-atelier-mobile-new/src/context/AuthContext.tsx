@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import { Preferences } from "@capacitor/preferences";
 import { fetchApi } from "../config/request";
 import { API_URL } from "../config/api";
@@ -37,7 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     setSessionError("");
     try {
-      const { value: storedToken } = await Preferences.get({ key: "auth_token" });
+      const { value: storedToken } = await Preferences.get({
+        key: "auth_token",
+      });
       if (!storedToken) return;
       const res = await fetchApi(`${API_URL}/api/whoami`, {
         headers: { Authorization: `Bearer ${storedToken}` },
@@ -54,13 +63,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("Session service unavailable");
       }
     } catch {
-      setSessionError("Unable to check your saved sign-in. Check your connection and try again.");
+      setSessionError(
+        "Unable to check your saved sign-in. Check your connection and try again.",
+      );
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  useEffect(() => { void retrySession(); }, [retrySession]);
+  useEffect(() => {
+    void retrySession();
+  }, [retrySession]);
 
   const login = async (newToken: string, newUser: User) => {
     await Preferences.set({ key: "auth_token", value: newToken });
@@ -75,11 +88,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updateUser = (updates: Partial<User>) => {
-    setUser((current) => current ? { ...current, ...updates } : current);
+    setUser((current) => (current ? { ...current, ...updates } : current));
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, sessionError, retrySession, login, logout, updateUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isLoading,
+        sessionError,
+        retrySession,
+        login,
+        logout,
+        updateUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-  IonContent, IonHeader, IonPage, IonRefresher, IonRefresherContent,
-  IonText, IonTitle, IonToolbar, IonButtons, IonMenuButton,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonRefresher,
+  IonRefresherContent,
+  IonText,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
@@ -47,7 +55,11 @@ const OrdersPage: React.FC = () => {
       if (!res.ok) throw new Error(data.error || "Unable to load orders.");
       setOrders(data.orders);
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Unable to load orders.");
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Unable to load orders.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -61,49 +73,86 @@ const OrdersPage: React.FC = () => {
     <IonPage className="tea-orders-page">
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start"><IonMenuButton menu="tea-navigation" aria-label="Open navigation menu" /></IonButtons>
+          <IonButtons slot="start">
+            <IonMenuButton
+              menu="tea-navigation"
+              aria-label="Open navigation menu"
+            />
+          </IonButtons>
           <IonTitle>My Orders</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonRefresher slot="fixed" onIonRefresh={async (event) => { await loadOrders(); event.detail.complete(); }}>
+        <IonRefresher
+          slot="fixed"
+          onIonRefresh={async (event) => {
+            await loadOrders();
+            event.detail.complete();
+          }}
+        >
           <IonRefresherContent />
         </IonRefresher>
         <div className="tea-page-inner">
-          {isLoading && <div className="tea-state"><TeaLoader size="page" label="Loading orders" /></div>}
+          {isLoading && (
+            <div className="tea-state">
+              <TeaLoader size="page" label="Loading orders" />
+            </div>
+          )}
           {!isLoading && error && (
             <div className="tea-state">
-              <IonText color="danger"><p>{error}</p></IonText>
+              <IonText color="danger">
+                <p>{error}</p>
+              </IonText>
             </div>
           )}
           {!isLoading && !error && orders.length === 0 && (
             <div className="tea-state">
-              <IonText><h2>No orders yet</h2><p>Your completed orders will appear here.</p></IonText>
+              <IonText>
+                <h2>No orders yet</h2>
+                <p>Your completed orders will appear here.</p>
+              </IonText>
             </div>
           )}
-          {!isLoading && !error && orders.map((order) => (
-            <article className="tea-order-card tea-order-card-clickable" key={order.id} onClick={() => navigate(`/orders/${order.id}`)}>
-              <div className="tea-order-card-header">
-                <div>
-                  <p className="tea-order-label">Order #{order.id}</p>
-                  <p className="tea-order-date">{new Date(order.createdAt).toLocaleDateString()}</p>
-                </div>
-                <span className="tea-order-status">{order.status}</span>
-              </div>
-              <div className="tea-order-items">
-                {order.items.map((item) => (
-                  <div className="tea-order-item" key={`${order.id}-${item.name}`}>
-                    <span>{item.quantity} × {item.name}</span>
-                    <strong>₱{(item.price * item.quantity).toFixed(2)}</strong>
+          {!isLoading &&
+            !error &&
+            orders.map((order) => (
+              <article
+                className="tea-order-card tea-order-card-clickable"
+                key={order.id}
+                onClick={() => navigate(`/orders/${order.id}`)}
+              >
+                <div className="tea-order-card-header">
+                  <div>
+                    <p className="tea-order-label">Order #{order.id}</p>
+                    <p className="tea-order-date">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                ))}
-              </div>
-              <div className="tea-order-total">
-                <span>{paymentLabels[order.paymentMethod] || order.paymentMethod}</span>
-                <strong>₱{order.totalAmount.toFixed(2)}</strong>
-              </div>
-            </article>
-          ))}
+                  <span className="tea-order-status">{order.status}</span>
+                </div>
+                <div className="tea-order-items">
+                  {order.items.map((item) => (
+                    <div
+                      className="tea-order-item"
+                      key={`${order.id}-${item.name}`}
+                    >
+                      <span>
+                        {item.quantity} × {item.name}
+                      </span>
+                      <strong>
+                        ₱{(item.price * item.quantity).toFixed(2)}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+                <div className="tea-order-total">
+                  <span>
+                    {paymentLabels[order.paymentMethod] || order.paymentMethod}
+                  </span>
+                  <strong>₱{order.totalAmount.toFixed(2)}</strong>
+                </div>
+              </article>
+            ))}
         </div>
       </IonContent>
     </IonPage>

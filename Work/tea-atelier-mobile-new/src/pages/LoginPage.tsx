@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonItem, IonInput, IonButton, IonText,
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonButton,
+  IonText,
   IonRouterLink,
 } from "@ionic/react";
 import { API_URL } from "../config/api";
@@ -28,7 +35,10 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ credential }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Google sign-in failed."); return; }
+      if (!res.ok) {
+        setError(data.error || "Google sign-in failed.");
+        return;
+      }
       await login(data.token, data.user);
     } catch {
       setError("Network error. Please try again.");
@@ -45,11 +55,21 @@ const LoginPage: React.FC = () => {
       const res = await fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, totpCode: totpCode || undefined }),
+        body: JSON.stringify({
+          email,
+          password,
+          totpCode: totpCode || undefined,
+        }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
-      if (data.requiresTotp) { setRequiresTotp(true); return; }
+      if (!res.ok) {
+        setError(data.error);
+        return;
+      }
+      if (data.requiresTotp) {
+        setRequiresTotp(true);
+        return;
+      }
       await login(data.token, data.user);
     } catch {
       setError("Network error. Please try again.");
@@ -109,15 +129,23 @@ const LoginPage: React.FC = () => {
               </>
             )}
 
-            <IonButton type="submit" className="auth-button" expand="block" disabled={isLoading}>
+            <IonButton
+              type="submit"
+              className="auth-button"
+              expand="block"
+              disabled={isLoading}
+            >
               {isLoading ? <TeaLoader /> : "Sign In"}
             </IonButton>
 
-            <div className="tea-auth-divider"><span>or continue with</span></div>
+            <div className="tea-auth-divider">
+              <span>or continue with</span>
+            </div>
             <GoogleSignInButton onCredential={handleGoogleCredential} />
 
             <p className="auth-link">
-              Don't have an account? <IonRouterLink routerLink="/register">Register</IonRouterLink>
+              Don't have an account?{" "}
+              <IonRouterLink routerLink="/register">Register</IonRouterLink>
             </p>
           </form>
         </div>

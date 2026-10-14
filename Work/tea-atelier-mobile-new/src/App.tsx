@@ -1,46 +1,53 @@
-import React from 'react';
-import { Navigate, Route, useLocation, useNavigate } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, IonPage, IonContent, IonButton, setupIonicReact } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import ShopPage from './pages/ShopPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage';
-import OrderConfirmationPage from './pages/OrderConfirmationPage';
-import OrderDetailPage from './pages/OrderDetailPage';
-import OrdersPage from './pages/OrdersPage';
-import AccountPage from './pages/AccountPage';
-import Home from './pages/Home';
-import SplashScreen from './components/SplashScreen';
-import SideMenu from './components/SideMenu';
-import AboutPage from './pages/AboutPage';
-import DevelopersPage from './pages/DevelopersPage';
-import NotificationsPage from './pages/NotificationsPage';
-import ContactPage from './pages/ContactPage';
-import PrivacyPage from './pages/PrivacyPage';
-import SettingsPage from './pages/SettingsPage';
-import PaymentReturnListener from './components/PaymentReturnListener';
-import { postLoginPath } from './config/paymentReturn';
+import React from "react";
+import { Navigate, Route, useLocation, useNavigate } from "react-router-dom";
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonPage,
+  IonContent,
+  IonButton,
+  setupIonicReact,
+} from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ShopPage from "./pages/ShopPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import OrdersPage from "./pages/OrdersPage";
+import AccountPage from "./pages/AccountPage";
+import Home from "./pages/Home";
+import SplashScreen from "./components/SplashScreen";
+import SideMenu from "./components/SideMenu";
+import AboutPage from "./pages/AboutPage";
+import DevelopersPage from "./pages/DevelopersPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import SettingsPage from "./pages/SettingsPage";
+import PaymentReturnListener from "./components/PaymentReturnListener";
+import { postLoginPath } from "./config/paymentReturn";
 
 /* Core CSS required for Ionic components to work properly */
-import '@ionic/react/css/core.css';
+import "@ionic/react/css/core.css";
 
 /* Basic CSS for apps built with Ionic */
-import '@ionic/react/css/normalize.css';
-import '@ionic/react/css/structure.css';
-import '@ionic/react/css/typography.css';
+import "@ionic/react/css/normalize.css";
+import "@ionic/react/css/structure.css";
+import "@ionic/react/css/typography.css";
 
 /* Optional CSS utils that can be commented out */
-import '@ionic/react/css/padding.css';
-import '@ionic/react/css/float-elements.css';
-import '@ionic/react/css/text-alignment.css';
-import '@ionic/react/css/text-transformation.css';
-import '@ionic/react/css/flex-utils.css';
-import '@ionic/react/css/display.css';
+import "@ionic/react/css/padding.css";
+import "@ionic/react/css/float-elements.css";
+import "@ionic/react/css/text-alignment.css";
+import "@ionic/react/css/text-transformation.css";
+import "@ionic/react/css/flex-utils.css";
+import "@ionic/react/css/display.css";
 
 /**
  * Ionic Dark Mode
@@ -54,11 +61,13 @@ import '@ionic/react/css/display.css';
 /* import '@ionic/react/css/palettes/dark.system.css'; */
 
 /* Theme variables */
-import './theme/variables.css';
+import "./theme/variables.css";
 
 setupIonicReact();
 
-const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
+const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({
+  element,
+}) => {
   const { token, isLoading } = useAuth();
   const location = useLocation();
 
@@ -70,13 +79,22 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => 
     // Ionic keeps earlier pages mounted. A cached protected page must not
     // redirect again once login is open and overwrite the saved destination.
     if (["/login", "/register"].includes(location.pathname)) return null;
-    return <Navigate to="/login" replace state={{ from: { pathname: location.pathname } }} />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: { pathname: location.pathname } }}
+      />
+    );
   }
 
   return <>{element}</>;
 };
 
-const AuthRoute: React.FC<{ element: React.ReactNode; path: string }> = ({ element, path }) => {
+const AuthRoute: React.FC<{ element: React.ReactNode; path: string }> = ({
+  element,
+  path,
+}) => {
   const { token, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,33 +111,71 @@ const AuthRoute: React.FC<{ element: React.ReactNode; path: string }> = ({ eleme
 
 const AppRoutes: React.FC = () => {
   const { sessionError, retrySession, isLoading } = useAuth();
-  if (sessionError) return (
-    <IonPage><IonContent className="ion-padding ion-text-center">
-      <p role="alert">{sessionError}</p>
-      <IonButton onClick={() => void retrySession()} disabled={isLoading}>Try again</IonButton>
-    </IonContent></IonPage>
-  );
+  if (sessionError)
+    return (
+      <IonPage>
+        <IonContent className="ion-padding ion-text-center">
+          <p role="alert">{sessionError}</p>
+          <IonButton onClick={() => void retrySession()} disabled={isLoading}>
+            Try again
+          </IonButton>
+        </IonContent>
+      </IonPage>
+    );
   if (isLoading) return null;
   return (
-  <IonRouterOutlet>
-    <Route path="/login" element={<AuthRoute path="/login" element={<LoginPage />} />} />
-    <Route path="/register" element={<AuthRoute path="/register" element={<RegisterPage />} />} />
-    <Route path="/about" element={<AboutPage />} />
-    <Route path="/developers" element={<DevelopersPage />} />
-    <Route path="/notifications" element={<ProtectedRoute element={<NotificationsPage />} />} />
-    <Route path="/contact" element={<ProtectedRoute element={<ContactPage />} />} />
-    <Route path="/privacy" element={<PrivacyPage />} />
-    <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} />} />
-    <Route path="/shop" element={<ProtectedRoute element={<ShopPage />} />} />
-    <Route path="/product/:id" element={<ProtectedRoute element={<ProductDetailPage />} />} />
-    <Route path="/cart" element={<ProtectedRoute element={<CartPage />} />} />
-    <Route path="/orders" element={<ProtectedRoute element={<OrdersPage />} />} />
-    <Route path="/orders/:orderId" element={<ProtectedRoute element={<OrderDetailPage />} />} />
-    <Route path="/account" element={<ProtectedRoute element={<AccountPage />} />} />
-    <Route path="/checkout" element={<ProtectedRoute element={<CheckoutPage />} />} />
-    <Route path="/order-confirmation/:orderId" element={<ProtectedRoute element={<OrderConfirmationPage />} />} />
-    <Route path="/" element={<Home />} />
-  </IonRouterOutlet>
+    <IonRouterOutlet>
+      <Route
+        path="/login"
+        element={<AuthRoute path="/login" element={<LoginPage />} />}
+      />
+      <Route
+        path="/register"
+        element={<AuthRoute path="/register" element={<RegisterPage />} />}
+      />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/developers" element={<DevelopersPage />} />
+      <Route
+        path="/notifications"
+        element={<ProtectedRoute element={<NotificationsPage />} />}
+      />
+      <Route
+        path="/contact"
+        element={<ProtectedRoute element={<ContactPage />} />}
+      />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route
+        path="/settings"
+        element={<ProtectedRoute element={<SettingsPage />} />}
+      />
+      <Route path="/shop" element={<ProtectedRoute element={<ShopPage />} />} />
+      <Route
+        path="/product/:id"
+        element={<ProtectedRoute element={<ProductDetailPage />} />}
+      />
+      <Route path="/cart" element={<ProtectedRoute element={<CartPage />} />} />
+      <Route
+        path="/orders"
+        element={<ProtectedRoute element={<OrdersPage />} />}
+      />
+      <Route
+        path="/orders/:orderId"
+        element={<ProtectedRoute element={<OrderDetailPage />} />}
+      />
+      <Route
+        path="/account"
+        element={<ProtectedRoute element={<AccountPage />} />}
+      />
+      <Route
+        path="/checkout"
+        element={<ProtectedRoute element={<CheckoutPage />} />}
+      />
+      <Route
+        path="/order-confirmation/:orderId"
+        element={<ProtectedRoute element={<OrderConfirmationPage />} />}
+      />
+      <Route path="/" element={<Home />} />
+    </IonRouterOutlet>
   );
 };
 
