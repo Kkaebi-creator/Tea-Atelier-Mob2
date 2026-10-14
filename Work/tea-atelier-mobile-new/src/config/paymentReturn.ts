@@ -40,3 +40,27 @@ export function postLoginPath(state: unknown): string {
   );
   return match && Number.isSafeInteger(Number(match[2])) ? pathname : "/shop";
 }
+
+// Authentication always has a way back to a guest-accessible screen.
+// Never send a guest straight back to a protected payment/security route.
+export function authBackPath(state: unknown): string {
+  const pathname = (state as { from?: { pathname?: unknown } } | null)?.from
+    ?.pathname;
+  if (typeof pathname !== "string") return "/shop";
+  if (
+    [
+      "/shop",
+      "/cart",
+      "/orders",
+      "/account",
+      "/about",
+      "/privacy",
+      "/developers",
+    ].includes(pathname)
+  )
+    return pathname;
+  const product = /^\/product\/([1-9]\d*)$/.exec(pathname);
+  return product && Number.isSafeInteger(Number(product[1]))
+    ? pathname
+    : "/shop";
+}

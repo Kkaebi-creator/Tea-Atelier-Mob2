@@ -23,6 +23,9 @@ import OrdersPage from "./pages/OrdersPage";
 import AccountPage from "./pages/AccountPage";
 import SplashScreen from "./components/SplashScreen";
 import SideMenu from "./components/SideMenu";
+import GuestAccessPage, {
+  type GuestSection,
+} from "./components/GuestAccessPage";
 import AppNavigation from "./components/AppNavigation";
 import AboutPage from "./pages/AboutPage";
 import DevelopersPage from "./pages/DevelopersPage";
@@ -65,9 +68,10 @@ import "./theme/variables.css";
 
 setupIonicReact();
 
-const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({
-  element,
-}) => {
+const ProtectedRoute: React.FC<{
+  element: React.ReactNode;
+  guestSection?: GuestSection;
+}> = ({ element, guestSection }) => {
   const { token, isLoading } = useAuth();
   const location = useLocation();
 
@@ -75,6 +79,13 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({
     return null;
   }
 
+  // Preserve one IonPage for this route across guest → signed-in transitions.
+  if (guestSection)
+    return (
+      <IonPage className={`tea-${guestSection}-page`}>
+        {token ? element : <GuestAccessPage section={guestSection} embedded />}
+      </IonPage>
+    );
   if (!token) {
     // Ionic keeps earlier pages mounted. Cached protected pages must not
     // redirect over the public shop, a product, or an authentication page.
@@ -162,10 +173,20 @@ const AppRoutes: React.FC = () => {
       />
       <Route path="/shop" element={<ShopPage />} />
       <Route path="/product/:id" element={<ProductDetailPage />} />
-      <Route path="/cart" element={<ProtectedRoute element={<CartPage />} />} />
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute guestSection="cart" element={<CartPage embedded />} />
+        }
+      />
       <Route
         path="/orders"
-        element={<ProtectedRoute element={<OrdersPage />} />}
+        element={
+          <ProtectedRoute
+            guestSection="orders"
+            element={<OrdersPage embedded />}
+          />
+        }
       />
       <Route
         path="/orders/:orderId"
@@ -173,7 +194,12 @@ const AppRoutes: React.FC = () => {
       />
       <Route
         path="/account"
-        element={<ProtectedRoute element={<AccountPage />} />}
+        element={
+          <ProtectedRoute
+            guestSection="account"
+            element={<AccountPage embedded />}
+          />
+        }
       />
       <Route
         path="/checkout"

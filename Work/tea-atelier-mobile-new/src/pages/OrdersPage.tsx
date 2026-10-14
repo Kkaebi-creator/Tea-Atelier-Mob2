@@ -1,10 +1,10 @@
+import PageFrame from "../components/PageFrame";
 import PageIntro from "../components/PageIntro";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IonButton,
   IonContent,
   IonHeader,
-  IonPage,
   IonRefresher,
   IonRefresherContent,
   IonTitle,
@@ -30,7 +30,11 @@ const paymentLabels: Record<string, string> = {
   gcash: "GCash",
   grabpay: "GrabPay",
 };
-export default function OrdersPage() {
+export default function OrdersPage({
+  embedded = false,
+}: {
+  embedded?: boolean;
+}) {
   const { token } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -88,7 +92,7 @@ export default function OrdersPage() {
     return invalidate;
   }, [load, invalidate]);
   return (
-    <IonPage className="tea-orders-page">
+    <PageFrame embedded={embedded} className="tea-orders-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -220,6 +224,6 @@ export default function OrdersPage() {
           )}
         </div>
       </IonContent>
-    </IonPage>
+    </PageFrame>
   );
 }

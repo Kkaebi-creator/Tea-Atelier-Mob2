@@ -1,7 +1,7 @@
+import PageFrame from "../components/PageFrame";
 import PageIntro from "../components/PageIntro";
 import React from "react";
 import {
-  IonPage,
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -20,7 +20,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import TeaLoader from "../components/TeaLoader";
 
-const CartPage: React.FC = () => {
+const CartPage: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const {
     items,
     isLoading,
@@ -52,7 +52,7 @@ const CartPage: React.FC = () => {
 
   if (!token)
     return (
-      <IonPage>
+      <PageFrame embedded={embedded}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
@@ -70,11 +70,11 @@ const CartPage: React.FC = () => {
           </IonText>
           <IonButton routerLink="/login">Sign In</IonButton>
         </IonContent>
-      </IonPage>
+      </PageFrame>
     );
 
   return (
-    <IonPage className="tea-cart-page">
+    <PageFrame embedded={embedded} className="tea-cart-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -231,7 +231,7 @@ const CartPage: React.FC = () => {
           </div>
         )}
       </IonContent>
-    </IonPage>
+    </PageFrame>
   );
 };
 

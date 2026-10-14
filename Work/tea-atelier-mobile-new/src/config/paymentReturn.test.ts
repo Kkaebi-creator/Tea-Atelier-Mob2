@@ -1,5 +1,9 @@
 import { expect, test } from "vitest";
-import { paymentReturnPath, postLoginPath } from "./paymentReturn";
+import {
+  authBackPath,
+  paymentReturnPath,
+  postLoginPath,
+} from "./paymentReturn";
 
 test("Android return identifies the order without accepting payment claims", () => {
   expect(
@@ -62,3 +66,31 @@ test.each([
 ])("sign-in rejects unsafe or unsupported destination %s", (pathname) => {
   expect(postLoginPath({ from: { pathname } })).toBe("/shop");
 });
+
+test.each([
+  "/shop",
+  "/cart",
+  "/orders",
+  "/account",
+  "/product/1",
+  "/about",
+  "/privacy",
+  "/developers",
+])("auth back returns to guest-accessible %s", (pathname) => {
+  expect(authBackPath({ from: { pathname } })).toBe(pathname);
+});
+test.each([
+  null,
+  {},
+  { from: { pathname: "/order-confirmation/150" } },
+  { from: { pathname: "/settings" } },
+  { from: { pathname: "/checkout" } },
+  { from: { pathname: "//evil.test" } },
+  { from: { pathname: "/product/01" } },
+  { from: { pathname: "/product/9007199254740992" } },
+])(
+  "auth back uses Shop instead of a protected or invalid destination: %j",
+  (state) => {
+    expect(authBackPath(state)).toBe("/shop");
+  },
+);

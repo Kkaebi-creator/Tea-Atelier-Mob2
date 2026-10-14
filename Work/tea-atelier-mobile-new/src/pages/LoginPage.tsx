@@ -8,15 +8,17 @@ import {
   IonInput,
   IonButton,
   IonText,
-  IonRouterLink,
 } from "@ionic/react";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import GoogleSignInButton from "../components/GoogleSignInButton";
+import AuthBackButton from "../components/AuthBackButton";
+import { Link, useLocation } from "react-router-dom";
 import TeaLoader from "../components/TeaLoader";
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -81,6 +83,7 @@ const LoginPage: React.FC = () => {
     <IonPage className="tea-auth-page">
       <IonHeader>
         <IonToolbar>
+          <AuthBackButton />
           <IonTitle>Sign In</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -152,7 +155,9 @@ const LoginPage: React.FC = () => {
 
             <p className="auth-link">
               Don't have an account?{" "}
-              <IonRouterLink routerLink="/register">Register</IonRouterLink>
+              <Link to="/register" state={location.state} replace>
+                Register
+              </Link>
             </p>
           </form>
         </div>

@@ -1,3 +1,4 @@
+import PageFrame from "../components/PageFrame";
 import PageIntro from "../components/PageIntro";
 import React, { useState } from "react";
 import {
@@ -12,7 +13,6 @@ import {
   IonLabel,
   IonList,
   IonMenuButton,
-  IonPage,
   IonSegment,
   IonSegmentButton,
   IonText,
@@ -25,7 +25,9 @@ import { useAuth } from "../context/AuthContext";
 import { API_URL } from "../config/api";
 import TeaLoader from "../components/TeaLoader";
 
-const AccountPage: React.FC = () => {
+const AccountPage: React.FC<{ embedded?: boolean }> = ({
+  embedded = false,
+}) => {
   const { user, token, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [section, setSection] = useState("profile");
@@ -129,7 +131,7 @@ const AccountPage: React.FC = () => {
   };
 
   return (
-    <IonPage className="tea-account-page">
+    <PageFrame embedded={embedded} className="tea-account-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -335,7 +337,7 @@ const AccountPage: React.FC = () => {
         ]}
         onDidDismiss={() => setAddressToDelete(null)}
       />
-    </IonPage>
+    </PageFrame>
   );
 };
 
