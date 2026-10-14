@@ -94,6 +94,16 @@ export default function ShopPage() {
   const featureTrack = useRef<HTMLDivElement>(null);
   const collectionHeading = useRef<HTMLHeadingElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const slideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const requestedSlide = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (slideTimer.current !== undefined) clearTimeout(slideTimer.current);
+    },
+    [],
+  );
   const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [bestLoading, setBestLoading] = useState(true);
   const [bestError, setBestError] = useState("");
@@ -154,31 +164,56 @@ export default function ShopPage() {
       image: "/images/atelier/matcha.jpg",
       action: "Explore the collection",
     },
-    ...categories
-      .slice(1, 3)
-      .map((name) => ({
-        category: name,
-        title: `Discover ${name}.`,
-        description: "A new favorite starts with a little exploring.",
-        image:
-          products.find((item) => item.category === name)?.image ||
-          "/images/atelier/tea-leaves.jpg",
-        action: `Explore ${name}`,
-      })),
+    ...categories.slice(1, 3).map((name) => ({
+      category: name,
+      title: `Discover ${name}.`,
+      description: "A new favorite starts with a little exploring.",
+      image:
+        products.find((item) => item.category === name)?.image ||
+        "/images/atelier/tea-leaves.jpg",
+      action: `Explore ${name}`,
+    })),
   ];
   const selectedSlide = Math.min(activeSlide, slides.length - 1);
-  const showDiscovery = !search.trim() && category === "All";
   const motion = (): ScrollBehavior =>
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
       ? "auto"
       : "smooth";
-  const goToSlide = (index: number) => {
-    setActiveSlide(index);
-    featureTrack.current?.scrollTo({
-      left: index * (featureTrack.current.clientWidth + 12),
-      behavior: motion(),
-    });
+  const syncSlidePosition = () => {
+    const track = featureTrack.current;
+    if (!track || !track.children.length) return;
+    const firstOffset = (track.children[0] as HTMLElement).offsetLeft;
+    const closest = Array.from(track.children).reduce(
+      (best, child, index, children) => {
+        const distance = Math.abs(
+          (child as HTMLElement).offsetLeft - firstOffset - track.scrollLeft,
+        );
+        const bestDistance = Math.abs(
+          (children[best] as HTMLElement).offsetLeft -
+            firstOffset -
+            track.scrollLeft,
+        );
+        return distance < bestDistance ? index : best;
+      },
+      0,
+    );
+    requestedSlide.current = null;
+    setActiveSlide(closest);
   };
+  const goToSlide = (value: number) => {
+    const track = featureTrack.current;
+    if (!track || !track.children.length) return;
+    if (slideTimer.current !== undefined) clearTimeout(slideTimer.current);
+    const index = Math.max(0, Math.min(track.children.length - 1, value));
+    const left =
+      (track.children[index] as HTMLElement).offsetLeft -
+      (track.children[0] as HTMLElement).offsetLeft;
+    requestedSlide.current = index;
+    track.scrollTo({ left, behavior: motion() });
+    if (Math.abs(track.scrollLeft - left) < 1) syncSlidePosition();
+  };
+  const moveSlide = (direction: number) =>
+    goToSlide((requestedSlide.current ?? selectedSlide) + direction);
   const explore = (value: string) => {
     setCategory(value);
     setSearch("");
@@ -252,159 +287,150 @@ export default function ShopPage() {
             onIonInput={(event) => setSearch(event.detail.value || "")}
             placeholder="Find your tea or essentials"
           />
-          {showDiscovery && (
-            <>
-              <section
-                className="tea-features"
-                aria-label="Featured collections"
-                aria-roledescription="carousel"
-              >
+          <section
+            className="tea-features"
+            aria-label="Featured collections"
+            aria-roledescription="carousel"
+          >
+            <div
+              className="tea-feature-track"
+              ref={featureTrack}
+              tabIndex={0}
+              aria-label="Swipe through featured collections"
+              onScroll={() => {
+                // Commit the indicator once motion settles, using actual slide offsets.
+                if (slideTimer.current !== undefined)
+                  clearTimeout(slideTimer.current);
+                slideTimer.current = setTimeout(() => {
+                  slideTimer.current = undefined;
+                  syncSlidePosition();
+                }, 120);
+              }}
+              onPointerDown={() => {
+                requestedSlide.current = null;
+              }}
+              onWheel={() => {
+                requestedSlide.current = null;
+              }}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === "ArrowRight") {
+                  event.preventDefault();
+                  moveSlide(1);
+                }
+                if (event.key === "ArrowLeft") {
+                  event.preventDefault();
+                  moveSlide(-1);
+                }
+              }}
+            >
+              {slides.map((slide, index) => (
                 <div
-                  className="tea-feature-track"
-                  ref={featureTrack}
-                  tabIndex={0}
-                  aria-label="Swipe through featured collections"
-                  onScroll={(event) => {
-                    const track = event.currentTarget;
-                    setActiveSlide(
-                      Math.max(
-                        0,
-                        Math.min(
-                          slides.length - 1,
-                          Math.round(
-                            track.scrollLeft / (track.clientWidth + 12),
-                          ),
-                        ),
-                      ),
-                    );
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.target !== event.currentTarget) return;
-                    if (event.key === "ArrowRight") {
-                      event.preventDefault();
-                      goToSlide(Math.min(slides.length - 1, selectedSlide + 1));
-                    }
-                    if (event.key === "ArrowLeft") {
-                      event.preventDefault();
-                      goToSlide(Math.max(0, selectedSlide - 1));
-                    }
-                  }}
+                  className="tea-feature-slide"
+                  key={slide.category}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${index + 1} of ${slides.length}: ${slide.category === "All" ? "The collection" : slide.category}`}
                 >
-                  {slides.map((slide, index) => (
-                    <div
-                      className="tea-feature-slide"
-                      key={slide.category}
-                      role="group"
-                      aria-roledescription="slide"
-                      aria-label={`${index + 1} of ${slides.length}: ${slide.category === "All" ? "The collection" : slide.category}`}
-                    >
-                      <div>
-                        <h2>{slide.title}</h2>
-                        <p>{slide.description}</p>
-                        <button
-                          type="button"
-                          onClick={() => explore(slide.category)}
-                          tabIndex={index === selectedSlide ? 0 : -1}
-                        >
-                          {slide.action}
-                          <IonIcon
-                            icon={arrowForwardOutline}
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </div>
-                      <img
-                        src={slide.image}
-                        alt=""
-                        loading={index === 0 ? "eager" : "lazy"}
-                      />
-                    </div>
-                  ))}
-                </div>
-                {slides.length > 1 && (
-                  <div className="tea-feature-controls">
+                  <div>
+                    <h2>{slide.title}</h2>
+                    <p>{slide.description}</p>
                     <button
                       type="button"
-                      aria-label="Previous feature"
-                      disabled={selectedSlide === 0}
-                      onClick={() => goToSlide(selectedSlide - 1)}
+                      onClick={() => explore(slide.category)}
+                      tabIndex={index === selectedSlide ? 0 : -1}
                     >
-                      <IonIcon icon={chevronBackOutline} aria-hidden="true" />
-                    </button>
-                    <div className="tea-feature-dots">
-                      {slides.map((slide, index) => (
-                        <button
-                          type="button"
-                          key={slide.category}
-                          aria-label={`Show feature ${index + 1}`}
-                          aria-current={
-                            selectedSlide === index ? "true" : undefined
-                          }
-                          onClick={() => goToSlide(index)}
-                        >
-                          <span />
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      aria-label="Next feature"
-                      disabled={selectedSlide === slides.length - 1}
-                      onClick={() => goToSlide(selectedSlide + 1)}
-                    >
-                      <IonIcon
-                        icon={chevronForwardOutline}
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                )}
-              </section>
-              {(bestLoading || bestError || bestSellers.length > 0) && (
-                <section className="tea-best-sellers" aria-label="Best Sellers">
-                  <div className="tea-shop-section-heading">
-                    <div>
-                      <h2>Best Sellers</h2>
-                      <p>A few well-loved favorites.</p>
-                    </div>
-                    <button type="button" onClick={() => explore("All")}>
-                      View all{" "}
+                      {slide.action}
                       <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
                     </button>
                   </div>
-                  {bestLoading && (
-                    <p role="status" className="tea-panel-copy">
-                      Finding best sellers…
-                    </p>
-                  )}
-                  {!bestLoading && bestError && (
-                    <div role="alert" className="tea-best-error">
-                      <p>{bestError}</p>
-                      <IonButton
-                        size="small"
-                        fill="outline"
-                        onClick={() => void loadBestSellers()}
-                      >
-                        Retry best sellers
-                      </IonButton>
-                    </div>
-                  )}
-                  {!bestLoading && !bestError && (
-                    <div
-                      className="tea-best-track"
-                      tabIndex={0}
-                      aria-label="Swipe through best sellers"
+                  <img
+                    src={slide.image}
+                    alt=""
+                    loading={index === 0 ? "eager" : "lazy"}
+                  />
+                </div>
+              ))}
+            </div>
+            {slides.length > 1 && (
+              <div className="tea-feature-controls">
+                <button
+                  type="button"
+                  aria-label="Previous feature"
+                  disabled={selectedSlide === 0}
+                  onClick={() => moveSlide(-1)}
+                >
+                  <IonIcon icon={chevronBackOutline} aria-hidden="true" />
+                </button>
+                <div className="tea-feature-dots">
+                  {slides.map((slide, index) => (
+                    <button
+                      type="button"
+                      key={slide.category}
+                      aria-label={`Show feature ${index + 1}`}
+                      aria-current={
+                        selectedSlide === index ? "true" : undefined
+                      }
+                      onClick={() => goToSlide(index)}
                     >
-                      {bestSellers.map((product) => (
-                        <div className="tea-best-card" key={product.id}>
-                          <ProductCard product={product} onOpen={openProduct} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </section>
+                      <span />
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  aria-label="Next feature"
+                  disabled={selectedSlide === slides.length - 1}
+                  onClick={() => moveSlide(1)}
+                >
+                  <IonIcon icon={chevronForwardOutline} aria-hidden="true" />
+                </button>
+              </div>
+            )}
+          </section>
+          {(bestLoading || bestError || bestSellers.length > 0) && (
+            <section className="tea-best-sellers" aria-label="Best Sellers">
+              <div className="tea-shop-section-heading">
+                <div>
+                  <h2>Best Sellers</h2>
+                  <p>A few well-loved favorites.</p>
+                </div>
+                <button type="button" onClick={() => explore("All")}>
+                  View all{" "}
+                  <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
+                </button>
+              </div>
+              {bestLoading && (
+                <p role="status" className="tea-panel-copy">
+                  Finding best sellers…
+                </p>
               )}
-            </>
+              {!bestLoading && bestError && (
+                <div role="alert" className="tea-best-error">
+                  <p>{bestError}</p>
+                  <IonButton
+                    size="small"
+                    fill="outline"
+                    onClick={() => void loadBestSellers()}
+                  >
+                    Retry best sellers
+                  </IonButton>
+                </div>
+              )}
+              {!bestLoading && !bestError && (
+                <div
+                  className="tea-best-track"
+                  tabIndex={0}
+                  aria-label="Swipe through best sellers"
+                >
+                  {bestSellers.map((product) => (
+                    <div className="tea-best-card" key={product.id}>
+                      <ProductCard product={product} onOpen={openProduct} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
           )}
           <div className="tea-shop-section-heading">
             <h2 ref={collectionHeading} tabIndex={-1}>

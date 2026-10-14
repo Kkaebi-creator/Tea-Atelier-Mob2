@@ -1605,15 +1605,27 @@ ion-button .tea-loader-label {
 .tea-feature-dots {
   display: flex;
 }
+.tea-feature-dots button {
+  flex: 0 0 44px;
+  width: 44px;
+  padding: 0;
+}
 .tea-feature-dots span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 6px;
+}
+.tea-feature-dots span::before {
+  content: "";
+  display: block;
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: 999px;
   background: #c0c7b7;
 }
-.tea-feature-dots [aria-current="true"] span {
+.tea-feature-dots [aria-current="true"] span::before {
   width: 20px;
-  border-radius: 4px;
   background: var(--tea-green-deep);
 }
 .tea-shop-section-heading {

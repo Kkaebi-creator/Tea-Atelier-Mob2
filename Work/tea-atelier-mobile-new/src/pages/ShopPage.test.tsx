@@ -99,3 +99,50 @@ test("an empty best seller response does not label catalog products as best sell
   await screen.findByText("Catalog Tea");
   expect(screen.queryByRole("region", { name: "Best Sellers" })).toBeNull();
 });
+
+test("category filtering keeps featured collections and the server's best sellers mounted", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async (url) =>
+        new Response(
+          JSON.stringify({
+            products: String(url).endsWith("/best-sellers")
+              ? [{ ...product, name: "Ranked Seller" }]
+              : [
+                  product,
+                  {
+                    ...product,
+                    id: "2",
+                    name: "Leaf Blend",
+                    category: "Leaf Tea",
+                  },
+                ],
+          }),
+        ),
+    ),
+  );
+  const view = render(<ShopPage />);
+  await screen.findByText("Ranked Seller");
+  fireEvent.click(await screen.findByRole("button", { name: "Tea" }));
+  expect(
+    screen.getByRole("region", { name: "Featured collections" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("region", { name: "Best Sellers" }),
+  ).toBeInTheDocument();
+  expect(
+    Array.from(
+      view.container.querySelectorAll(".product-grid .tea-product-name"),
+    ).map((node) => node.textContent),
+  ).toEqual(["Catalog Tea"]);
+  fireEvent.click(screen.getByRole("button", { name: "Leaf Tea" }));
+  expect(
+    screen.getByRole("region", { name: "Best Sellers" }),
+  ).toBeInTheDocument();
+  expect(
+    Array.from(
+      view.container.querySelectorAll(".product-grid .tea-product-name"),
+    ).map((node) => node.textContent),
+  ).toEqual(["Leaf Blend"]);
+});
