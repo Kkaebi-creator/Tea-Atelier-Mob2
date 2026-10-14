@@ -11,7 +11,7 @@ import {
   IonMenuButton,
   IonToast,
 } from "@ionic/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchApi, ensureOk, requestError } from "../config/request";
 import { API_URL } from "../config/api";
 import { useCart } from "../context/CartContext";
@@ -31,6 +31,7 @@ type Product = {
 };
 
 const ProductDetailPage: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { addToCart } = useCart();
   const { token } = useAuth();
@@ -63,8 +64,7 @@ const ProductDetailPage: React.FC = () => {
 
   const handleAddToCart = async () => {
     if (!token) {
-      setToastMsg("Please sign in to add items to cart.");
-      setShowToast(true);
+      navigate("/login", { state: { from: { pathname: `/product/${id}` } } });
       return;
     }
     if (!product) return;
@@ -162,7 +162,13 @@ const ProductDetailPage: React.FC = () => {
             onClick={handleAddToCart}
             style={{ marginTop: 18 }}
           >
-            {adding ? <TeaLoader /> : "Add to Cart"}
+            {adding ? (
+              <TeaLoader />
+            ) : token ? (
+              "Add to Cart"
+            ) : (
+              "Sign in to add to cart"
+            )}
           </IonButton>
           <ProductReviews productId={product.id} />
         </div>

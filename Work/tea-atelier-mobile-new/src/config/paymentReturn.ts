@@ -23,6 +23,20 @@ export function postLoginPath(state: unknown): string {
   const pathname = (state as { from?: { pathname?: unknown } } | null)?.from
     ?.pathname;
   if (typeof pathname !== "string") return "/shop";
-  const match = /^\/order-confirmation\/([1-9]\d*)$/.exec(pathname);
-  return match ? (confirmationPath(match[1]) ?? "/shop") : "/shop";
+  if (
+    [
+      "/shop",
+      "/cart",
+      "/orders",
+      "/account",
+      "/notifications",
+      "/contact",
+      "/settings",
+    ].includes(pathname)
+  )
+    return pathname;
+  const match = /^\/(product|orders|order-confirmation)\/([1-9]\d*)$/.exec(
+    pathname,
+  );
+  return match && Number.isSafeInteger(Number(match[2])) ? pathname : "/shop";
 }

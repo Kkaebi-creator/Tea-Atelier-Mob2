@@ -28,6 +28,8 @@ import {
 } from "ionicons/icons";
 import { useLocation } from "react-router-dom";
 
+import { useAuth } from "../context/AuthContext";
+
 const modules = [
   { label: "Shop", href: "/shop", icon: bagHandleOutline },
   { label: "Orders", href: "/orders", icon: receiptOutline },
@@ -42,6 +44,7 @@ const modules = [
 
 const SideMenu: React.FC = () => {
   const location = useLocation();
+  const { token } = useAuth();
 
   const isActive = (href: string) =>
     href === "/shop"
@@ -75,6 +78,21 @@ const SideMenu: React.FC = () => {
           </div>
         </div>
 
+        {!token && (
+          <div className="tea-menu-auth">
+            <p>Sign in to save your cart and follow your orders.</p>
+            <IonMenuToggle autoHide={false}>
+              <IonButton expand="block" routerLink="/login">
+                Sign in
+              </IonButton>
+            </IonMenuToggle>
+            <IonMenuToggle autoHide={false}>
+              <IonButton expand="block" fill="clear" routerLink="/register">
+                Create account
+              </IonButton>
+            </IonMenuToggle>
+          </div>
+        )}
         <IonList inset className="tea-menu-list">
           <IonNote className="tea-menu-section-label">Your atelier</IonNote>
           {modules.map((module) => (
@@ -167,7 +185,7 @@ const SideMenu: React.FC = () => {
           </IonMenuToggle>
         </IonList>
 
-        <p className="tea-menu-footer">Tea Atelier · Since 2026</p>
+        <p className="tea-menu-footer">Small rituals. Beautiful tea.</p>
       </IonContent>
     </IonMenu>
   );

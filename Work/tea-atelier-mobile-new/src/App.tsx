@@ -21,7 +21,6 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import OrdersPage from "./pages/OrdersPage";
 import AccountPage from "./pages/AccountPage";
-import Home from "./pages/Home";
 import SplashScreen from "./components/SplashScreen";
 import SideMenu from "./components/SideMenu";
 import AppNavigation from "./components/AppNavigation";
@@ -77,9 +76,21 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({
   }
 
   if (!token) {
-    // Ionic keeps earlier pages mounted. A cached protected page must not
-    // redirect again once login is open and overwrite the saved destination.
-    if (["/login", "/register"].includes(location.pathname)) return null;
+    // Ionic keeps earlier pages mounted. Cached protected pages must not
+    // redirect over the public shop, a product, or an authentication page.
+    if (
+      [
+        "/",
+        "/shop",
+        "/login",
+        "/register",
+        "/about",
+        "/privacy",
+        "/developers",
+      ].includes(location.pathname) ||
+      location.pathname.startsWith("/product/")
+    )
+      return null;
     return (
       <Navigate
         to="/login"
@@ -149,11 +160,8 @@ const AppRoutes: React.FC = () => {
         path="/settings"
         element={<ProtectedRoute element={<SettingsPage />} />}
       />
-      <Route path="/shop" element={<ProtectedRoute element={<ShopPage />} />} />
-      <Route
-        path="/product/:id"
-        element={<ProtectedRoute element={<ProductDetailPage />} />}
-      />
+      <Route path="/shop" element={<ShopPage />} />
+      <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/cart" element={<ProtectedRoute element={<CartPage />} />} />
       <Route
         path="/orders"
@@ -175,16 +183,15 @@ const AppRoutes: React.FC = () => {
         path="/order-confirmation/:orderId"
         element={<ProtectedRoute element={<OrderConfirmationPage />} />}
       />
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Navigate to="/shop" replace />} />
     </IonRouterOutlet>
   );
 };
 
 const AppShell: React.FC = () => {
-  const { token, isLoading, sessionError } = useAuth();
+  const { isLoading, sessionError } = useAuth();
   const { pathname } = useLocation();
   const showNavigation =
-    !!token &&
     !isLoading &&
     !sessionError &&
     pathname !== "/" &&

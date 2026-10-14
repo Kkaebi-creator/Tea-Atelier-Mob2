@@ -1507,3 +1507,166 @@ ion-button .tea-loader-label {
   box-shadow: none;
   border-radius: 14px;
 }
+
+/* Product-first home: touch carousels share the collection's real products. */
+.tea-shop-intro {
+  margin: 4px 0 18px;
+}
+.tea-shop-intro h1 {
+  margin: 0;
+  font-size: clamp(28px, 7.5vw, 36px);
+}
+.tea-features {
+  margin: 18px 0 10px;
+  min-width: 0;
+}
+.tea-feature-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: 18px;
+}
+.tea-feature-track::-webkit-scrollbar {
+  display: none;
+}
+.tea-feature-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: #e9eee2;
+  border: 1px solid var(--tea-border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.tea-feature-slide > div {
+  padding: 18px 16px;
+  min-width: 0;
+}
+.tea-feature-slide h2 {
+  font-size: clamp(20px, 5.8vw, 27px);
+  margin: 0 0 6px;
+}
+.tea-feature-slide p {
+  font-size: 11px;
+  margin: 0 0 8px;
+  color: var(--tea-text-soft);
+}
+.tea-feature-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 145px;
+}
+.tea-feature-slide button,
+.tea-shop-section-heading > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tea-green-deep);
+  border: 0;
+  background: none;
+  padding: 5px 0;
+  min-height: 44px;
+  text-align: left;
+  font: 600 11px var(--tea-body);
+}
+.tea-feature-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.tea-feature-controls button {
+  border: 0;
+  background: none;
+  color: var(--tea-green-deep);
+  min-width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tea-feature-controls button:disabled {
+  opacity: 0.3;
+}
+.tea-feature-dots {
+  display: flex;
+}
+.tea-feature-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c0c7b7;
+}
+.tea-feature-dots [aria-current="true"] span {
+  width: 20px;
+  border-radius: 4px;
+  background: var(--tea-green-deep);
+}
+.tea-shop-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0 14px;
+}
+.tea-shop-section-heading h2 {
+  font-size: 25px;
+  margin: 0;
+}
+.tea-shop-section-heading p {
+  font-size: 11px;
+  margin: 4px 0 0;
+  color: var(--tea-text-soft);
+}
+.tea-best-track {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  gap: 12px;
+  padding-bottom: 10px;
+}
+.tea-best-card {
+  flex: 0 0 160px;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.tea-best-sellers .tea-product-image {
+  aspect-ratio: 1.45;
+}
+.tea-best-sellers .tea-product-body {
+  gap: 6px;
+}
+.tea-best-sellers .tea-product-name {
+  min-height: 36px;
+}
+.tea-best-sellers .tea-product-category {
+  display: none;
+}
+.tea-best-error {
+  background: var(--tea-card);
+  border: 1px solid var(--tea-border);
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 12px;
+}
+.tea-menu-auth {
+  padding: 0 20px 12px;
+}
+.tea-menu-auth p {
+  font-size: 12px;
+  color: var(--tea-text-soft);
+}
+.tea-feature-track:focus-visible,
+.tea-best-track:focus-visible,
+.tea-features button:focus-visible,
+.tea-shop-section-heading > button:focus-visible {
+  outline: 2px solid var(--tea-green-deep);
+  outline-offset: 3px;
+}
