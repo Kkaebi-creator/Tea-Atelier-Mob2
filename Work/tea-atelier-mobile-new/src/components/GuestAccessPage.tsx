@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import PageFrame from "./PageFrame";
 import PageIntro from "./PageIntro";
+import "./GuestAccessPage.css";
 const sections = {
   cart: {
     title: "Your Cart",
@@ -68,46 +69,46 @@ export default function GuestAccessPage({
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <div className="tea-page-inner">
+        <div className="tea-page-inner tea-guest-access">
           <PageIntro
             eyebrow="Your atelier"
             title={content.heading}
             description={content.description}
           />
           <section
-            className="tea-card-panel"
+            className="tea-card-panel tea-guest-card"
             aria-label={`${content.title} sign-in options`}
           >
-            <IonIcon
-              icon={content.icon}
-              aria-hidden="true"
-              style={{ fontSize: 36, color: "var(--tea-green-deep)" }}
-            />
+            <div className="tea-guest-icon">
+              <IonIcon icon={content.icon} aria-hidden="true" />
+            </div>
             <h2>You're welcome to look around.</h2>
             <p className="tea-panel-copy">
               Browse the collection any time. Your account is here when you're
               ready.
             </p>
-            <IonButton
-              expand="block"
-              onClick={() => navigate("/login", { state: authState })}
-            >
-              Sign in
-            </IonButton>
-            <IonButton
-              expand="block"
-              fill="outline"
-              onClick={() => navigate("/register", { state: authState })}
-            >
-              Create account
-            </IonButton>
-            <IonButton
-              expand="block"
-              fill="clear"
-              onClick={() => navigate("/shop")}
-            >
-              Continue browsing
-            </IonButton>
+            <div className="tea-guest-actions">
+              <IonButton
+                expand="block"
+                onClick={() => navigate("/login", { state: authState })}
+              >
+                Sign in
+              </IonButton>
+              <IonButton
+                expand="block"
+                fill="outline"
+                onClick={() => navigate("/register", { state: authState })}
+              >
+                Create account
+              </IonButton>
+              <IonButton
+                expand="block"
+                fill="clear"
+                onClick={() => navigate("/shop")}
+              >
+                Continue browsing
+              </IonButton>
+            </div>
           </section>
         </div>
       </IonContent>

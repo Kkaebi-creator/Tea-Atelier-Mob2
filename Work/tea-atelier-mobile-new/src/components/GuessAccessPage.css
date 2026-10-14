@@ -1,0 +1,56 @@
+.tea-page-inner.tea-guest-access {
+  max-width: 560px;
+  padding: 20px 18px 24px;
+}
+.tea-guest-access > .tea-page-intro {
+  margin-bottom: 18px;
+}
+.tea-guest-access .tea-page-intro h1 {
+  font-size: clamp(28px, 7vw, 32px);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.tea-guest-access .tea-page-description {
+  line-height: 1.6;
+}
+.tea-guest-access > .tea-guest-card {
+  margin-top: 0;
+  padding: 20px 18px 16px;
+  text-align: center;
+}
+.tea-guest-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  border-radius: 15px;
+  background: #edf1e7;
+  color: var(--tea-green-deep);
+}
+.tea-guest-icon ion-icon {
+  font-size: 26px;
+}
+.tea-guest-card h2 {
+  font-size: 23px;
+  line-height: 1.25;
+  margin: 0 0 8px;
+}
+.tea-guest-card > .tea-panel-copy {
+  max-width: 34ch;
+  margin: 0 auto 18px;
+  line-height: 1.6;
+}
+.tea-guest-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tea-guest-actions ion-button {
+  margin: 0;
+}
+.tea-guest-actions ion-button[fill="clear"] {
+  height: 44px;
+  min-height: 44px;
+}
