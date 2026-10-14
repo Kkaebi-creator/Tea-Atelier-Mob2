@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  IonButton,
   IonContent,
   IonHeader,
   IonPage,
   IonRefresher,
   IonRefresherContent,
-  IonText,
   IonTitle,
   IonToolbar,
   IonButtons,
@@ -14,61 +14,78 @@ import {
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
+import { ensureOk, fetchApi, requestError } from "../config/request";
 import TeaLoader from "../components/TeaLoader";
-
-type OrderItem = {
-  name: string;
-  quantity: number;
-  price: number;
-};
-
 type Order = {
   id: number;
   status: string;
   paymentMethod: string;
   totalAmount: number;
   createdAt: string;
-  items: OrderItem[];
+  items: { name: string; quantity: number; price: number }[];
 };
-
 const paymentLabels: Record<string, string> = {
   cod: "Cash on Delivery",
   gcash: "GCash",
+  grabpay: "GrabPay",
 };
-
-const OrdersPage: React.FC = () => {
+export default function OrdersPage() {
   const { token } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const loadOrders = async () => {
-    if (!token) return;
-    setError("");
-    setIsLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/api/orders?page=1`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Unable to load orders.");
-      setOrders(data.orders);
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Unable to load orders.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  const sequence = useRef(0);
+  const requestedPage = useRef(1);
+  const invalidate = useCallback(() => {
+    ++sequence.current;
+  }, []);
+  const load = useCallback(
+    async (target: number) => {
+      const current = ++sequence.current;
+      requestedPage.current = target;
+      setLoading(true);
+      setError("");
+      try {
+        if (!token) throw new Error("Please sign in to view orders.");
+        const response = await fetchApi(
+          `${API_URL}/api/orders?page=${target}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        await ensureOk(response, "Unable to load orders.");
+        const data = await response.json();
+        if (
+          !Array.isArray(data.orders) ||
+          !Number.isSafeInteger(data.currentPage) ||
+          data.currentPage < 1 ||
+          !Number.isSafeInteger(data.totalPages) ||
+          data.totalPages < 1 ||
+          data.currentPage > data.totalPages
+        )
+          throw new Error("Unable to load order pagination.");
+        if (current === sequence.current) {
+          setOrders(data.orders);
+          setPage(data.currentPage);
+          setTotalPages(data.totalPages);
+        }
+      } catch (failure) {
+        if (current === sequence.current)
+          setError(requestError(failure, "Unable to load orders."));
+      } finally {
+        if (current === sequence.current) setLoading(false);
+      }
+    },
+    [token],
+  );
   useEffect(() => {
-    loadOrders();
-  }, [token]);
-
+    setOrders([]);
+    setPage(1);
+    setTotalPages(1);
+    void load(1);
+    return invalidate;
+  }, [load, invalidate]);
   return (
     <IonPage className="tea-orders-page">
       <IonHeader>
@@ -86,40 +103,61 @@ const OrdersPage: React.FC = () => {
         <IonRefresher
           slot="fixed"
           onIonRefresh={async (event) => {
-            await loadOrders();
-            event.detail.complete();
+            try {
+              await load(page);
+            } finally {
+              event.detail.complete();
+            }
           }}
         >
           <IonRefresherContent />
         </IonRefresher>
         <div className="tea-page-inner">
-          {isLoading && (
+          <IonButton
+            fill="outline"
+            disabled={loading}
+            onClick={() => void load(page)}
+          >
+            Refresh orders
+          </IonButton>
+          {loading && (
             <div className="tea-state">
               <TeaLoader size="page" label="Loading orders" />
             </div>
           )}
-          {!isLoading && error && (
-            <div className="tea-state">
-              <IonText color="danger">
-                <p>{error}</p>
-              </IonText>
+          {error && (
+            <div role="alert">
+              <p>{error}</p>
+              <IonButton
+                disabled={loading}
+                onClick={() => void load(requestedPage.current)}
+              >
+                Retry orders
+              </IonButton>
             </div>
           )}
-          {!isLoading && !error && orders.length === 0 && (
+          {!loading && !error && orders.length === 0 && (
             <div className="tea-state">
-              <IonText>
-                <h2>No orders yet</h2>
-                <p>Your completed orders will appear here.</p>
-              </IonText>
+              <h2>No orders yet</h2>
+              <p>Your orders will appear here.</p>
             </div>
           )}
-          {!isLoading &&
+          {!loading &&
             !error &&
             orders.map((order) => (
               <article
                 className="tea-order-card tea-order-card-clickable"
                 key={order.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open order ${order.id}`}
                 onClick={() => navigate(`/orders/${order.id}`)}
+                onKeyDown={(event) => {
+                  if (["Enter", " "].includes(event.key)) {
+                    event.preventDefault();
+                    navigate(`/orders/${order.id}`);
+                  }
+                }}
               >
                 <div className="tea-order-card-header">
                   <div>
@@ -131,10 +169,10 @@ const OrdersPage: React.FC = () => {
                   <span className="tea-order-status">{order.status}</span>
                 </div>
                 <div className="tea-order-items">
-                  {order.items.map((item) => (
+                  {order.items.map((item, index) => (
                     <div
                       className="tea-order-item"
-                      key={`${order.id}-${item.name}`}
+                      key={`${order.id}-${index}`}
                     >
                       <span>
                         {item.quantity} × {item.name}
@@ -153,10 +191,29 @@ const OrdersPage: React.FC = () => {
                 </div>
               </article>
             ))}
+          {totalPages > 1 && (
+            <nav aria-label="Order pages" className="ion-text-center">
+              <IonButton
+                fill="outline"
+                disabled={loading || page <= 1}
+                onClick={() => void load(page - 1)}
+              >
+                Previous orders
+              </IonButton>
+              <span>
+                Page {page} of {totalPages}
+              </span>
+              <IonButton
+                fill="outline"
+                disabled={loading || page >= totalPages}
+                onClick={() => void load(page + 1)}
+              >
+                Next orders
+              </IonButton>
+            </nav>
+          )}
         </div>
       </IonContent>
     </IonPage>
   );
-};
-
-export default OrdersPage;
+}

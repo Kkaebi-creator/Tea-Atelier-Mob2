@@ -1,136 +1,221 @@
-import React, { useEffect, useState } from "react";
-import { Preferences } from "@capacitor/preferences";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
   IonMenuButton,
   IonPage,
-  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
-
-type Order = {
-  id: number;
-  status: string;
-  createdAt: string;
-  totalAmount: number;
+import { ensureOk, fetchApi, requestError } from "../config/request";
+type Notification = {
+  notification_id: string;
+  order_id: number | null;
+  title: string;
+  message: string;
+  created_at: string;
+  read_at: string | null;
 };
-
-const statusCopy: Record<string, string> = {
-  pending: "Your order has been received and is waiting to be processed.",
-  processing: "Your order is being prepared by Tea Atelier.",
-  shipped: "Your order is on its way.",
-  delivered: "Your order has been delivered. Enjoy your tea.",
-  cancelled: "Your order has been cancelled.",
-};
-
-const NotificationsPage: React.FC = () => {
+export default function NotificationsPage() {
   const { token } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [error, setError] = useState("");
-  const [readIds, setReadIds] = useState<number[]>([]);
-
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const sequence = useRef(0);
+  const busy = useRef(false);
+  const invalidate = useCallback(() => {
+    ++sequence.current;
+  }, []);
+  const load = useCallback(async () => {
+    const current = ++sequence.current;
+    setLoading(true);
+    setLoadError("");
+    try {
+      if (!token) throw new Error("Please sign in to view notifications.");
+      const response = await fetchApi(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await ensureOk(response, "Unable to load notifications.");
+      const data = await response.json();
+      if (
+        !Array.isArray(data.notifications) ||
+        !Number.isInteger(data.unreadCount) ||
+        data.unreadCount < 0
+      )
+        throw new Error("Unable to load notifications.");
+      if (current === sequence.current) {
+        setNotifications(data.notifications);
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (failure) {
+      if (current === sequence.current)
+        setLoadError(requestError(failure, "Unable to load notifications."));
+    } finally {
+      if (current === sequence.current) setLoading(false);
+    }
+  }, [token]);
   useEffect(() => {
-    Preferences.get({ key: "read_order_notifications" }).then(({ value }) => {
-      if (value) setReadIds(JSON.parse(value));
-    });
-    if (!token) return;
-    fetch(`${API_URL}/api/orders?page=1`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok)
-          throw new Error(data.error || "Unable to load notifications.");
-        setOrders(data.orders);
-      })
-      .catch((requestError) =>
-        setError(
-          requestError instanceof Error
-            ? requestError.message
-            : "Unable to load notifications.",
+    setNotifications([]);
+    setUnreadCount(0);
+    setActionError("");
+    setSaving(false);
+    busy.current = false;
+    void load();
+    return invalidate;
+  }, [load, invalidate]);
+  const markRead = async (notificationId?: string) => {
+    if (!token || busy.current || loading || loadError) return;
+    const selected = notifications.find(
+      (item) => item.notification_id === notificationId,
+    );
+    if (notificationId && (!selected || selected.read_at)) return;
+    busy.current = true;
+    setSaving(true);
+    setActionError("");
+    const current = ++sequence.current;
+    let acknowledged = false;
+    try {
+      const response = await fetchApi(`${API_URL}/api/notifications`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(
+          notificationId ? { notificationId } : { all: true },
+        ),
+      });
+      await ensureOk(response, "Unable to update notifications.");
+      const result = await response.json();
+      if (result.success !== true)
+        throw new Error(
+          "Unable to confirm read status. Refresh notifications before retrying.",
+        );
+      if (current !== sequence.current) return;
+      acknowledged = true;
+      const readAt = new Date().toISOString();
+      setNotifications((previous) =>
+        previous.map((item) =>
+          !notificationId || item.notification_id === notificationId
+            ? { ...item, read_at: item.read_at || readAt }
+            : item,
         ),
       );
-  }, [token]);
-
-  const markRead = async (id: number) => {
-    const next = readIds.includes(id) ? readIds : [...readIds, id];
-    setReadIds(next);
-    await Preferences.set({
-      key: "read_order_notifications",
-      value: JSON.stringify(next),
-    });
+      setUnreadCount((previous) =>
+        notificationId ? Math.max(0, previous - 1) : 0,
+      );
+    } catch (failure) {
+      if (current === sequence.current)
+        setActionError(
+          requestError(failure, "Unable to update notifications."),
+        );
+    } finally {
+      if (current === sequence.current) {
+        busy.current = false;
+        setSaving(false);
+        // A refresh failure must not turn an acknowledged PATCH into a failed PATCH.
+        if (acknowledged) void load();
+      }
+    }
   };
-
-  const markAllRead = async () => {
-    const next = orders.map((order) => order.id);
-    setReadIds(next);
-    await Preferences.set({
-      key: "read_order_notifications",
-      value: JSON.stringify(next),
-    });
-  };
-
   return (
     <IonPage className="tea-info-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonMenuButton menu="tea-navigation" />
+            <IonMenuButton
+              menu="tea-navigation"
+              aria-label="Open navigation menu"
+            />
           </IonButtons>
           <IonTitle>Notifications</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <div className="tea-page-inner">
-          <p className="tea-info-eyebrow">Order progression</p>
+          <p className="tea-info-eyebrow">Recent notifications</p>
           <h1>Stay in the loop.</h1>
-          {orders.some((order) => !readIds.includes(order.id)) && (
-            <button className="tea-notification-read-all" onClick={markAllRead}>
+          <IonButton
+            fill="outline"
+            disabled={loading || saving}
+            onClick={() => void load()}
+          >
+            Refresh notifications
+          </IonButton>
+          {!loading && !loadError && <p>{unreadCount} unread</p>}
+          {unreadCount > 0 && (
+            <IonButton
+              disabled={loading || saving || !!loadError}
+              onClick={() => void markRead()}
+            >
               Mark all as read
-            </button>
+            </IonButton>
           )}
-          {error && (
-            <IonText color="danger">
-              <p>{error}</p>
-            </IonText>
-          )}
-          {!error && orders.length === 0 && (
-            <div className="tea-state">
-              <IonText>
-                <h2>No updates yet</h2>
-                <p>Your order updates will appear here.</p>
-              </IonText>
+          {loading && <p role="status">Loading notifications…</p>}
+          {loadError && (
+            <div role="alert">
+              <p>{loadError}</p>
+              <IonButton
+                disabled={loading || saving}
+                onClick={() => void load()}
+              >
+                Retry notifications
+              </IonButton>
             </div>
           )}
-          {!error &&
-            orders.map((order) => (
+          {actionError && <p role="alert">{actionError}</p>}
+          {!loading && !loadError && notifications.length === 0 && (
+            <div className="tea-state">
+              <h2>No updates yet</h2>
+              <p>Tea Atelier updates will appear here.</p>
+            </div>
+          )}
+          {!loading &&
+            notifications.map((item) => (
               <article
                 className={
-                  readIds.includes(order.id)
+                  item.read_at
                     ? "tea-notification-card read"
                     : "tea-notification-card"
                 }
-                key={order.id}
-                onClick={() => markRead(order.id)}
+                key={item.notification_id}
               >
                 <span className="tea-notification-dot" />
                 <div>
-                  <p className="tea-order-label">
-                    Order #{order.id} · {order.status}
-                  </p>
-                  <p>
-                    {statusCopy[order.status.toLowerCase()] ||
-                      `Your order status is ${order.status.toLowerCase()}.`}
-                  </p>
+                  <p className="tea-order-label">{item.title}</p>
+                  <p style={{ whiteSpace: "pre-wrap" }}>{item.message}</p>
                   <small>
-                    {new Date(order.createdAt).toLocaleDateString()} · ₱
-                    {order.totalAmount.toFixed(2)}
+                    {new Date(item.created_at).toLocaleDateString()} ·{" "}
+                    {item.read_at ? "Read" : "Unread"}
                   </small>
+                  {!item.read_at && (
+                    <IonButton
+                      size="small"
+                      fill="outline"
+                      aria-label={`Mark ${item.title} as read`}
+                      disabled={saving || !!loadError}
+                      onClick={() => void markRead(item.notification_id)}
+                    >
+                      Mark as read
+                    </IonButton>
+                  )}
+                  {Number.isSafeInteger(item.order_id) &&
+                    Number(item.order_id) > 0 && (
+                      <IonButton
+                        size="small"
+                        fill="clear"
+                        routerLink={`/orders/${item.order_id}`}
+                      >
+                        View order
+                      </IonButton>
+                    )}
                 </div>
               </article>
             ))}
@@ -138,6 +223,4 @@ const NotificationsPage: React.FC = () => {
       </IonContent>
     </IonPage>
   );
-};
-
-export default NotificationsPage;
+}

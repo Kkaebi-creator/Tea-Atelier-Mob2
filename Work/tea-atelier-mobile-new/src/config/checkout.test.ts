@@ -93,13 +93,11 @@ test("payment initiation uses the dedicated endpoint for the existing order", as
 });
 
 test("payment API errors are exposed without creating another order", async () => {
-  const fetch = vi
-    .fn()
-    .mockResolvedValue(
-      new Response('{"error":"Payment initiation is unavailable."}', {
-        status: 503,
-      }),
-    );
+  const fetch = vi.fn().mockResolvedValue(
+    new Response('{"error":"Payment initiation is unavailable."}', {
+      status: 503,
+    }),
+  );
   vi.stubGlobal("fetch", fetch);
   await expect(openPaymentSource("token", 4, "gcash")).rejects.toThrow(
     "Payment initiation is unavailable.",
