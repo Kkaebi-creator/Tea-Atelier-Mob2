@@ -121,6 +121,7 @@ const OrderDetailPage: React.FC = () => {
                 <div className="tea-summary-row total"><span>Total</span><span className="tea-amount">₱{order.total.toFixed(2)}</span></div>
               </div>
               <p className="tea-order-date">Payment: {order.paymentMethod.toUpperCase()} · Deliver to {order.recipientName}</p>
+              {["gcash", "grabpay"].includes(order.paymentMethod) && <IonButton fill="outline" routerLink={`/order-confirmation/${order.orderId}`}>View payment status</IonButton>}
               {reviewMessage && <IonText color="success"><p>{reviewMessage}</p></IonText>}
               <div className="tea-order-actions">
                 {!refundRequested && !["DELIVERED", "CANCELLED"].includes(order.orderStatus.toUpperCase()) && <IonItem><IonLabel position="stacked">Refund reason</IonLabel><IonInput value={refundReason} placeholder="Tell us what went wrong" onIonChange={(event) => setRefundReason(event.detail.value || "")} /></IonItem>}

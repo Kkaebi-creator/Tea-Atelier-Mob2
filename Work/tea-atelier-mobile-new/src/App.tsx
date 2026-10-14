@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, useLocation } from 'react-router-dom';
+import { Navigate, Route, useLocation, useNavigate } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, IonPage, IonContent, IonButton, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -23,6 +23,8 @@ import NotificationsPage from './pages/NotificationsPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
 import SettingsPage from './pages/SettingsPage';
+import PaymentReturnListener from './components/PaymentReturnListener';
+import { postLoginPath } from './config/paymentReturn';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -65,23 +67,27 @@ const ProtectedRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => 
   }
 
   if (!token) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    // Ionic keeps earlier pages mounted. A cached protected page must not
+    // redirect again once login is open and overwrite the saved destination.
+    if (["/login", "/register"].includes(location.pathname)) return null;
+    return <Navigate to="/login" replace state={{ from: { pathname: location.pathname } }} />;
   }
 
   return <>{element}</>;
 };
 
-const AuthRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => {
+const AuthRoute: React.FC<{ element: React.ReactNode; path: string }> = ({ element, path }) => {
   const { token, isLoading } = useAuth();
-
-  if (isLoading) {
-    return null;
-  }
-
-  if (token) {
-    return <Navigate to="/shop" replace />;
-  }
-
+  const location = useLocation();
+  const navigate = useNavigate();
+  const destination = postLoginPath(location.state);
+  React.useEffect(() => {
+    if (!isLoading && token && location.pathname === path) {
+      navigate(destination, { replace: true });
+    }
+  }, [isLoading, token, location.pathname, path, destination, navigate]);
+  // Keep the IonPage mounted while Ionic transitions away. This route owns
+  // post-auth navigation; login/signup handlers only update the session.
   return <>{element}</>;
 };
 
@@ -96,8 +102,8 @@ const AppRoutes: React.FC = () => {
   if (isLoading) return null;
   return (
   <IonRouterOutlet>
-    <Route path="/login" element={<AuthRoute element={<LoginPage />} />} />
-    <Route path="/register" element={<AuthRoute element={<RegisterPage />} />} />
+    <Route path="/login" element={<AuthRoute path="/login" element={<LoginPage />} />} />
+    <Route path="/register" element={<AuthRoute path="/register" element={<RegisterPage />} />} />
     <Route path="/about" element={<AboutPage />} />
     <Route path="/developers" element={<DevelopersPage />} />
     <Route path="/notifications" element={<ProtectedRoute element={<NotificationsPage />} />} />
@@ -130,6 +136,7 @@ const App: React.FC = () => {
       {showSplash && <SplashScreen />}
       <AuthProvider>
         <IonReactRouter>
+          <PaymentReturnListener />
           <CartProvider>
             <SideMenu />
             <div id="main-content" className="ion-page">

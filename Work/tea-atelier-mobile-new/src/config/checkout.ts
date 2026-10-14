@@ -59,11 +59,7 @@ export async function openPaymentSource(token: string, orderId: number, type: st
   const response = await fetchApi(`${API_URL}/api/payments/paymongo/source`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ orderId, type,
-      // Browser sessions return to their own origin. Native deep links need
-      // a separate installed-app return flow; preserve its existing contract.
-      ...(!Capacitor.isNativePlatform() ? { returnTarget: 'mobile' } : {}),
-    }),
+    body: JSON.stringify({ orderId, type, returnTarget: Capacitor.getPlatform() === 'android' ? 'android' : Capacitor.isNativePlatform() ? 'website' : 'mobile' }),
   });
   const result = await response.json().catch(() => null);
   const status = readPaymentStatus(result?.paymentStatus);

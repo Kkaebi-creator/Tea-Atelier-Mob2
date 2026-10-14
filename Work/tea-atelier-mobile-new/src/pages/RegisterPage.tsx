@@ -4,7 +4,6 @@ import {
   IonItem, IonInput, IonButton, IonText,
   IonRouterLink,
 } from "@ionic/react";
-import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import GoogleSignInButton from "../components/GoogleSignInButton";
@@ -12,7 +11,6 @@ import TeaLoader from "../components/TeaLoader";
 
 const RegisterPage: React.FC = () => {
   const { login } = useAuth();
-  const navigate = useNavigate();
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phoneNumber: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +27,6 @@ const RegisterPage: React.FC = () => {
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Google sign-in failed."); return; }
       await login(data.token, data.user);
-      navigate("/shop", { replace: true });
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -58,7 +55,6 @@ const RegisterPage: React.FC = () => {
       const data = await res.json();
       if (!res.ok) { setError(data.error); return; }
       await login(data.token, data.user);
-      navigate("/shop", { replace: true });
     } catch {
       setError("Network error. Please try again.");
     } finally {

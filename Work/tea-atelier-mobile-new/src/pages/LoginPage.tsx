@@ -4,7 +4,6 @@ import {
   IonItem, IonInput, IonButton, IonText,
   IonRouterLink,
 } from "@ionic/react";
-import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import GoogleSignInButton from "../components/GoogleSignInButton";
@@ -12,7 +11,6 @@ import TeaLoader from "../components/TeaLoader";
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -32,7 +30,6 @@ const LoginPage: React.FC = () => {
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Google sign-in failed."); return; }
       await login(data.token, data.user);
-      navigate("/shop", { replace: true });
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -54,7 +51,6 @@ const LoginPage: React.FC = () => {
       if (!res.ok) { setError(data.error); return; }
       if (data.requiresTotp) { setRequiresTotp(true); return; }
       await login(data.token, data.user);
-      navigate("/shop", { replace: true });
     } catch {
       setError("Network error. Please try again.");
     } finally {

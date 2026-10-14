@@ -129,11 +129,13 @@ const OrderConfirmationPage: React.FC = () => {
   useEffect(() => {
     const refreshOnReturn = () => { if (document.visibilityState === "visible") void load(); };
     window.addEventListener("focus", refreshOnReturn);
+    window.addEventListener("tea-payment-return", refreshOnReturn);
     document.addEventListener("visibilitychange", refreshOnReturn);
     const listener = Capacitor.isNativePlatform()
       ? Browser.addListener("browserFinished", () => { void load(); }) : null;
     return () => {
       window.removeEventListener("focus", refreshOnReturn);
+      window.removeEventListener("tea-payment-return", refreshOnReturn);
       document.removeEventListener("visibilitychange", refreshOnReturn);
       if (listener) void listener.then((handle) => handle.remove());
     };
