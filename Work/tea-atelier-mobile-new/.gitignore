@@ -32,3 +32,6 @@ yarn-error.log*
 
 # TypeScript build cache
 *.tsbuildinfo
+
+gradle-jdk21-check.txt
+gradle-signing-error.txt
