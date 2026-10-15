@@ -31,35 +31,75 @@ const GoogleSignInButton: React.FC<{
 
   useEffect(() => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!clientId || !buttonRef.current) return;
+    const host = buttonRef.current;
+    if (!clientId || !host) return;
 
+    let lastWidth = 0;
+    let frame = 0;
+    let disposed = false;
     const render = () => {
-      if (!window.google || !buttonRef.current) return;
+      frame = 0;
+      if (disposed) return;
+      // Ionic caches hidden pages. Never let Google render with a zero width,
+      // which makes it fall back to a narrow, content-sized button.
+      const width = Math.min(400, host.offsetWidth);
+      if (width <= 0) {
+        lastWidth = 0;
+        return;
+      }
+      if (!window.google || width === lastWidth) return;
+      lastWidth = width;
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: ({ credential }) => callbackRef.current(credential),
       });
-      window.google.accounts.id.renderButton(buttonRef.current, {
+      host.replaceChildren();
+      window.google.accounts.id.renderButton(host, {
         theme: "outline",
         size: "large",
-        width: buttonRef.current.offsetWidth,
+        width,
       });
     };
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(render);
+    };
+    const observer = new ResizeObserver((entries) => {
+      if (entries.some((entry) => entry.contentRect.width === 0)) lastWidth = 0;
+      schedule();
+    });
+    observer.observe(host);
+    window.addEventListener("resize", schedule);
 
+    let script: HTMLScriptElement | undefined;
     if (window.google) {
-      render();
-      return;
+      schedule();
+    } else {
+      script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.onload = schedule;
+      document.head.appendChild(script);
     }
 
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.onload = render;
-    document.head.appendChild(script);
+    return () => {
+      disposed = true;
+      observer.disconnect();
+      window.removeEventListener("resize", schedule);
+      cancelAnimationFrame(frame);
+      // Keep the shared Google SDK available for the other authentication page.
+      if (script) script.onload = null;
+    };
   }, []);
 
   if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) return null;
-  return <div className="tea-google-button" ref={buttonRef} />;
+  return (
+    <div
+      className="tea-google-button"
+      ref={buttonRef}
+      style={{ width: "100%", display: "flex", justifyContent: "center" }}
+    />
+  );
 };
 
 export default GoogleSignInButton;
