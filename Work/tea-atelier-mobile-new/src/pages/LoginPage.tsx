@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   IonPage,
   IonHeader,
@@ -10,6 +10,7 @@ import {
   IonText,
 } from "@ionic/react";
 import { API_URL } from "../config/api";
+import { fetchApi, requestError } from "../config/request";
 import { useAuth } from "../context/AuthContext";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 import AuthBackButton from "../components/AuthBackButton";
@@ -26,24 +27,48 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const googlePending = useRef(false);
+
   const handleGoogleCredential = async (credential: string) => {
+    if (googlePending.current) return;
+    googlePending.current = true;
     setError("");
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/auth/google`, {
+      const res = await fetchApi(`${API_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credential }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
       if (!res.ok) {
-        setError(data.error || "Google sign-in failed.");
+        setError(
+          typeof data?.error === "string"
+            ? data.error
+            : "Google sign-in failed. Please try again.",
+        );
         return;
       }
+      if (
+        typeof data?.token !== "string" ||
+        !data.token.trim() ||
+        !data.user ||
+        typeof data.user.email !== "string"
+      ) {
+        throw new Error(
+          "Google sign-in returned an incomplete response. Please try again.",
+        );
+      }
       await login(data.token, data.user);
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (error) {
+      setError(
+        requestError(
+          error,
+          "Google sign-in couldn't finish. Please try again.",
+        ),
+      );
     } finally {
+      googlePending.current = false;
       setIsLoading(false);
     }
   };
@@ -151,7 +176,10 @@ const LoginPage: React.FC = () => {
             <div className="tea-auth-divider">
               <span>or continue with</span>
             </div>
-            <GoogleSignInButton onCredential={handleGoogleCredential} />
+            <GoogleSignInButton
+              disabled={isLoading}
+              onCredential={handleGoogleCredential}
+            />
 
             <p className="auth-link">
               Don't have an account?{" "}

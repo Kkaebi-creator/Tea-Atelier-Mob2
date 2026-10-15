@@ -256,7 +256,8 @@ const RegisterPage: React.FC = () => {
               <span>or continue with</span>
             </div>
             <GoogleSignInButton
-              onCredential={(credential) => void submit(credential)}
+              disabled={isLoading || !!pendingSession}
+              onCredential={(credential) => submit(credential)}
             />
 
             <p className="auth-link">
