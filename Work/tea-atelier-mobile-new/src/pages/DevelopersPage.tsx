@@ -21,7 +21,7 @@ const developers = [
     image: "/images/developers/John Bryan.jpg",
   },
   { name: "De Jesus, Sophia Jullia", image: "/images/developers/JULSPIC.jpg" },
-  { name: "Golfo, Vance Aaron", image: "/images/developers/ARRONPIC.jpg" },
+  { name: "Carmen, Simon Christian", image: "/images/developers/Simon.jpg" },
   {
     name: "Rabanzo, Francheska Ann Nicole",
     image: "/images/developers/CHIPIC.jpg",
