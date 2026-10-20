@@ -1,0 +1,267 @@
+.tea-profile-form [role="status"] {
+  color: var(--tea-green-deep);
+}
+.tea-profile-form [role="alert"] {
+  color: var(--tea-red);
+}
+.tea-profile-form ion-input .input-wrapper {
+  margin: 0;
+}
+.tea-profile-form ion-input .input-bottom {
+  font-size: 11px;
+  padding: 6px 12px;
+}
+.tea-checkout-delivery {
+  margin: 24px 0;
+}
+.tea-checkout-section-heading {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.tea-checkout-page .tea-checkout-section-heading h3 {
+  margin: 0 !important;
+}
+.tea-checkout-section-heading > span {
+  color: var(--tea-text-soft);
+  font-size: 11px;
+  text-align: end;
+}
+.tea-checkout-page .tea-address-preview {
+  padding: 16px 16px 6px;
+  margin: 0 0 18px;
+  background: #f1f4eb;
+  border-radius: 18px;
+}
+.tea-address-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.tea-address-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #e3eadb;
+  color: var(--tea-green-deep);
+  font-size: 19px;
+}
+.tea-address-card-copy,
+.tea-address-option-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.tea-address-card-copy {
+  flex: 1;
+}
+.tea-address-card-copy strong,
+.tea-address-option-copy strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--tea-text);
+}
+.tea-address-card-copy > p:not(.tea-info-eyebrow) {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--tea-text-soft);
+  margin: 5px 0;
+}
+.tea-address-card-copy .tea-info-eyebrow {
+  margin: 0 0 6px;
+  font-size: 9px;
+}
+.tea-address-default {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 8px;
+  color: var(--tea-green-deep);
+  background: #e5ecde;
+  border-radius: 20px;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.tea-address-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 4px;
+  margin-top: 14px;
+  padding-top: 5px;
+  border-top: 1px solid #dce4d3;
+}
+.tea-address-card-actions ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  font-size: 11px;
+}
+.tea-recipient-fields,
+.tea-new-address-fields {
+  display: grid;
+  gap: 14px;
+}
+.tea-checkout-page .tea-field {
+  margin: 0;
+}
+.tea-checkout-page .tea-field ion-input {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+.tea-checkout-page .tea-field ion-input .input-wrapper {
+  margin: 0;
+}
+.tea-checkout-page .tea-new-address-fields {
+  margin-top: 18px;
+}
+.tea-checkout-field-caption {
+  margin: 0;
+  color: var(--tea-text-soft);
+  font-size: 12px;
+}
+.tea-checkout-address-error {
+  margin-bottom: 16px;
+}
+.tea-checkout-shipping {
+  margin: 20px 0;
+}
+.tea-checkout-page .tea-checkout-shipping ion-select {
+  padding: 10px 14px;
+  min-height: 64px;
+}
+.tea-choose-saved-address {
+  margin-bottom: 14px !important;
+}
+ion-modal.tea-address-sheet {
+  --background: var(--tea-bg);
+  --height: 80%;
+  --border-radius: 26px 26px 0 0;
+  --box-shadow: 0 -8px 40px #26321f18;
+  --max-width: 600px;
+}
+ion-modal.tea-address-sheet::part(handle) {
+  background: #b8c2af;
+  width: 36px;
+  height: 4px;
+}
+.tea-address-sheet ion-content {
+  --background: var(--tea-bg);
+  --padding-top: 0;
+  --padding-bottom: 16px;
+}
+.tea-address-sheet-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 30px 22px 18px;
+  background: var(--tea-bg);
+}
+.tea-address-sheet-heading h2 {
+  margin: 0;
+  font-size: 28px;
+}
+.tea-address-sheet-heading .tea-info-eyebrow {
+  margin: 0 0 9px;
+}
+.tea-address-sheet-heading p:last-child {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--tea-text-soft);
+}
+.tea-address-sheet-heading > ion-button {
+  margin: -6px -6px 0 0;
+  min-width: 44px;
+  height: 44px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+.tea-address-sheet-heading > ion-button ion-icon {
+  font-size: 22px;
+}
+.tea-address-sheet-list {
+  display: grid;
+  gap: 12px;
+  padding: 0 20px 12px;
+}
+.tea-address-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 80px;
+  padding: 16px;
+  border: 1px solid var(--tea-border);
+  border-radius: 18px;
+  background: var(--tea-card);
+  color: var(--tea-text);
+  text-align: start;
+}
+.tea-address-option.selected {
+  border-color: var(--tea-green);
+  background: #eef3e8;
+}
+.tea-address-option:focus-visible {
+  outline: 3px solid var(--tea-green);
+  outline-offset: 2px;
+}
+.tea-address-option-copy {
+  display: grid;
+  gap: 5px;
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--tea-text-soft);
+}
+.tea-address-option-copy .tea-info-eyebrow {
+  margin: 0;
+  font-size: 9px;
+}
+.tea-address-option-copy .tea-address-default {
+  justify-self: start;
+  margin-top: 3px;
+}
+.tea-address-selected-check {
+  flex: 0 0 18px;
+  color: var(--tea-green-deep);
+  font-size: 18px;
+  margin-top: 4px;
+}
+.tea-address-sheet-footer {
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--tea-border);
+  background: var(--tea-bg);
+}
+.tea-address-sheet-footer ion-button {
+  margin: 0;
+}
+.tea-checkout-delivery-sheet {
+  --background: var(--tea-card);
+  --button-background: var(--tea-card);
+  --button-background-selected: #eaf0e6;
+  --button-color: var(--tea-green-deep);
+  --color: var(--tea-text);
+}
+.tea-checkout-delivery-sheet .action-sheet-group {
+  border-radius: 20px;
+  overflow: hidden;
+}
+.tea-checkout-delivery-sheet .action-sheet-title {
+  font-family: var(--tea-display);
+  font-size: 23px;
+}
+.tea-checkout-delivery-sheet .action-sheet-button {
+  min-height: 52px;
+  font-size: 14px;
+}
+@media (min-width: 640px) {
+  .tea-recipient-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

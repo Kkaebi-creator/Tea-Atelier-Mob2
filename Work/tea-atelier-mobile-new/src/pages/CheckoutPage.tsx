@@ -17,6 +17,9 @@ import {
   IonMenuButton,
   IonSelect,
   IonSelectOption,
+  IonModal,
+  IonFooter,
+  IonIcon,
 } from "@ionic/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { placeOrder } from "../config/checkout";
@@ -25,6 +28,14 @@ import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import TeaLoader from "../components/TeaLoader";
+import {
+  locationOutline,
+  addOutline,
+  closeOutline,
+  checkmarkOutline,
+  chevronDownOutline,
+} from "ionicons/icons";
+import "../theme/profile-checkout.css";
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,6 +56,23 @@ const CheckoutPage: React.FC = () => {
     province: "",
     paymentMethod: "cod",
   });
+  const previousContact = useRef({
+    fullName: user?.name ?? "",
+    phone: user?.phone ?? "",
+  });
+  useEffect(() => {
+    const previous = previousContact.current;
+    const next = { fullName: user?.name ?? "", phone: user?.phone ?? "" };
+    setForm((current) => ({
+      ...current,
+      fullName:
+        current.fullName === previous.fullName
+          ? next.fullName
+          : current.fullName,
+      phone: current.phone === previous.phone ? next.phone : current.phone,
+    }));
+    previousContact.current = next;
+  }, [user?.name, user?.phone]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<
@@ -53,9 +81,12 @@ const CheckoutPage: React.FC = () => {
       address_line1: string;
       address_line2: string | null;
       address_line3: string | null;
+      default_address?: boolean;
+      address_label?: string | null;
     }[]
   >([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [addressPickerOpen, setAddressPickerOpen] = useState(false);
   const [addressesLoading, setAddressesLoading] = useState(true);
   const [addressesError, setAddressesError] = useState("");
   const addressChoiceMade = useRef(false);
@@ -105,7 +136,19 @@ const CheckoutPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       await ensureOk(response, "Unable to load saved addresses.");
-      const savedAddresses = (await response.json()).addresses || [];
+      const savedAddresses = (await response.json()).addresses;
+      if (
+        !Array.isArray(savedAddresses) ||
+        savedAddresses.some(
+          (address) =>
+            !address ||
+            !Number.isSafeInteger(Number(address.address_id)) ||
+            Number(address.address_id) <= 0 ||
+            typeof address.address_line1 !== "string",
+        )
+      ) {
+        throw new Error("Unable to load saved addresses.");
+      }
       setAddresses(savedAddresses);
       const preferred =
         savedAddresses.find(
@@ -126,6 +169,8 @@ const CheckoutPage: React.FC = () => {
   const chooseAddress = (value: string) => {
     addressChoiceMade.current = true;
     setSelectedAddressId(value);
+    setAddressPickerOpen(false);
+    setError("");
   };
 
   const selectedAddress = addresses.find(
@@ -297,114 +342,174 @@ const CheckoutPage: React.FC = () => {
             </div>
           ))}
 
-          <h3 style={{ margin: "0 0 12px", color: "#1d1b1a" }}>
-            Delivery Address
-          </h3>
-          {addresses.length > 0 && (
-            <IonItem>
-              <IonLabel position="stacked">Use saved address</IonLabel>
-              <IonSelect
-                value={selectedAddressId}
-                placeholder="Select an address"
-                onIonChange={(event) =>
-                  chooseAddress(String(event.detail.value ?? ""))
-                }
-              >
-                <IonSelectOption value="">Enter a new address</IonSelectOption>
-                {addresses.map((address) => (
-                  <IonSelectOption
-                    value={String(address.address_id)}
-                    key={address.address_id}
+          <section
+            className="tea-checkout-delivery"
+            aria-labelledby="checkout-delivery-heading"
+          >
+            <div className="tea-checkout-section-heading">
+              <h3 id="checkout-delivery-heading">Delivery address</h3>
+              {addresses.length > 0 && (
+                <span>
+                  {addresses.length} saved{" "}
+                  {addresses.length === 1 ? "address" : "addresses"}
+                </span>
+              )}
+            </div>
+            {addressesError && (
+              <div className="tea-checkout-address-error" role="alert">
+                <p>{addressesError}</p>
+                <IonButton
+                  fill="clear"
+                  className="tea-action-button"
+                  onClick={() => void loadAddresses()}
+                >
+                  Retry saved addresses
+                </IonButton>
+              </div>
+            )}
+            {addressesLoading ? (
+              <p role="status">Loading saved addresses…</p>
+            ) : selectedAddress ? (
+              <div className="tea-address-preview">
+                <div className="tea-address-card-main">
+                  <span className="tea-address-symbol">
+                    <IonIcon icon={locationOutline} aria-hidden="true" />
+                  </span>
+                  <div className="tea-address-card-copy">
+                    <p className="tea-info-eyebrow">
+                      {selectedAddress.address_label || "Saved address"}
+                    </p>
+                    <strong>{selectedAddress.address_line1}</strong>
+                    <p>
+                      {[
+                        selectedAddress.address_line2,
+                        selectedAddress.address_line3,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </p>
+                    {selectedAddress.default_address && (
+                      <span className="tea-address-default">
+                        Default delivery address
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="tea-address-card-actions">
+                  <IonButton
+                    fill="clear"
+                    className="tea-action-button"
+                    onClick={() => setAddressPickerOpen(true)}
+                    aria-label="Change saved address"
                   >
-                    {[
-                      address.address_line1,
-                      address.address_line2,
-                      address.address_line3,
-                    ]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
-          )}
-          <div className="tea-field">
-            <IonInput
-              label="Full Name"
-              labelPlacement="stacked"
-              value={form.fullName}
-              onIonChange={set("fullName")}
-            />
-          </div>
-          <div className="tea-field">
-            <IonInput
-              label="Phone"
-              labelPlacement="stacked"
-              type="tel"
-              value={form.phone}
-              onIonChange={set("phone")}
-            />
-          </div>
-          {addressesError && (
-            <div role="alert">
-              <p>{addressesError}</p>
-              <IonButton fill="outline" onClick={() => void loadAddresses()}>
-                Retry saved addresses
-              </IonButton>
+                    Change address
+                    <IonIcon
+                      icon={chevronDownOutline}
+                      slot="end"
+                      aria-hidden="true"
+                    />
+                  </IonButton>
+                  <IonButton
+                    fill="clear"
+                    className="tea-action-button"
+                    onClick={() => chooseAddress("")}
+                  >
+                    Enter a new address
+                  </IonButton>
+                </div>
+              </div>
+            ) : (
+              addresses.length > 0 && (
+                <IonButton
+                  fill="clear"
+                  className="tea-action-button tea-choose-saved-address"
+                  onClick={() => setAddressPickerOpen(true)}
+                >
+                  <IonIcon
+                    icon={locationOutline}
+                    slot="start"
+                    aria-hidden="true"
+                  />
+                  Choose a saved address
+                </IonButton>
+              )
+            )}
+            <div className="tea-recipient-fields">
+              <div className="tea-field">
+                <IonInput
+                  label="Full Name"
+                  labelPlacement="stacked"
+                  value={form.fullName}
+                  autocomplete="name"
+                  onIonInput={set("fullName")}
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="tea-field">
+                <IonInput
+                  label="Phone"
+                  labelPlacement="stacked"
+                  type="tel"
+                  value={form.phone}
+                  autocomplete="tel"
+                  onIonInput={set("phone")}
+                  disabled={isLoading}
+                  placeholder="Mobile number"
+                />
+              </div>
             </div>
-          )}
-          {addressesLoading ? (
-            <p>Loading saved addresses…</p>
-          ) : selectedAddress ? (
-            <div className="tea-address-preview">
-              <p>
-                {[
-                  selectedAddress.address_line1,
-                  selectedAddress.address_line2,
-                  selectedAddress.address_line3,
-                ]
-                  .filter(Boolean)
-                  .join(", ")}
-              </p>
-              <IonButton fill="clear" onClick={() => chooseAddress("")}>
-                Enter a new address
-              </IonButton>
-            </div>
-          ) : (
-            <>
-              <div className="tea-field">
-                <IonInput
-                  label="Street Address"
-                  labelPlacement="stacked"
-                  value={form.street}
-                  onIonChange={set("street")}
-                  placeholder="123 Mabini St."
-                />
+            {!addressesLoading && !selectedAddress && (
+              <div className="tea-new-address-fields">
+                <p className="tea-checkout-field-caption">
+                  Where should we deliver your tea?
+                </p>
+                <div className="tea-field">
+                  <IonInput
+                    label="Street Address"
+                    labelPlacement="stacked"
+                    value={form.street}
+                    onIonInput={set("street")}
+                    autocomplete="street-address"
+                    placeholder="123 Mabini St."
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="tea-field">
+                  <IonInput
+                    label="City / Municipality"
+                    labelPlacement="stacked"
+                    value={form.city}
+                    onIonInput={set("city")}
+                    autocomplete="address-level2"
+                    placeholder="Quezon City"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="tea-field">
+                  <IonInput
+                    label="Province"
+                    labelPlacement="stacked"
+                    value={form.province}
+                    onIonInput={set("province")}
+                    autocomplete="address-level1"
+                    placeholder="Metro Manila"
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
-              <div className="tea-field">
-                <IonInput
-                  label="City / Municipality"
-                  labelPlacement="stacked"
-                  value={form.city}
-                  onIonChange={set("city")}
-                  placeholder="Quezon City"
-                />
-              </div>
-              <div className="tea-field">
-                <IonInput
-                  label="Province"
-                  labelPlacement="stacked"
-                  value={form.province}
-                  onIonChange={set("province")}
-                  placeholder="Metro Manila"
-                />
-              </div>
-            </>
-          )}
+            )}
+          </section>
 
-          <IonItem>
-            <IonLabel>Delivery</IonLabel>
+          <div className="tea-checkout-shipping">
             <IonSelect
+              label="Delivery option"
+              labelPlacement="stacked"
+              aria-label="Delivery option"
+              interface="action-sheet"
+              interfaceOptions={{
+                cssClass: "tea-checkout-delivery-sheet",
+                header: "Delivery option",
+              }}
               value={shippingMethod}
               onIonChange={(event) => setShippingMethod(event.detail.value)}
             >
@@ -418,7 +523,7 @@ const CheckoutPage: React.FC = () => {
                   </IonSelectOption>
                 ))}
             </IonSelect>
-          </IonItem>
+          </div>
           <h3 style={{ margin: "18px 0 12px", color: "#1d1b1a" }}>
             Payment Method
           </h3>
@@ -476,6 +581,86 @@ const CheckoutPage: React.FC = () => {
           {isLoading ? <TeaLoader /> : "Place Order"}
         </IonButton>
       </IonContent>
+      <IonModal
+        isOpen={addressPickerOpen}
+        onDidDismiss={() => setAddressPickerOpen(false)}
+        className="tea-address-sheet"
+        initialBreakpoint={1}
+        breakpoints={[0, 1]}
+        handle={true}
+        aria-label="Choose delivery address"
+      >
+        <IonHeader className="ion-no-border">
+          <div className="tea-address-sheet-heading">
+            <div>
+              <p className="tea-info-eyebrow">Your saved places</p>
+              <h2>Choose an address.</h2>
+              <p>Select where your tea is going.</p>
+            </div>
+            <IonButton
+              fill="clear"
+              aria-label="Close address picker"
+              onClick={() => setAddressPickerOpen(false)}
+            >
+              <IonIcon icon={closeOutline} aria-hidden="true" />
+            </IonButton>
+          </div>
+        </IonHeader>
+        <IonContent>
+          <div className="tea-address-sheet-list">
+            {addresses.map((address) => (
+              <button
+                type="button"
+                key={address.address_id}
+                className={`tea-address-option ${String(address.address_id) === selectedAddressId ? "selected" : ""}`}
+                aria-pressed={String(address.address_id) === selectedAddressId}
+                onClick={() => chooseAddress(String(address.address_id))}
+              >
+                <span className="tea-address-symbol">
+                  <IonIcon icon={locationOutline} aria-hidden="true" />
+                </span>
+                <span className="tea-address-option-copy">
+                  {address.address_label && (
+                    <span className="tea-info-eyebrow">
+                      {address.address_label}
+                    </span>
+                  )}
+                  <strong>{address.address_line1}</strong>
+                  <span>
+                    {[address.address_line2, address.address_line3]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </span>
+                  {address.default_address && (
+                    <span className="tea-address-default">
+                      Default delivery address
+                    </span>
+                  )}
+                </span>
+                {String(address.address_id) === selectedAddressId && (
+                  <IonIcon
+                    icon={checkmarkOutline}
+                    className="tea-address-selected-check"
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </IonContent>
+        <IonFooter className="ion-no-border">
+          <div className="tea-address-sheet-footer">
+            <IonButton
+              expand="block"
+              fill="outline"
+              onClick={() => chooseAddress("")}
+            >
+              <IonIcon icon={addOutline} slot="start" aria-hidden="true" />
+              Enter a new address
+            </IonButton>
+          </div>
+        </IonFooter>
+      </IonModal>
     </IonPage>
   );
 };
