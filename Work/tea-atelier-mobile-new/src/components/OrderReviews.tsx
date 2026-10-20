@@ -1,3 +1,4 @@
+import RefreshButton from "./RefreshButton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IonButton, IonTextarea } from "@ionic/react";
 import { API_URL } from "../config/api";
@@ -115,13 +116,11 @@ export default function OrderReviews({
       {error && (
         <div role="alert">
           <p>{error}</p>
-          <IonButton
+          <RefreshButton
+            label="Refresh review eligibility"
             disabled={saving}
-            fill="outline"
             onClick={() => void load()}
-          >
-            Refresh review eligibility
-          </IonButton>
+          />
         </div>
       )}
       {!data && !error && <p>Loading review eligibility…</p>}

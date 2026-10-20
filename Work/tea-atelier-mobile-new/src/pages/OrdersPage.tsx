@@ -1,3 +1,4 @@
+import RefreshButton from "../components/RefreshButton";
 import PageFrame from "../components/PageFrame";
 import PageIntro from "../components/PageIntro";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -123,13 +124,13 @@ export default function OrdersPage({
             title="Your orders."
             description="Track deliveries and revisit your favorites."
           />
-          <IonButton
-            fill="outline"
-            disabled={loading}
-            onClick={() => void load(page)}
-          >
-            Refresh orders
-          </IonButton>
+          <div className="tea-list-toolbar tea-orders-toolbar">
+            <RefreshButton
+              label="Refresh orders"
+              busy={loading}
+              onClick={() => void load(page)}
+            />
+          </div>
           {loading && (
             <div className="tea-state">
               <TeaLoader size="page" label="Loading orders" />
@@ -202,7 +203,7 @@ export default function OrdersPage({
               </article>
             ))}
           {totalPages > 1 && (
-            <nav aria-label="Order pages" className="ion-text-center">
+            <nav aria-label="Order pages" className="tea-order-pagination">
               <IonButton
                 fill="outline"
                 disabled={loading || page <= 1}

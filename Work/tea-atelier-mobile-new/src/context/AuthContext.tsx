@@ -18,6 +18,7 @@ type User = {
   role: "admin" | "customer";
   phone: string | null;
   isVerified: boolean;
+  avatarUrl?: string | null;
 };
 
 type AuthContextType = {

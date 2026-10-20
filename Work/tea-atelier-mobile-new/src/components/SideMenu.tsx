@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IonButton,
   IonButtons,
@@ -25,10 +25,12 @@ import {
   personOutline,
   receiptOutline,
   peopleOutline,
+  timeOutline,
 } from "ionicons/icons";
 import { useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { mediaUrl } from "../config/media";
 
 const modules = [
   { label: "Shop", href: "/shop", icon: bagHandleOutline },
@@ -44,7 +46,16 @@ const modules = [
 
 const SideMenu: React.FC = () => {
   const location = useLocation();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
+  const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
+  const name = user?.name?.trim() || "Your account";
+  const initials = name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => Array.from(part)[0])
+    .join("")
+    .toUpperCase();
+  const avatar = token ? mediaUrl(user?.avatarUrl) : null;
 
   const isActive = (href: string) =>
     href === "/shop"
@@ -70,11 +81,34 @@ const SideMenu: React.FC = () => {
         </IonButtons>
       </IonToolbar>
       <IonContent>
-        <div className="tea-menu-brand">
-          <span className="tea-menu-mark">TA</span>
-          <div>
-            <strong>Tea Atelier</strong>
-            <IonNote>Small rituals. Better days.</IonNote>
+        <div
+          className="tea-menu-brand"
+          aria-label={token ? "Signed-in profile" : "Tea Atelier"}
+        >
+          <span className="tea-menu-mark" aria-hidden="true">
+            {avatar && avatar !== failedAvatar ? (
+              <img
+                src={avatar}
+                alt=""
+                referrerPolicy="no-referrer"
+                onError={() => setFailedAvatar(avatar)}
+              />
+            ) : token ? (
+              initials
+            ) : (
+              "TA"
+            )}
+          </span>
+          <div className="tea-menu-profile-details">
+            <strong>{token ? name : "Tea Atelier"}</strong>
+            {token ? (
+              <>
+                {user?.email && <IonNote>{user.email}</IonNote>}
+                {user?.phone && <IonNote>{user.phone}</IonNote>}
+              </>
+            ) : (
+              <IonNote>Find your daily steep.</IonNote>
+            )}
           </div>
         </div>
 
@@ -116,6 +150,21 @@ const SideMenu: React.FC = () => {
 
         <IonList inset className="tea-menu-list tea-menu-secondary-list">
           <IonNote className="tea-menu-section-label">Discover</IonNote>
+          <IonMenuToggle autoHide={false}>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/company-history"
+              className={
+                isActive("/company-history")
+                  ? "tea-menu-item active"
+                  : "tea-menu-item"
+              }
+            >
+              <IonIcon slot="start" icon={timeOutline} />
+              <IonLabel>Company History</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
             <IonItem
               button

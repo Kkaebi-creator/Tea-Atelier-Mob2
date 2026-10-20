@@ -1,0 +1,206 @@
+/* Compact utility actions; primary purchase and authentication actions keep their emphasis. */
+ion-button.tea-action-button {
+  --background: transparent;
+  --background-hover: #eaf0e6;
+  --background-activated: #e4eadf;
+  --color: var(--tea-green-deep);
+  --border-width: 0;
+  --border-radius: 10px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --box-shadow: none;
+  min-height: 44px;
+  height: 44px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+ion-button.tea-action-button ion-icon {
+  font-size: 17px;
+}
+ion-button.tea-action-button ion-icon[slot="start"] {
+  margin-inline-end: 7px;
+}
+ion-button.tea-action-button ion-icon[slot="end"] {
+  margin-inline-start: 7px;
+}
+ion-button.tea-refresh-button {
+  --color: #667b60;
+}
+.tea-refresh-spinning {
+  animation: tea-refresh-turn 1s linear infinite;
+}
+@keyframes tea-refresh-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tea-refresh-spinning {
+    animation: none;
+  }
+}
+.tea-list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: -8px 0 16px;
+  min-height: 44px;
+}
+.tea-list-summary {
+  margin: 0 auto 0 0;
+  color: var(--tea-text-soft);
+  font-size: 12px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.tea-list-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 100%;
+  margin-inline-start: auto;
+}
+.tea-notification-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  border-top: 1px solid var(--tea-border);
+  margin-top: 14px;
+  padding-top: 8px;
+}
+.tea-notification-footer small {
+  font-size: 11px;
+}
+.tea-notification-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-inline-start: auto;
+}
+.tea-notification-card > div {
+  overflow-wrap: anywhere;
+}
+.tea-order-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  color: var(--tea-text-soft);
+  font-size: 12px;
+}
+.tea-order-pagination ion-button {
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  height: 44px;
+  margin: 0;
+  font-size: 12px;
+}
+/* The drawer reflects the existing shared-backend profile. */
+.tea-menu-brand {
+  padding: 22px;
+  gap: 14px;
+}
+.tea-menu-mark {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  overflow: hidden;
+  border: 1px solid #dce3d5;
+}
+.tea-menu-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tea-menu-profile-details {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.tea-menu-profile-details strong {
+  font-size: 21px;
+  line-height: 1.25;
+}
+.tea-menu-profile-details ion-note {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+/* Company content comes from the same CMS as the main website. */
+.tea-history-image {
+  margin: 0 0 28px;
+  background: #e9eee2;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 22px;
+}
+.tea-history-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tea-history-story {
+  margin-bottom: 32px;
+}
+.tea-history-story h2 {
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  margin: 0 0 16px;
+}
+.tea-history-story > p:not(.tea-info-eyebrow) {
+  color: var(--tea-text-soft);
+  font-size: 14px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.tea-history-values > div {
+  display: grid;
+  gap: 12px;
+}
+.tea-history-values article {
+  padding: 22px;
+  border: 1px solid var(--tea-border);
+  border-radius: 18px;
+  background: var(--tea-card);
+  overflow-wrap: anywhere;
+}
+.tea-history-values article > span {
+  color: var(--tea-green);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.tea-history-values h3 {
+  margin: 10px 0;
+  font-size: 21px;
+}
+.tea-history-values article p {
+  margin: 0;
+  color: var(--tea-text-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+ion-button.tea-history-shop-link {
+  margin-top: 20px;
+}
+@media (min-width: 640px) {
+  .tea-history-values > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tea-history-values article:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}

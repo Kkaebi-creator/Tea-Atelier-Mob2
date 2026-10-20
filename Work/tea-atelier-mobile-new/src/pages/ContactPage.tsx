@@ -1,3 +1,4 @@
+import RefreshButton from "../components/RefreshButton";
 import PageFrame from "../components/PageFrame";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -244,13 +245,13 @@ const ContactPage: React.FC<{ embedded?: boolean }> = ({
           )}
           {tab === "messages" && (
             <section aria-label="Message history">
-              <IonButton
-                fill="outline"
-                disabled={loading}
-                onClick={() => void load(page)}
-              >
-                Refresh messages
-              </IonButton>
+              <div className="tea-list-toolbar">
+                <RefreshButton
+                  label="Refresh messages"
+                  busy={loading}
+                  onClick={() => void load(page)}
+                />
+              </div>
               {loading && <p role="status">Loading messages…</p>}
               {historyError && (
                 <div role="alert">

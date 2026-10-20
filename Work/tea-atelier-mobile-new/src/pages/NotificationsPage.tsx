@@ -6,10 +6,17 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonMenuButton,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import {
+  checkmarkDoneOutline,
+  checkmarkOutline,
+  arrowForwardOutline,
+} from "ionicons/icons";
+import RefreshButton from "../components/RefreshButton";
 import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import { ensureOk, fetchApi, requestError } from "../config/request";
@@ -150,22 +157,36 @@ export default function NotificationsPage({
             title="Your updates."
             description="Recent news from your orders and the Tea Atelier team."
           />
-          <IonButton
-            fill="outline"
-            disabled={loading || saving}
-            onClick={() => void load()}
-          >
-            Refresh notifications
-          </IonButton>
-          {!loading && !loadError && <p>{unreadCount} unread</p>}
-          {unreadCount > 0 && (
-            <IonButton
-              disabled={loading || saving || !!loadError}
-              onClick={() => void markRead()}
-            >
-              Mark all as read
-            </IonButton>
-          )}
+          <div className="tea-list-toolbar tea-notifications-toolbar">
+            {!loading && !loadError && (
+              <p className="tea-list-summary" aria-live="polite">
+                {unreadCount} unread
+              </p>
+            )}
+            <div className="tea-list-actions">
+              <RefreshButton
+                label="Refresh notifications"
+                busy={loading}
+                disabled={saving}
+                onClick={() => void load()}
+              />
+              {unreadCount > 0 && (
+                <IonButton
+                  fill="clear"
+                  className="tea-action-button"
+                  disabled={loading || saving || !!loadError}
+                  onClick={() => void markRead()}
+                >
+                  <IonIcon
+                    icon={checkmarkDoneOutline}
+                    slot="start"
+                    aria-hidden="true"
+                  />
+                  Mark all as read
+                </IonButton>
+              )}
+            </div>
+          </div>
           {loading && <p role="status">Loading notifications…</p>}
           {loadError && (
             <div role="alert">
@@ -199,31 +220,47 @@ export default function NotificationsPage({
                 <div>
                   <p className="tea-order-label">{item.title}</p>
                   <p style={{ whiteSpace: "pre-wrap" }}>{item.message}</p>
-                  <small>
-                    {new Date(item.created_at).toLocaleDateString()} ·{" "}
-                    {item.read_at ? "Read" : "Unread"}
-                  </small>
-                  {!item.read_at && (
-                    <IonButton
-                      size="small"
-                      fill="outline"
-                      aria-label={`Mark ${item.title} as read`}
-                      disabled={saving || !!loadError}
-                      onClick={() => void markRead(item.notification_id)}
-                    >
-                      Mark as read
-                    </IonButton>
-                  )}
-                  {Number.isSafeInteger(item.order_id) &&
-                    Number(item.order_id) > 0 && (
-                      <IonButton
-                        size="small"
-                        fill="clear"
-                        routerLink={`/orders/${item.order_id}`}
-                      >
-                        View order
-                      </IonButton>
-                    )}
+                  <div className="tea-notification-footer">
+                    <small>
+                      {new Date(item.created_at).toLocaleDateString()} ·{" "}
+                      {item.read_at ? "Read" : "Unread"}
+                    </small>
+                    <div className="tea-notification-actions">
+                      {!item.read_at && (
+                        <IonButton
+                          size="small"
+                          fill="clear"
+                          className="tea-action-button"
+                          aria-label={`Mark ${item.title} as read`}
+                          disabled={saving || !!loadError}
+                          onClick={() => void markRead(item.notification_id)}
+                        >
+                          <IonIcon
+                            icon={checkmarkOutline}
+                            slot="start"
+                            aria-hidden="true"
+                          />
+                          Mark as read
+                        </IonButton>
+                      )}
+                      {Number.isSafeInteger(item.order_id) &&
+                        Number(item.order_id) > 0 && (
+                          <IonButton
+                            size="small"
+                            fill="clear"
+                            className="tea-action-button"
+                            routerLink={`/orders/${item.order_id}`}
+                          >
+                            View order
+                            <IonIcon
+                              icon={arrowForwardOutline}
+                              slot="end"
+                              aria-hidden="true"
+                            />
+                          </IonButton>
+                        )}
+                    </div>
+                  </div>
                 </div>
               </article>
             ))}

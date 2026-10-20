@@ -1,3 +1,4 @@
+import RefreshButton from "./RefreshButton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IonButton,
@@ -169,9 +170,11 @@ export default function OrderReturns({
   return (
     <section className="tea-card-panel" aria-label="Returns and refunds">
       <h3>Returns and refunds</h3>
-      <IonButton disabled={saving} fill="outline" onClick={() => void load()}>
-        Refresh request status
-      </IonButton>
+      <RefreshButton
+        label="Refresh request status"
+        disabled={saving}
+        onClick={() => void load()}
+      />
       {error && <p role="alert">{error}</p>}
       {!data && !error && <p>Loading return/refund eligibility…</p>}
       {request ? (

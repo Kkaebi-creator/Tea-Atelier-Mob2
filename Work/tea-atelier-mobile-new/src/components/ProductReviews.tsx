@@ -1,3 +1,4 @@
+import RefreshButton from "./RefreshButton";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IonButton } from "@ionic/react";
 import { API_URL } from "../config/api";
@@ -64,13 +65,11 @@ export default function ProductReviews({ productId }: { productId: string }) {
       style={{ marginTop: 20 }}
     >
       <h3>Customer reviews</h3>
-      <IonButton
-        fill="outline"
-        disabled={loading}
+      <RefreshButton
+        label="Refresh reviews"
+        busy={loading}
         onClick={() => void load(page)}
-      >
-        Refresh reviews
-      </IonButton>
+      />
       {loading && <p>Loading reviews…</p>}
       {error && <p role="alert">{error}</p>}
       {!loading && !error && data && (

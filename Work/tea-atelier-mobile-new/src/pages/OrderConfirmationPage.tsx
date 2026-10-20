@@ -1,3 +1,4 @@
+import RefreshButton from "../components/RefreshButton";
 import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -413,9 +414,10 @@ const OrderConfirmationPage: React.FC = () => {
             <p>
               Your payment is confirmed, but your cart could not be refreshed.
             </p>
-            <IonButton fill="outline" onClick={() => void refresh()}>
-              Refresh cart
-            </IonButton>
+            <RefreshButton
+              label="Refresh cart"
+              onClick={() => void refresh()}
+            />
           </div>
         )}
         <IonButton expand="block" routerLink="/shop" style={{ marginTop: 16 }}>

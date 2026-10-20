@@ -28,6 +28,7 @@ import GuestAccessPage, {
 } from "./components/GuestAccessPage";
 import AppNavigation from "./components/AppNavigation";
 import AboutPage from "./pages/AboutPage";
+import CompanyHistoryPage from "./pages/CompanyHistoryPage";
 import DevelopersPage from "./pages/DevelopersPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ContactPage from "./pages/ContactPage";
@@ -65,6 +66,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import "./theme/atelier-polish.css";
 
 setupIonicReact();
 
@@ -102,6 +104,7 @@ const ProtectedRoute: React.FC<{
         "/login",
         "/register",
         "/about",
+        "/company-history",
         "/privacy",
         "/developers",
       ].includes(location.pathname) ||
@@ -163,6 +166,7 @@ const AppRoutes: React.FC = () => {
         element={<AuthRoute path="/register" element={<RegisterPage />} />}
       />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/company-history" element={<CompanyHistoryPage />} />
       <Route path="/developers" element={<DevelopersPage />} />
       <Route
         path="/notifications"
