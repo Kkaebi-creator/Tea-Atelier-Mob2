@@ -250,7 +250,8 @@ ion-modal.tea-address-sheet::part(handle) {
 }
 .tea-checkout-delivery-sheet .action-sheet-group {
   border-radius: 20px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .tea-checkout-delivery-sheet .action-sheet-title {
   font-family: var(--tea-display);
@@ -358,7 +359,8 @@ ion-modal.tea-address-sheet::part(handle) {
 }
 .tea-profile-photo-sheet .action-sheet-group {
   border-radius: 22px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .tea-profile-photo-sheet .action-sheet-title {
   font-family: var(--tea-display);
@@ -376,6 +378,63 @@ ion-modal.tea-address-sheet::part(handle) {
   font-size: 14px;
 }
 .tea-profile-photo-sheet .action-sheet-destructive {
+  color: var(--tea-red);
+}
+/* Keep both sheets clear of system navigation and preserve scrolling when short. */
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) {
+  --tea-sheet-top: max(var(--ion-safe-area-top, 0px), env(safe-area-inset-top, 0px));
+  --tea-sheet-bottom: max(var(--ion-safe-area-bottom, 0px), env(safe-area-inset-bottom, 0px));
+  --background: var(--tea-card);
+  --button-background: var(--tea-card);
+  --button-color: var(--tea-green-deep);
+  --color: var(--tea-text);
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-wrapper {
+  box-sizing: border-box;
+  max-height: calc(100% - var(--tea-sheet-top) - 12px);
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-container {
+  box-sizing: border-box;
+  height: auto;
+  max-height: calc(100vh - var(--tea-sheet-top) - 12px);
+  max-height: calc(100dvh - var(--tea-sheet-top) - 12px);
+  padding: 0 12px calc(12px + var(--tea-sheet-bottom));
+  gap: 10px;
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-group {
+  min-height: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-group-cancel {
+  flex-shrink: 0;
+  padding-bottom: 0;
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-title {
+  font-family: var(--tea-display);
+  font-size: 24px;
+  line-height: 1.3;
+  color: var(--tea-text);
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-sub-title {
+  font-family: var(--tea-body);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--tea-text-soft);
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-button {
+  min-height: 54px;
+  font-size: 14px;
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-icon {
+  margin-inline-end: 12px;
+  font-size: 20px;
+  color: currentColor;
+}
+ion-action-sheet:is(.tea-profile-photo-sheet, .tea-checkout-delivery-sheet) .action-sheet-destructive {
   color: var(--tea-red);
 }
 @media (prefers-reduced-motion: reduce) {
