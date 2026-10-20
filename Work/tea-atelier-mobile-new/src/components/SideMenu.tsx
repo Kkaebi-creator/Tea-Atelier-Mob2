@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   IonButton,
   IonButtons,
@@ -30,7 +30,7 @@ import {
 import { useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
-import { mediaUrl } from "../config/media";
+import ProfileAvatar from "./ProfileAvatar";
 
 const modules = [
   { label: "Shop", href: "/shop", icon: bagHandleOutline },
@@ -47,15 +47,7 @@ const modules = [
 const SideMenu: React.FC = () => {
   const location = useLocation();
   const { token, user } = useAuth();
-  const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
   const name = user?.name?.trim() || "Your account";
-  const initials = name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => Array.from(part)[0])
-    .join("")
-    .toUpperCase();
-  const avatar = token ? mediaUrl(user?.avatarUrl) : null;
 
   const isActive = (href: string) =>
     href === "/shop"
@@ -85,20 +77,11 @@ const SideMenu: React.FC = () => {
           className="tea-menu-brand"
           aria-label={token ? "Signed-in profile" : "Tea Atelier"}
         >
-          <span className="tea-menu-mark" aria-hidden="true">
-            {avatar && avatar !== failedAvatar ? (
-              <img
-                src={avatar}
-                alt=""
-                referrerPolicy="no-referrer"
-                onError={() => setFailedAvatar(avatar)}
-              />
-            ) : token ? (
-              initials
-            ) : (
-              "TA"
-            )}
-          </span>
+          <ProfileAvatar
+            className="tea-menu-mark"
+            name={token ? name : "Tea Atelier"}
+            src={token ? user?.avatarUrl : null}
+          />
           <div className="tea-menu-profile-details">
             <strong>{token ? name : "Tea Atelier"}</strong>
             {token ? (

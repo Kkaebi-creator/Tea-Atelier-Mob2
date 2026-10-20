@@ -265,3 +265,59 @@ ion-modal.tea-address-sheet::part(handle) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+.tea-profile-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #e5ecde;
+  color: var(--tea-green-deep);
+  font-weight: 600;
+}
+.tea-profile-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tea-account-avatar {
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--tea-border);
+  border-radius: 22px;
+  font-size: 25px;
+}
+.tea-account-page .tea-account-hero {
+  align-items: flex-start;
+}
+.tea-account-identity {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.tea-profile-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  margin-top: 6px;
+}
+.tea-profile-photo-actions ion-button {
+  --padding-start: 0;
+  --padding-end: 4px;
+  margin: 0;
+  min-height: 44px;
+  font-size: 11px;
+}
+.tea-account-hero .tea-profile-photo-actions ion-icon {
+  font-size: 16px;
+}
+.tea-profile-photo-hint,
+.tea-profile-photo-feedback {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.tea-profile-photo-hint {
+  color: var(--tea-text-soft);
+}

@@ -19,12 +19,14 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { logOutOutline, personCircleOutline } from "ionicons/icons";
+import { logOutOutline, cameraOutline, trashOutline } from "ionicons/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API_URL } from "../config/api";
 import TeaLoader from "../components/TeaLoader";
 import { ensureOk, fetchApi, requestError } from "../config/request";
+import ProfileAvatar from "../components/ProfileAvatar";
+import { mediaUrl } from "../config/media";
 import "../theme/profile-checkout.css";
 
 type ProfileFields = { firstName: string; lastName: string; phone: string };
@@ -64,12 +66,22 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
   const [message, setMessage] = useState("");
   const [profileError, setProfileError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const photoInput = useRef<HTMLInputElement>(null);
+  const [photoAction, setPhotoAction] = useState<"upload" | "remove" | null>(
+    null,
+  );
+  const [photoError, setPhotoError] = useState("");
+  const [photoMessage, setPhotoMessage] = useState("");
+  const isBusy = isSaving || photoAction !== null;
   const hasProfileChanges = !sameProfile(profile, profileFields(user));
 
   useEffect(() => {
     const sessionEpoch = ++epoch.current;
     savePending.current = false;
     setIsSaving(false);
+    setPhotoAction(null);
+    setPhotoError("");
+    setPhotoMessage("");
     setMessage("");
     setProfileError("");
     return () => {
@@ -240,6 +252,84 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
     }
   };
 
+  const savePhoto = async (file: File | null) => {
+    if (savePending.current) return;
+    setPhotoError("");
+    setPhotoMessage("");
+    if (!token) {
+      setPhotoError("Sign in again to change your photo.");
+      return;
+    }
+    if (file && !["image/jpeg", "image/png"].includes(file.type)) {
+      setPhotoError("Choose a JPG or PNG image.");
+      return;
+    }
+    if (file && (file.size === 0 || file.size > 5 * 1024 * 1024)) {
+      setPhotoError(
+        file.size === 0
+          ? "This image is empty. Choose another photo."
+          : "Choose an image no larger than 5 MB.",
+      );
+      return;
+    }
+    savePending.current = true;
+    setPhotoAction(file ? "upload" : "remove");
+    const current = epoch.current;
+    const isCurrent = () =>
+      current === epoch.current && latestToken.current === token;
+    try {
+      let avatarUrl: string | null = null;
+      if (file) {
+        const body = new FormData();
+        body.append("file", file);
+        const upload = await fetchApi(`${API_URL}/api/user/avatar-upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body,
+        });
+        await ensureOk(upload, "Unable to upload photo. Please try again.");
+        const data = await upload.json().catch(() => null);
+        if (
+          typeof data?.url !== "string" ||
+          !/^https?:\/\//i.test(data.url) ||
+          !mediaUrl(data.url)
+        )
+          throw new Error(
+            "The upload didn't return a valid photo. Please try again.",
+          );
+        avatarUrl = data.url;
+      }
+      if (!isCurrent()) return;
+      const response = await fetchApi(`${API_URL}/api/user`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ avatarUrl }),
+      });
+      await ensureOk(response, "Unable to save your photo. Please try again.");
+      const data = await response.json().catch(() => null);
+      if (!data?.user || data.user.avatarUrl !== avatarUrl)
+        throw new Error(
+          "We couldn't confirm your photo was saved. Please try again.",
+        );
+      if (!isCurrent()) return;
+      updateUser({ avatarUrl });
+      setPhotoMessage(
+        file ? "Profile photo updated." : "Profile photo removed.",
+      );
+    } catch (failure) {
+      if (isCurrent())
+        setPhotoError(requestError(failure, "Unable to save your photo."));
+    } finally {
+      if (isCurrent()) {
+        savePending.current = false;
+        setPhotoAction(null);
+      }
+    }
+  };
+
   const addAddress = async () => {
     if (!token || !addressLine1.trim()) {
       setAddressError("Address line 1 is required.");
@@ -297,12 +387,83 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
             description="Your details, saved addresses, and little preferences."
           />
           <div className="tea-account-hero">
-            <IonIcon icon={personCircleOutline} />
-            <div>
+            <ProfileAvatar
+              name={user?.name || "Tea customer"}
+              src={user?.avatarUrl}
+              className="tea-account-avatar"
+            />
+            <div className="tea-account-identity">
               <p className="tea-account-name">{user?.name || "Tea customer"}</p>
               <p className="tea-account-email">
                 {user?.email || "Signed in customer"}
               </p>
+              <div
+                className="tea-profile-photo-actions"
+                aria-busy={photoAction !== null}
+              >
+                <input
+                  ref={photoInput}
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  aria-label="Choose profile photo"
+                  hidden
+                  disabled={isBusy}
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = "";
+                    if (file) void savePhoto(file);
+                  }}
+                />
+                <IonButton
+                  fill="clear"
+                  className="tea-action-button"
+                  disabled={isBusy}
+                  onClick={() => photoInput.current?.click()}
+                >
+                  <IonIcon
+                    icon={cameraOutline}
+                    slot="start"
+                    aria-hidden="true"
+                  />
+                  {photoAction === "upload"
+                    ? "Uploading…"
+                    : user?.avatarUrl
+                      ? "Change photo"
+                      : "Add photo"}
+                </IonButton>
+                {user?.avatarUrl && (
+                  <IonButton
+                    fill="clear"
+                    className="tea-action-button"
+                    disabled={isBusy}
+                    onClick={() => void savePhoto(null)}
+                  >
+                    <IonIcon
+                      icon={trashOutline}
+                      slot="start"
+                      aria-hidden="true"
+                    />
+                    {photoAction === "remove" ? "Removing…" : "Remove photo"}
+                  </IonButton>
+                )}
+              </div>
+              <p className="tea-profile-photo-hint">
+                JPG or PNG, up to 5 MB. Photo changes save automatically.
+              </p>
+              {photoMessage && (
+                <IonText color="success">
+                  <p role="status" className="tea-profile-photo-feedback">
+                    {photoMessage}
+                  </p>
+                </IonText>
+              )}
+              {photoError && (
+                <IonText color="danger">
+                  <p role="alert" className="tea-profile-photo-feedback">
+                    {photoError}
+                  </p>
+                </IonText>
+              )}
             </div>
           </div>
           <IonSegment
@@ -338,7 +499,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
                     labelPlacement="stacked"
                     value={profile.firstName}
                     autocomplete="given-name"
-                    disabled={isSaving}
+                    disabled={isBusy}
                     onIonInput={(e) =>
                       editProfile("firstName", e.detail.value || "")
                     }
@@ -350,7 +511,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
                     labelPlacement="stacked"
                     value={profile.lastName}
                     autocomplete="family-name"
-                    disabled={isSaving}
+                    disabled={isBusy}
                     onIonInput={(e) =>
                       editProfile("lastName", e.detail.value || "")
                     }
@@ -365,7 +526,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
                     autocomplete="tel"
                     placeholder="09XXXXXXXXX"
                     helperText="Optional. Use 09XXXXXXXXX or +639XXXXXXXXX."
-                    disabled={isSaving}
+                    disabled={isBusy}
                     onIonInput={(e) =>
                       editProfile("phone", e.detail.value || "")
                     }
@@ -382,7 +543,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
                 <IonButton
                   expand="block"
                   type="submit"
-                  disabled={isSaving || !hasProfileChanges}
+                  disabled={isBusy || !hasProfileChanges}
                 >
                   {isSaving ? <TeaLoader /> : "Save profile"}
                 </IonButton>
