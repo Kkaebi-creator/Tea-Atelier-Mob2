@@ -27,13 +27,43 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const googlePending = useRef(false);
+  const pending = useRef(false);
+  const [stage, setStage] = useState("");
+
+  const finishSignIn = async (data: unknown) => {
+    const session = data as {
+      token?: string;
+      user?: Parameters<typeof login>[1];
+    } | null;
+    if (
+      !session ||
+      typeof session.token !== "string" ||
+      !session.token.trim() ||
+      !session.user ||
+      typeof session.user.email !== "string" ||
+      typeof session.user.name !== "string" ||
+      !["customer", "admin"].includes(session.user.role)
+    ) {
+      throw new Error(
+        "Sign-in returned an incomplete response. Please try again.",
+      );
+    }
+    setStage("Opening your atelier…");
+    try {
+      await login(session.token, session.user);
+    } catch {
+      throw new Error(
+        "We couldn't save your sign-in on this device. Please try again.",
+      );
+    }
+  };
 
   const handleGoogleCredential = async (credential: string) => {
-    if (googlePending.current) return;
-    googlePending.current = true;
+    if (pending.current) return;
+    pending.current = true;
     setError("");
     setIsLoading(true);
+    setStage("Signing in with Google…");
     try {
       const res = await fetchApi(`${API_URL}/api/auth/google`, {
         method: "POST",
@@ -41,66 +71,70 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ credential }),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok) {
-        setError(
+      if (!res.ok)
+        throw new Error(
           typeof data?.error === "string"
             ? data.error
             : "Google sign-in failed. Please try again.",
         );
-        return;
-      }
-      if (
-        typeof data?.token !== "string" ||
-        !data.token.trim() ||
-        !data.user ||
-        typeof data.user.email !== "string"
-      ) {
-        throw new Error(
-          "Google sign-in returned an incomplete response. Please try again.",
-        );
-      }
-      await login(data.token, data.user);
-    } catch (error) {
+      await finishSignIn(data);
+    } catch (failure) {
       setError(
         requestError(
-          error,
+          failure,
           "Google sign-in couldn't finish. Please try again.",
         ),
       );
     } finally {
-      googlePending.current = false;
+      pending.current = false;
       setIsLoading(false);
+      setStage("");
     }
   };
 
   const handleSubmit = async (event?: React.FormEvent) => {
     event?.preventDefault();
+    if (pending.current) return;
     setError("");
+    if (!email.trim() || !password) {
+      setError("Enter your email and password.");
+      return;
+    }
+    if (requiresTotp && !/^\d{6}$/.test(totpCode.trim())) {
+      setError("Enter the 6-digit code from your authenticator app.");
+      return;
+    }
+    pending.current = true;
     setIsLoading(true);
+    setStage(requiresTotp ? "Verifying your code…" : "Signing in…");
     try {
-      const res = await fetch(`${API_URL}/api/login`, {
+      const res = await fetchApi(`${API_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
+          email: email.trim(),
           password,
-          totpCode: totpCode || undefined,
+          totpCode: requiresTotp ? totpCode.trim() : undefined,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error);
-        return;
-      }
-      if (data.requiresTotp) {
+      const data = await res.json().catch(() => null);
+      if (!res.ok)
+        throw new Error(
+          typeof data?.error === "string"
+            ? data.error
+            : "Unable to sign in. Please try again.",
+        );
+      if (data?.requiresTotp === true) {
         setRequiresTotp(true);
         return;
       }
-      await login(data.token, data.user);
-    } catch {
-      setError("Network error. Please try again.");
+      await finishSignIn(data);
+    } catch (failure) {
+      setError(requestError(failure, "Unable to sign in. Please try again."));
     } finally {
+      pending.current = false;
       setIsLoading(false);
+      setStage("");
     }
   };
 
@@ -121,16 +155,30 @@ const LoginPage: React.FC = () => {
             <p>Your favorite rituals are right where you left them.</p>
           </div>
 
-          {error && <IonText className="error-text">{error}</IonText>}
+          {error && (
+            <IonText className="error-text" role="alert">
+              {error}
+            </IonText>
+          )}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form
+            className="auth-form"
+            aria-busy={isLoading}
+            onSubmit={handleSubmit}
+          >
             <div className="tea-field">
               <IonInput
+                disabled={isLoading}
                 label="Email"
                 labelPlacement="stacked"
                 type="email"
                 value={email}
-                onIonInput={(e) => setEmail(e.detail.value || "")}
+                onIonInput={(e) => {
+                  setEmail(e.detail.value || "");
+                  setRequiresTotp(false);
+                  setTotpCode("");
+                  setError("");
+                }}
                 autocomplete="email"
                 placeholder="you@example.com"
               />
@@ -138,6 +186,7 @@ const LoginPage: React.FC = () => {
 
             <div className="tea-field">
               <IonInput
+                disabled={isLoading}
                 label="Password"
                 labelPlacement="stacked"
                 type="password"
@@ -150,8 +199,14 @@ const LoginPage: React.FC = () => {
 
             {requiresTotp && (
               <>
+                <p className="tea-auth-step" role="status">
+                  One more step. Enter the code from your authenticator app.
+                </p>
                 <div className="tea-field">
                   <IonInput
+                    disabled={isLoading}
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
                     label="Authenticator Code"
                     labelPlacement="stacked"
                     type="text"
@@ -170,7 +225,13 @@ const LoginPage: React.FC = () => {
               expand="block"
               disabled={isLoading}
             >
-              {isLoading ? <TeaLoader /> : "Sign In"}
+              {isLoading ? (
+                <TeaLoader label={stage || "Signing in…"} />
+              ) : requiresTotp ? (
+                "Verify & sign in"
+              ) : (
+                "Sign In"
+              )}
             </IonButton>
 
             <div className="tea-auth-divider">
@@ -183,7 +244,15 @@ const LoginPage: React.FC = () => {
 
             <p className="auth-link">
               Don't have an account?{" "}
-              <Link to="/register" state={location.state} replace>
+              <Link
+                to="/register"
+                state={location.state}
+                replace
+                aria-disabled={isLoading}
+                onClick={(event) => {
+                  if (isLoading) event.preventDefault();
+                }}
+              >
                 Register
               </Link>
             </p>

@@ -288,36 +288,98 @@ ion-modal.tea-address-sheet::part(handle) {
   border-radius: 22px;
   font-size: 25px;
 }
+/* Compact account identity and photo editor. */
 .tea-account-page .tea-account-hero {
-  align-items: flex-start;
+  align-items: center;
+  gap: 18px;
 }
 .tea-account-identity {
   min-width: 0;
   flex: 1;
   overflow-wrap: anywhere;
 }
-.tea-profile-photo-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-  margin-top: 6px;
+.tea-profile-photo-trigger {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 72px;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 150ms ease;
 }
-.tea-profile-photo-actions ion-button {
-  --padding-start: 0;
-  --padding-end: 4px;
-  margin: 0;
-  min-height: 44px;
+.tea-profile-photo-trigger:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.tea-profile-photo-trigger:focus-visible {
+  outline: 3px solid var(--tea-green);
+  outline-offset: 5px;
+}
+.tea-profile-photo-trigger:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.tea-profile-photo-pencil {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  right: -5px;
+  bottom: -5px;
+  width: 29px;
+  height: 29px;
+  border: 3px solid var(--tea-bg);
+  border-radius: 50%;
+  background: var(--tea-green);
+  color: white;
+}
+.tea-account-hero .tea-profile-photo-pencil ion-icon {
+  font-size: 14px;
+  color: inherit;
+}
+.tea-account-identity .tea-loader {
+  margin-top: 8px;
   font-size: 11px;
 }
-.tea-account-hero .tea-profile-photo-actions ion-icon {
-  font-size: 16px;
+.tea-account-identity .tea-loader-orbit {
+  width: 17px;
+  height: 17px;
 }
-.tea-profile-photo-hint,
 .tea-profile-photo-feedback {
-  margin: 6px 0 0;
-  font-size: 11px;
+  margin: -6px 0 18px;
+  font-size: 12px;
   line-height: 1.6;
 }
-.tea-profile-photo-hint {
+.tea-profile-photo-sheet {
+  --background: var(--tea-card);
+  --button-background: var(--tea-card);
+  --button-color: var(--tea-green-deep);
+  --color: var(--tea-text);
+}
+.tea-profile-photo-sheet .action-sheet-group {
+  border-radius: 22px;
+  overflow: hidden;
+}
+.tea-profile-photo-sheet .action-sheet-title {
+  font-family: var(--tea-display);
+  font-size: 24px;
+}
+.tea-profile-photo-sheet .action-sheet-sub-title {
   color: var(--tea-text-soft);
+  font-family: var(--tea-body);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.tea-profile-photo-sheet .action-sheet-button {
+  min-height: 54px;
+  font-size: 14px;
+}
+.tea-profile-photo-sheet .action-sheet-destructive {
+  color: var(--tea-red);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tea-profile-photo-trigger {
+    transition: none;
+  }
 }

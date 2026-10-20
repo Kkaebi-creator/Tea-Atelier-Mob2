@@ -3,6 +3,7 @@ import PageIntro from "../components/PageIntro";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   IonAlert,
+  IonActionSheet,
   IonButton,
   IonButtons,
   IonContent,
@@ -19,7 +20,12 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { logOutOutline, cameraOutline, trashOutline } from "ionicons/icons";
+import {
+  logOutOutline,
+  cameraOutline,
+  trashOutline,
+  createOutline,
+} from "ionicons/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API_URL } from "../config/api";
@@ -67,6 +73,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
   const [profileError, setProfileError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const photoInput = useRef<HTMLInputElement>(null);
+  const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
   const [photoAction, setPhotoAction] = useState<"upload" | "remove" | null>(
     null,
   );
@@ -80,6 +87,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
     savePending.current = false;
     setIsSaving(false);
     setPhotoAction(null);
+    setPhotoEditorOpen(false);
     setPhotoError("");
     setPhotoMessage("");
     setMessage("");
@@ -387,85 +395,95 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
             description="Your details, saved addresses, and little preferences."
           />
           <div className="tea-account-hero">
-            <ProfileAvatar
-              name={user?.name || "Tea customer"}
-              src={user?.avatarUrl}
-              className="tea-account-avatar"
-            />
+            <button
+              type="button"
+              className="tea-profile-photo-trigger"
+              aria-label="Edit profile photo"
+              aria-busy={photoAction !== null}
+              disabled={isBusy}
+              onClick={() => setPhotoEditorOpen(true)}
+            >
+              <ProfileAvatar
+                name={user?.name || "Tea customer"}
+                src={user?.avatarUrl}
+                className="tea-account-avatar"
+              />
+              <span className="tea-profile-photo-pencil" aria-hidden="true">
+                <IonIcon icon={createOutline} />
+              </span>
+            </button>
             <div className="tea-account-identity">
               <p className="tea-account-name">{user?.name || "Tea customer"}</p>
               <p className="tea-account-email">
                 {user?.email || "Signed in customer"}
               </p>
-              <div
-                className="tea-profile-photo-actions"
-                aria-busy={photoAction !== null}
-              >
-                <input
-                  ref={photoInput}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  aria-label="Choose profile photo"
-                  hidden
-                  disabled={isBusy}
-                  onChange={(event) => {
-                    const file = event.currentTarget.files?.[0];
-                    event.currentTarget.value = "";
-                    if (file) void savePhoto(file);
-                  }}
+              {photoAction && (
+                <TeaLoader
+                  label={
+                    photoAction === "upload"
+                      ? "Uploading photo…"
+                      : "Removing photo…"
+                  }
                 />
-                <IonButton
-                  fill="clear"
-                  className="tea-action-button"
-                  disabled={isBusy}
-                  onClick={() => photoInput.current?.click()}
-                >
-                  <IonIcon
-                    icon={cameraOutline}
-                    slot="start"
-                    aria-hidden="true"
-                  />
-                  {photoAction === "upload"
-                    ? "Uploading…"
-                    : user?.avatarUrl
-                      ? "Change photo"
-                      : "Add photo"}
-                </IonButton>
-                {user?.avatarUrl && (
-                  <IonButton
-                    fill="clear"
-                    className="tea-action-button"
-                    disabled={isBusy}
-                    onClick={() => void savePhoto(null)}
-                  >
-                    <IonIcon
-                      icon={trashOutline}
-                      slot="start"
-                      aria-hidden="true"
-                    />
-                    {photoAction === "remove" ? "Removing…" : "Remove photo"}
-                  </IonButton>
-                )}
-              </div>
-              <p className="tea-profile-photo-hint">
-                JPG or PNG, up to 5 MB. Photo changes save automatically.
-              </p>
-              {photoMessage && (
-                <IonText color="success">
-                  <p role="status" className="tea-profile-photo-feedback">
-                    {photoMessage}
-                  </p>
-                </IonText>
-              )}
-              {photoError && (
-                <IonText color="danger">
-                  <p role="alert" className="tea-profile-photo-feedback">
-                    {photoError}
-                  </p>
-                </IonText>
               )}
             </div>
           </div>
+          <input
+            ref={photoInput}
+            type="file"
+            accept="image/jpeg,image/png"
+            aria-label="Choose profile photo"
+            hidden
+            disabled={isBusy}
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0];
+              event.currentTarget.value = "";
+              if (file) void savePhoto(file);
+            }}
+          />
+          {photoMessage && (
+            <IonText color="success">
+              <p role="status" className="tea-profile-photo-feedback">
+                {photoMessage}
+              </p>
+            </IonText>
+          )}
+          {photoError && (
+            <IonText color="danger">
+              <p role="alert" className="tea-profile-photo-feedback">
+                {photoError}
+              </p>
+            </IonText>
+          )}
+          <IonActionSheet
+            isOpen={photoEditorOpen}
+            className="tea-profile-photo-sheet"
+            header="Profile photo"
+            subHeader="JPG or PNG, up to 5 MB. Changes save automatically."
+            onDidDismiss={() => setPhotoEditorOpen(false)}
+            buttons={[
+              {
+                text: user?.avatarUrl ? "Change photo" : "Add photo",
+                icon: cameraOutline,
+                handler: () => {
+                  photoInput.current?.click();
+                },
+              },
+              ...(user?.avatarUrl
+                ? [
+                    {
+                      text: "Remove photo",
+                      role: "destructive",
+                      icon: trashOutline,
+                      handler: () => {
+                        void savePhoto(null);
+                      },
+                    },
+                  ]
+                : []),
+              { text: "Cancel", role: "cancel" },
+            ]}
+          />
           <IonSegment
             value={section}
             onIonChange={(event) => setSection(event.detail.value as string)}

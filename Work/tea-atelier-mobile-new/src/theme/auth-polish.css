@@ -1,0 +1,54 @@
+.tea-auth-page .auth-button {
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+.tea-auth-page .auth-button:active:not(.button-disabled) {
+  transform: scale(0.985);
+}
+.tea-auth-page .auth-button .tea-loader {
+  gap: 10px;
+}
+.tea-auth-page .auth-button .tea-loader-label {
+  color: inherit;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.tea-auth-step {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #dce5d3;
+  border-radius: 14px;
+  background: #edf2e7;
+  color: var(--tea-green-deep);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.tea-auth-page a[aria-disabled="true"] {
+  opacity: 0.6;
+}
+ion-toast.tea-auth-toast {
+  --background: #eff4e9;
+  --color: var(--tea-green-deep);
+  --border-color: #d5dfcc;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-radius: 18px;
+  --box-shadow: 0 6px 24px #26321f16;
+  --max-width: 480px;
+  --start: 16px;
+  --end: 16px;
+}
+ion-toast.tea-auth-toast::part(message) {
+  font-size: 14px;
+  line-height: 1.5;
+}
+ion-toast.tea-auth-toast::part(button) {
+  color: var(--tea-green-deep);
+  font-size: 12px;
+  min-height: 44px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tea-auth-page .auth-button {
+    transition: none;
+  }
+}

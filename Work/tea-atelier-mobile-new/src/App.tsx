@@ -6,6 +6,7 @@ import {
   IonPage,
   IonContent,
   IonButton,
+  IonToast,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -36,6 +37,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import SettingsPage from "./pages/SettingsPage";
 import PaymentReturnListener from "./components/PaymentReturnListener";
 import { postLoginPath } from "./config/paymentReturn";
+import { checkmarkCircleOutline } from "ionicons/icons";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -67,6 +69,7 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import "./theme/atelier-polish.css";
+import "./theme/auth-polish.css";
 
 setupIonicReact();
 
@@ -123,14 +126,14 @@ const ProtectedRoute: React.FC<{
   return <>{element}</>;
 };
 
-const AuthRoute: React.FC<{ element: React.ReactNode; path: string }> = ({
-  element,
-  path,
-}) => {
+export const AuthRoute: React.FC<{
+  element: React.ReactNode;
+  path: string;
+}> = ({ element, path }) => {
   const { token, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const destination = postLoginPath(location.state);
+  const destination = postLoginPath();
   React.useEffect(() => {
     if (!isLoading && token && location.pathname === path) {
       navigate(destination, { replace: true });
@@ -240,7 +243,8 @@ const AppRoutes: React.FC = () => {
 };
 
 const AppShell: React.FC = () => {
-  const { isLoading, sessionError } = useAuth();
+  const { isLoading, sessionError, token, welcomeMessage, clearWelcome } =
+    useAuth();
   const { pathname } = useLocation();
   const showNavigation =
     !isLoading &&
@@ -253,6 +257,16 @@ const AppShell: React.FC = () => {
   return (
     <>
       <SideMenu />
+      <IonToast
+        className="tea-auth-toast"
+        isOpen={!!token && pathname === "/shop" && !!welcomeMessage}
+        message={welcomeMessage}
+        icon={checkmarkCircleOutline}
+        duration={2600}
+        position="top"
+        buttons={[{ text: "Dismiss", role: "cancel" }]}
+        onDidDismiss={clearWelcome}
+      />
       <div
         id="main-content"
         className={`ion-page ${showNavigation ? "tea-has-dock" : ""}`}

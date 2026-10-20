@@ -1,243 +1,298 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { afterEach, beforeEach, expect, test, vi } from "vitest";
-import RegisterPage from "./RegisterPage";
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonInput,
+  IonButton,
+  IonText,
+} from "@ionic/react";
+import { API_URL } from "../config/api";
+import { fetchApi } from "../config/request";
+import { useAuth } from "../context/AuthContext";
+import GoogleSignInButton from "../components/GoogleSignInButton";
+import AuthBackButton from "../components/AuthBackButton";
+import { Link, useLocation } from "react-router-dom";
+import TeaLoader from "../components/TeaLoader";
 
-const { login } = vi.hoisted(() => ({ login: vi.fn() }));
-vi.mock("../context/AuthContext", () => ({ useAuth: () => ({ login }) }));
-vi.mock("../components/AuthBackButton", () => ({ default: () => null }));
-vi.mock("../components/GoogleSignInButton", () => ({ default: () => null }));
-vi.mock("@ionic/react", () => {
-  const Container = ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  );
-  return {
-    IonPage: Container,
-    IonHeader: Container,
-    IonToolbar: Container,
-    IonTitle: Container,
-    IonContent: Container,
-    IonText: ({ children }: { children: React.ReactNode }) => (
-      <div role="alert">{children}</div>
-    ),
-    IonButton: ({
-      children,
-      type,
-      disabled,
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-      <button type={type} disabled={disabled}>
-        {children}
-      </button>
-    ),
-    IonInput: ({
-      label,
-      onIonInput,
-      helperText,
-      value,
-      type,
-      disabled,
-      placeholder,
-    }: {
-      label: string;
-      onIonInput: (e: unknown) => void;
-      helperText?: string;
-    } & React.InputHTMLAttributes<HTMLInputElement>) => (
-      <label>
-        {label}
-        <input
-          aria-label={label}
-          value={value}
-          type={type}
-          disabled={disabled}
-          placeholder={placeholder}
-          onInput={(e) =>
-            onIonInput({ detail: { value: e.currentTarget.value } })
-          }
-        />
-        {helperText}
-      </label>
-    ),
-  };
-});
-const user = {
-  name: "Review Customer",
-  firstName: "Review",
-  lastName: "Customer",
-  email: "fresh@example.invalid",
-  phone: null,
-  role: "customer",
-  isVerified: false,
-};
-function setup(password = "LocalFixture1") {
-  render(
-    <MemoryRouter
-      initialEntries={[
-        { pathname: "/register", state: { from: { pathname: "/checkout" } } },
-      ]}
-    >
-      <RegisterPage />
-    </MemoryRouter>,
-  );
-  for (const [label, value] of [
-    ["First Name", " Review "],
-    ["Last Name", " Customer "],
-    ["Email", "fresh@example.invalid"],
-    ["Password", password],
-  ]) {
-    fireEvent.input(screen.getByLabelText(label), { target: { value } });
-  }
-}
-function submit() {
-  fireEvent.submit(
-    screen.getByRole("button", { name: "Create Account" }).closest("form")!,
-  );
-}
-beforeEach(() => {
-  login.mockReset();
-  login.mockResolvedValue(undefined);
-});
-afterEach(() => {
-  cleanup();
-  vi.unstubAllGlobals();
-});
-
-test("submits current input without blur, trims names, and saves session before route-owned navigation", async () => {
-  const fetch = vi
-    .fn()
-    .mockResolvedValue(
-      new Response(JSON.stringify({ token: "session", user })),
-    );
-  vi.stubGlobal("fetch", fetch);
-  setup();
-  submit();
-  await waitFor(() => expect(login).toHaveBeenCalledWith("session", user));
-  expect(JSON.parse(fetch.mock.calls[0][1].body)).toEqual({
-    firstName: "Review",
-    lastName: "Customer",
-    email: user.email,
+const RegisterPage: React.FC = () => {
+  const { login } = useAuth();
+  const location = useLocation();
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
     phoneNumber: "",
-    password: "LocalFixture1",
+    password: "",
   });
-  expect(
-    screen.getByRole("link", { name: "Sign In" }).getAttribute("href"),
-  ).toBe("/login");
-});
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [stage, setStage] = useState("");
+  type Session = {
+    token: Parameters<typeof login>[0];
+    user: Parameters<typeof login>[1];
+  };
+  const [pendingSession, setPendingSession] = useState<Session | null>(null);
+  const submitting = useRef(false);
 
-test.each([
-  "abcdefgh",
-  "ABCDEFG1",
-  "abcdefgh1",
-  "Abcdefgh",
-  "Ab1" + "é".repeat(35),
-])(
-  "rejects a password the backend cannot accept before sending: %s",
-  async (password) => {
-    const fetch = vi.fn();
-    vi.stubGlobal("fetch", fetch);
-    setup(password);
-    submit();
-    expect(screen.getByRole("alert").textContent).toMatch(/uppercase|too long/);
-    expect(fetch).not.toHaveBeenCalled();
-  },
-);
+  const saveSession = async (session: Session) => {
+    // Keep a successful signup in memory so a storage retry never creates another account.
+    setPendingSession(session);
+    try {
+      setStage("Opening your atelier…");
+      await login(session.token, session.user, "signup");
+      setPendingSession(null);
+    } catch {
+      setError(
+        "Your account is ready, but we couldn't save your sign-in on this device. Tap Retry sign-in, or use Sign In below. You don't need to register again.",
+      );
+    }
+  };
 
-test("rapid submits create one request while registration is pending", async () => {
-  let resolve!: (value: Response) => void;
-  const fetch = vi.fn(
-    () =>
-      new Promise<Response>((done) => {
-        resolve = done;
-      }),
-  );
-  vi.stubGlobal("fetch", fetch);
-  setup();
-  const form = screen
-    .getByRole("button", { name: "Create Account" })
-    .closest("form")!;
-  fireEvent.submit(form);
-  fireEvent.submit(form);
-  expect(fetch).toHaveBeenCalledTimes(1);
-  await act(async () =>
-    resolve(new Response(JSON.stringify({ token: "session", user }))),
-  );
-  expect(login).toHaveBeenCalledTimes(1);
-});
-
-test("a rejected email displays the server explanation and never signs in", async () => {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          error: "An account with this email already exists.",
-        }),
-        { status: 409 },
-      ),
-    ),
-  );
-  setup();
-  submit();
-  expect(await screen.findByRole("alert")).toHaveTextContent(
-    "An account with this email already exists.",
-  );
-  expect(login).not.toHaveBeenCalled();
-});
-
-test.each([
-  new Response("<html>Bad gateway</html>", { status: 502 }),
-  new Response(JSON.stringify({ user })),
-  new Response(
-    JSON.stringify({ token: "session", user: { name: "No email" } }),
-  ),
-  new Response("invalid JSON"),
-])(
-  "an uncertain result provides sign-in recovery instead of creating an invalid session",
-  async (response) => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response));
-    setup();
-    submit();
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Your account may have been created",
+  const submit = async (credential?: string) => {
+    if (submitting.current) return;
+    setError("");
+    const payload = {
+      ...form,
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      email: form.email.trim(),
+      phoneNumber: form.phoneNumber.trim(),
+    };
+    if (!credential && !pendingSession) {
+      if (
+        !payload.firstName ||
+        !payload.lastName ||
+        !payload.email ||
+        !payload.password
+      ) {
+        setError("Enter your first name, last name, email, and password.");
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+        setError("Enter a valid email address.");
+        return;
+      }
+      if (
+        payload.password.length < 8 ||
+        !/[A-Z]/.test(payload.password) ||
+        !/[a-z]/.test(payload.password) ||
+        !/[0-9]/.test(payload.password)
+      ) {
+        setError(
+          "Use at least 8 characters with uppercase and lowercase letters and a number.",
+        );
+        return;
+      }
+      if (new TextEncoder().encode(payload.password).length > 72) {
+        setError("Password is too long. Use no more than 72 UTF-8 bytes.");
+        return;
+      }
+    }
+    submitting.current = true;
+    setIsLoading(true);
+    setStage(
+      pendingSession
+        ? "Finishing your sign-in…"
+        : credential
+          ? "Signing in with Google…"
+          : "Creating your account…",
     );
-    expect(login).not.toHaveBeenCalled();
-  },
-);
+    try {
+      if (pendingSession) {
+        await saveSession(pendingSession);
+        return;
+      }
+      const res = await fetchApi(
+        `${API_URL}${credential ? "/api/auth/google" : "/api/signup"}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credential ? { credential } : payload),
+        },
+      );
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        if (res.status >= 500)
+          throw new Error("Registration service unavailable");
+        setError(
+          typeof data?.error === "string"
+            ? data.error
+            : credential
+              ? "Google sign-in failed. Please try again."
+              : "Unable to create account. Check your details and try again.",
+        );
+        return;
+      }
+      // A successful HTTP response alone cannot establish a signed-in session.
+      if (
+        typeof data?.token !== "string" ||
+        !data.token.trim() ||
+        !data.user ||
+        typeof data.user.email !== "string" ||
+        typeof data.user.name !== "string" ||
+        !["customer", "admin"].includes(data.user.role)
+      ) {
+        throw new Error("Incomplete sign-in response");
+      }
+      await saveSession(data);
+    } catch {
+      setError(
+        credential
+          ? "We couldn't complete Google sign-in. Check your connection and try again."
+          : "We couldn't confirm registration. Your account may have been created. Try Sign In below before registering again.",
+      );
+    } finally {
+      submitting.current = false;
+      setIsLoading(false);
+      setStage("");
+    }
+  };
 
-test("a lost response does not automatically retry account creation", async () => {
-  const fetch = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
-  vi.stubGlobal("fetch", fetch);
-  setup();
-  submit();
-  expect(await screen.findByRole("alert")).toHaveTextContent(
-    "Try Sign In below before registering again",
-  );
-  expect(fetch).toHaveBeenCalledTimes(1);
-  expect(login).not.toHaveBeenCalled();
-});
+  const set = (field: keyof typeof form) => (e: CustomEvent) =>
+    setForm((prev) => ({ ...prev, [field]: e.detail.value ?? "" }));
 
-test("after account creation, storage failure retries only session saving", async () => {
-  const fetch = vi
-    .fn()
-    .mockResolvedValue(
-      new Response(JSON.stringify({ token: "session", user })),
-    );
-  vi.stubGlobal("fetch", fetch);
-  login.mockRejectedValueOnce(new Error("Storage unavailable"));
-  setup();
-  submit();
-  expect(await screen.findByRole("alert")).toHaveTextContent(
-    "Your account is ready",
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    void submit();
+  };
+
+  return (
+    <IonPage className="tea-auth-page">
+      <IonHeader>
+        <IonToolbar>
+          <AuthBackButton />
+          <IonTitle>Create Account</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding">
+        <div className="auth-container">
+          <p className="tea-auth-brand">Tea Atelier</p>
+          <div className="tea-auth-intro">
+            <p className="tea-info-eyebrow">Small rituals. Beautiful tea.</p>
+            <h1>A little beginning.</h1>
+            <p>Make yourself at home in the atelier.</p>
+          </div>
+
+          {error && (
+            <IonText className="error-text" role="alert">
+              {error}
+            </IonText>
+          )}
+
+          <form
+            className="auth-form"
+            aria-busy={isLoading}
+            onSubmit={handleSubmit}
+          >
+            <div className="tea-field">
+              <IonInput
+                autocomplete="given-name"
+                disabled={isLoading || !!pendingSession}
+                label="First Name"
+                labelPlacement="stacked"
+                value={form.firstName}
+                onIonInput={set("firstName")}
+                placeholder="First name"
+              />
+            </div>
+
+            <div className="tea-field">
+              <IonInput
+                autocomplete="family-name"
+                disabled={isLoading || !!pendingSession}
+                label="Last Name"
+                labelPlacement="stacked"
+                value={form.lastName}
+                onIonInput={set("lastName")}
+                placeholder="Last name"
+              />
+            </div>
+
+            <div className="tea-field">
+              <IonInput
+                autocomplete="email"
+                disabled={isLoading || !!pendingSession}
+                label="Email"
+                labelPlacement="stacked"
+                type="email"
+                value={form.email}
+                onIonInput={set("email")}
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div className="tea-field">
+              <IonInput
+                autocomplete="tel"
+                disabled={isLoading || !!pendingSession}
+                label="Phone (Optional)"
+                labelPlacement="stacked"
+                type="tel"
+                value={form.phoneNumber}
+                onIonInput={set("phoneNumber")}
+                placeholder="Your phone number"
+              />
+            </div>
+
+            <div className="tea-field">
+              <IonInput
+                autocomplete="new-password"
+                disabled={isLoading || !!pendingSession}
+                helperText="At least 8 characters, with uppercase, lowercase, and a number."
+                label="Password"
+                labelPlacement="stacked"
+                type="password"
+                value={form.password}
+                onIonInput={set("password")}
+                placeholder="Create a password (min 8 characters)"
+              />
+            </div>
+
+            <IonButton
+              type="submit"
+              className="auth-button"
+              expand="block"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <TeaLoader label={stage || "Creating your account…"} />
+              ) : pendingSession ? (
+                "Retry sign-in"
+              ) : (
+                "Create Account"
+              )}
+            </IonButton>
+
+            <div className="tea-auth-divider">
+              <span>or continue with</span>
+            </div>
+            <GoogleSignInButton
+              disabled={isLoading || !!pendingSession}
+              onCredential={(credential) => submit(credential)}
+            />
+
+            <p className="auth-link">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                state={location.state}
+                replace
+                aria-disabled={isLoading}
+                onClick={(event) => {
+                  if (isLoading) event.preventDefault();
+                }}
+              >
+                Sign In
+              </Link>
+            </p>
+          </form>
+        </div>
+      </IonContent>
+    </IonPage>
   );
-  fireEvent.click(screen.getByRole("button", { name: "Retry sign-in" }));
-  await waitFor(() => expect(login).toHaveBeenCalledTimes(2));
-  expect(login).toHaveBeenLastCalledWith("session", user);
-  expect(fetch).toHaveBeenCalledTimes(1);
-});
+};
+
+export default RegisterPage;

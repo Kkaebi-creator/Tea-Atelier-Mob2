@@ -27,7 +27,13 @@ type AuthContextType = {
   isLoading: boolean;
   sessionError: string;
   retrySession: () => Promise<void>;
-  login: (token: string, user: User) => Promise<void>;
+  login: (
+    token: string,
+    user: User,
+    kind?: "signin" | "signup",
+  ) => Promise<void>;
+  welcomeMessage: string;
+  clearWelcome: () => void;
   logout: () => Promise<void>;
   updateUser: (updates: Partial<User>) => void;
 };
@@ -38,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [welcomeMessage, setWelcomeMessage] = useState("");
 
   const [sessionError, setSessionError] = useState("");
 
@@ -76,16 +83,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void retrySession();
   }, [retrySession]);
 
-  const login = async (newToken: string, newUser: User) => {
+  const login = async (
+    newToken: string,
+    newUser: User,
+    kind: "signin" | "signup" = "signin",
+  ) => {
     await Preferences.set({ key: "auth_token", value: newToken });
     setToken(newToken);
     setUser(newUser);
+    const name =
+      typeof newUser.firstName === "string" ? newUser.firstName.trim() : "";
+    setWelcomeMessage(
+      kind === "signup"
+        ? `Welcome to Tea Atelier${name ? `, ${name}` : ""}.`
+        : `Welcome back${name ? `, ${name}` : ""}.`,
+    );
   };
 
   const logout = async () => {
     await Preferences.remove({ key: "auth_token" });
     setToken(null);
     setUser(null);
+    setWelcomeMessage("");
   };
 
   const updateUser = (updates: Partial<User>) => {
@@ -101,6 +120,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         sessionError,
         retrySession,
         login,
+        welcomeMessage,
+        clearWelcome: () => setWelcomeMessage(""),
         logout,
         updateUser,
       }}

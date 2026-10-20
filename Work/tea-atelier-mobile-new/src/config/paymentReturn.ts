@@ -19,26 +19,12 @@ export function paymentReturnPath(value: string): string | null {
   }
 }
 
-export function postLoginPath(state: unknown): string {
-  const pathname = (state as { from?: { pathname?: unknown } } | null)?.from
-    ?.pathname;
-  if (typeof pathname !== "string") return "/shop";
-  if (
-    [
-      "/shop",
-      "/cart",
-      "/orders",
-      "/account",
-      "/notifications",
-      "/contact",
-      "/settings",
-    ].includes(pathname)
-  )
-    return pathname;
-  const match = /^\/(product|orders|order-confirmation)\/([1-9]\d*)$/.exec(
-    pathname,
-  );
-  return match && Number.isSafeInteger(Number(match[2])) ? pathname : "/shop";
+// Every completed sign-in/signup starts in Shop. App Links still use
+// paymentReturnPath above to open an order when a session already exists.
+export function postLoginPath(state?: unknown): string {
+  // Accept origin state from older callers while always starting in Shop.
+  void state;
+  return "/shop";
 }
 
 // Authentication always has a way back to a guest-accessible screen.
