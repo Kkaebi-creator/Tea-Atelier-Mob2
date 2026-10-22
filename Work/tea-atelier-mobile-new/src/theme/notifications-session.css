@@ -1,0 +1,99 @@
+ion-badge.tea-menu-unread-badge {
+  --background: var(--tea-green);
+  --color: #fff;
+  min-width: 22px;
+  padding: 4px 7px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+ion-modal.tea-signout-modal {
+  --height: auto;
+  --width: calc(100% - 32px);
+  --max-width: 380px;
+  --border-radius: 24px;
+  --background: var(--tea-bg);
+  --box-shadow: 0 12px 48px #26321f26;
+}
+ion-modal.tea-signout-modal .ion-delegate-host.ion-page {
+  position: relative;
+  inset: auto;
+  display: block;
+  contain: content;
+}
+.tea-signout-dialog {
+  padding: 28px 24px 22px;
+  max-height: calc(100dvh - 48px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+}
+.tea-signout-symbol {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  background: #e7eddf;
+  color: var(--tea-green-deep);
+  font-size: 23px;
+}
+.tea-signout-dialog h2 {
+  margin: 0 0 12px;
+  font-size: 27px;
+  line-height: 1.2;
+}
+.tea-signout-dialog p {
+  margin: 0 0 20px;
+  color: var(--tea-text-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.tea-signout-dialog .tea-signout-error {
+  color: var(--tea-red);
+}
+.tea-signout-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.tea-signout-actions ion-button {
+  margin: 0;
+  min-height: 46px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  font-size: 13px;
+}
+.tea-signout-actions .tea-loader {
+  gap: 6px;
+  font-size: 11px;
+}
+.tea-signout-actions .tea-loader-orbit {
+  width: 18px;
+  height: 18px;
+}
+.tea-delivery-estimate {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 2px 0;
+  color: var(--tea-text-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.tea-delivery-estimate ion-icon {
+  flex: 0 0 16px;
+  margin-top: 2px;
+  color: var(--tea-green);
+  font-size: 16px;
+}
+.tea-delivery-estimate strong {
+  color: var(--tea-green-deep);
+  font-weight: 500;
+}
+ion-action-sheet.tea-checkout-delivery-sheet .action-sheet-button-label {
+  white-space: normal;
+  text-overflow: clip;
+  overflow: visible;
+  line-height: 1.5;
+}

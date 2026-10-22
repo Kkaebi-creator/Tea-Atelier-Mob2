@@ -12,6 +12,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { NotificationsProvider } from "./context/NotificationsContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ShopPage from "./pages/ShopPage";
@@ -70,6 +71,7 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import "./theme/atelier-polish.css";
 import "./theme/auth-polish.css";
+import "./theme/notifications-session.css";
 
 setupIonicReact();
 
@@ -292,9 +294,11 @@ const App: React.FC = () => {
       <AuthProvider>
         <IonReactRouter>
           <PaymentReturnListener />
-          <CartProvider>
-            <AppShell />
-          </CartProvider>
+          <NotificationsProvider>
+            <CartProvider>
+              <AppShell />
+            </CartProvider>
+          </NotificationsProvider>
         </IonReactRouter>
       </AuthProvider>
     </IonApp>

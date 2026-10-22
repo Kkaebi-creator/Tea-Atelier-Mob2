@@ -1,6 +1,7 @@
 import React from "react";
 import {
   IonButton,
+  IonBadge,
   IonButtons,
   IonContent,
   IonIcon,
@@ -31,6 +32,7 @@ import { useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import ProfileAvatar from "./ProfileAvatar";
+import { useNotifications } from "../context/NotificationsContext";
 
 const modules = [
   { label: "Shop", href: "/shop", icon: bagHandleOutline },
@@ -47,6 +49,7 @@ const modules = [
 const SideMenu: React.FC = () => {
   const location = useLocation();
   const { token, user } = useAuth();
+  const { unreadCount, refresh } = useNotifications();
   const name = user?.name?.trim() || "Your account";
 
   const isActive = (href: string) =>
@@ -61,6 +64,9 @@ const SideMenu: React.FC = () => {
       menuId="tea-navigation"
       type="overlay"
       className="tea-side-menu"
+      onIonWillOpen={() => {
+        if (token) void refresh(true);
+      }}
     >
       <IonToolbar>
         <IonTitle>Explore the atelier</IonTitle>
@@ -126,6 +132,18 @@ const SideMenu: React.FC = () => {
               >
                 <IonIcon slot="start" icon={module.icon} />
                 <IonLabel>{module.label}</IonLabel>
+                {module.href === "/notifications" &&
+                  token &&
+                  unreadCount > 0 && (
+                    <IonBadge
+                      slot="end"
+                      className="tea-menu-unread-badge"
+                      aria-label={`${unreadCount} unread notifications`}
+                      aria-live="polite"
+                    >
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </IonBadge>
+                  )}
               </IonItem>
             </IonMenuToggle>
           ))}

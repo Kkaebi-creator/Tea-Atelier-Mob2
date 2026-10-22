@@ -1,6 +1,6 @@
 import PageFrame from "../components/PageFrame";
 import PageIntro from "../components/PageIntro";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React from "react";
 import {
   IonButton,
   IonButtons,
@@ -10,6 +10,7 @@ import {
   IonMenuButton,
   IonTitle,
   IonToolbar,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import {
   checkmarkDoneOutline,
@@ -17,126 +18,25 @@ import {
   arrowForwardOutline,
 } from "ionicons/icons";
 import RefreshButton from "../components/RefreshButton";
-import { API_URL } from "../config/api";
-import { useAuth } from "../context/AuthContext";
-import { ensureOk, fetchApi, requestError } from "../config/request";
-type Notification = {
-  notification_id: string;
-  order_id: number | null;
-  title: string;
-  message: string;
-  created_at: string;
-  read_at: string | null;
-};
+import { useNotifications } from "../context/NotificationsContext";
 export default function NotificationsPage({
   embedded = false,
 }: {
   embedded?: boolean;
 }) {
-  const { token } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [loadError, setLoadError] = useState("");
-  const [actionError, setActionError] = useState("");
-  const sequence = useRef(0);
-  const busy = useRef(false);
-  const invalidate = useCallback(() => {
-    ++sequence.current;
-  }, []);
-  const load = useCallback(async () => {
-    const current = ++sequence.current;
-    setLoading(true);
-    setLoadError("");
-    try {
-      if (!token) throw new Error("Please sign in to view notifications.");
-      const response = await fetchApi(`${API_URL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      await ensureOk(response, "Unable to load notifications.");
-      const data = await response.json();
-      if (
-        !Array.isArray(data.notifications) ||
-        !Number.isInteger(data.unreadCount) ||
-        data.unreadCount < 0
-      )
-        throw new Error("Unable to load notifications.");
-      if (current === sequence.current) {
-        setNotifications(data.notifications);
-        setUnreadCount(data.unreadCount);
-      }
-    } catch (failure) {
-      if (current === sequence.current)
-        setLoadError(requestError(failure, "Unable to load notifications."));
-    } finally {
-      if (current === sequence.current) setLoading(false);
-    }
-  }, [token]);
-  useEffect(() => {
-    setNotifications([]);
-    setUnreadCount(0);
-    setActionError("");
-    setSaving(false);
-    busy.current = false;
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    saving,
+    loadError,
+    actionError,
+    refresh: load,
+    markRead,
+  } = useNotifications();
+  useIonViewWillEnter(() => {
     void load();
-    return invalidate;
-  }, [load, invalidate]);
-  const markRead = async (notificationId?: string) => {
-    if (!token || busy.current || loading || loadError) return;
-    const selected = notifications.find(
-      (item) => item.notification_id === notificationId,
-    );
-    if (notificationId && (!selected || selected.read_at)) return;
-    busy.current = true;
-    setSaving(true);
-    setActionError("");
-    const current = ++sequence.current;
-    let acknowledged = false;
-    try {
-      const response = await fetchApi(`${API_URL}/api/notifications`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(
-          notificationId ? { notificationId } : { all: true },
-        ),
-      });
-      await ensureOk(response, "Unable to update notifications.");
-      const result = await response.json();
-      if (result.success !== true)
-        throw new Error(
-          "Unable to confirm read status. Refresh notifications before retrying.",
-        );
-      if (current !== sequence.current) return;
-      acknowledged = true;
-      const readAt = new Date().toISOString();
-      setNotifications((previous) =>
-        previous.map((item) =>
-          !notificationId || item.notification_id === notificationId
-            ? { ...item, read_at: item.read_at || readAt }
-            : item,
-        ),
-      );
-      setUnreadCount((previous) =>
-        notificationId ? Math.max(0, previous - 1) : 0,
-      );
-    } catch (failure) {
-      if (current === sequence.current)
-        setActionError(
-          requestError(failure, "Unable to update notifications."),
-        );
-    } finally {
-      if (current === sequence.current) {
-        busy.current = false;
-        setSaving(false);
-        // A refresh failure must not turn an acknowledged PATCH into a failed PATCH.
-        if (acknowledged) void load();
-      }
-    }
-  };
+  });
   return (
     <PageFrame embedded={embedded} className="tea-info-page">
       <IonHeader>

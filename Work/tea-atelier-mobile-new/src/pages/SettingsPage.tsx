@@ -16,11 +16,12 @@ import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import PageIntro from "../components/PageIntro";
 import TeaLoader from "../components/TeaLoader";
+import SignOutControl from "../components/SignOutControl";
 
 const SettingsPage: React.FC<{ embedded?: boolean }> = ({
   embedded = false,
 }) => {
-  const { token, user, logout } = useAuth();
+  const { token, user } = useAuth();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [qrCode, setQrCode] = useState("");
   const [code, setCode] = useState("");
@@ -281,9 +282,7 @@ const SettingsPage: React.FC<{ embedded?: boolean }> = ({
               <section className="tea-settings-card">
                 <h2>Session</h2>
                 <p>Sign out of Tea Atelier on this device.</p>
-                <IonButton fill="outline" color="danger" onClick={logout}>
-                  Sign out
-                </IonButton>
+                <SignOutControl />
               </section>
             </>
           )}

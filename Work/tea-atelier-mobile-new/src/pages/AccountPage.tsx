@@ -20,18 +20,14 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import {
-  logOutOutline,
-  cameraOutline,
-  trashOutline,
-  createOutline,
-} from "ionicons/icons";
+import { cameraOutline, trashOutline, createOutline } from "ionicons/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API_URL } from "../config/api";
 import TeaLoader from "../components/TeaLoader";
 import { ensureOk, fetchApi, requestError } from "../config/request";
 import ProfileAvatar from "../components/ProfileAvatar";
+import SignOutControl from "../components/SignOutControl";
 import { mediaUrl } from "../config/media";
 import "../theme/profile-checkout.css";
 
@@ -57,7 +53,7 @@ const mobileNumber = (value: string) => {
 const AccountPage: React.FC<{ embedded?: boolean }> = ({
   embedded = false,
 }) => {
-  const { user, token, logout, updateUser } = useAuth();
+  const { user, token, updateUser } = useAuth();
   const navigate = useNavigate();
   const [section, setSection] = useState("profile");
   const [profile, setProfile] = useState<ProfileFields>(() =>
@@ -161,11 +157,6 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
     setAddressError("");
     void loadAddresses();
   }, [loadAddresses]);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login", { replace: true });
-  };
 
   const saveProfile = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -661,10 +652,7 @@ const AccountPage: React.FC<{ embedded?: boolean }> = ({
                     <p>Email verification and two-factor authentication</p>
                   </IonLabel>
                 </IonItem>
-                <IonItem lines="none" button onClick={handleLogout}>
-                  <IonIcon icon={logOutOutline} slot="start" color="danger" />
-                  <IonLabel color="danger">Sign out</IonLabel>
-                </IonItem>
+                <SignOutControl asItem />
               </IonList>
             </div>
           )}

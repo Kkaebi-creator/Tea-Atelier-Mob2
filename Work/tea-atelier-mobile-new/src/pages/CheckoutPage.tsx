@@ -34,8 +34,14 @@ import {
   closeOutline,
   checkmarkOutline,
   chevronDownOutline,
+  timeOutline,
 } from "ionicons/icons";
 import "../theme/profile-checkout.css";
+
+const deliveryDetails: Record<string, { label: string; estimate: string }> = {
+  standard: { label: "Standard delivery", estimate: "3–5 business days" },
+  express: { label: "Express delivery", estimate: "1–2 business days" },
+};
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -510,6 +516,9 @@ const CheckoutPage: React.FC = () => {
                 cssClass: "tea-checkout-delivery-sheet",
                 header: "Delivery option",
               }}
+              selectedText={
+                deliveryDetails[shippingMethod]?.label || shippingMethod
+              }
               value={shippingMethod}
               onIonChange={(event) => setShippingMethod(event.detail.value)}
             >
@@ -517,12 +526,21 @@ const CheckoutPage: React.FC = () => {
                 .filter(([, option]) => option.enabled)
                 .map(([key]) => (
                   <IonSelectOption value={key} key={key}>
-                    {key === "express"
-                      ? "Express delivery"
-                      : "Standard delivery"}
+                    {deliveryDetails[key]
+                      ? `${deliveryDetails[key].label} · ${deliveryDetails[key].estimate}`
+                      : key}
                   </IonSelectOption>
                 ))}
             </IonSelect>
+            {deliveryDetails[shippingMethod] && (
+              <p className="tea-delivery-estimate" aria-live="polite">
+                <IonIcon icon={timeOutline} aria-hidden="true" />
+                <span>
+                  Estimated delivery:{" "}
+                  <strong>{deliveryDetails[shippingMethod].estimate}</strong>
+                </span>
+              </p>
+            )}
           </div>
           <h3 style={{ margin: "18px 0 12px", color: "#1d1b1a" }}>
             Payment Method
