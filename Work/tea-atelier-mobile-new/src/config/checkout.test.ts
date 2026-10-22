@@ -89,6 +89,7 @@ test("payment initiation uses the dedicated endpoint for the existing order", as
   expect(JSON.parse(fetch.mock.calls[0][1].body)).toEqual({
     orderId: 4,
     type: "gcash",
+    returnTarget: "mobile",
   });
 });
 
