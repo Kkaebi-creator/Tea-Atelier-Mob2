@@ -29,6 +29,7 @@ const RegisterPage: React.FC = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [stage, setStage] = useState("");
   type Session = {
     token: Parameters<typeof login>[0];
     user: Parameters<typeof login>[1];
@@ -40,7 +41,8 @@ const RegisterPage: React.FC = () => {
     // Keep a successful signup in memory so a storage retry never creates another account.
     setPendingSession(session);
     try {
-      await login(session.token, session.user);
+      setStage("Opening your atelier…");
+      await login(session.token, session.user, "signup");
       setPendingSession(null);
     } catch {
       setError(
@@ -91,6 +93,13 @@ const RegisterPage: React.FC = () => {
     }
     submitting.current = true;
     setIsLoading(true);
+    setStage(
+      pendingSession
+        ? "Finishing your sign-in…"
+        : credential
+          ? "Signing in with Google…"
+          : "Creating your account…",
+    );
     try {
       if (pendingSession) {
         await saveSession(pendingSession);
@@ -138,6 +147,7 @@ const RegisterPage: React.FC = () => {
     } finally {
       submitting.current = false;
       setIsLoading(false);
+      setStage("");
     }
   };
 
@@ -172,7 +182,11 @@ const RegisterPage: React.FC = () => {
             </IonText>
           )}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form
+            className="auth-form"
+            aria-busy={isLoading}
+            onSubmit={handleSubmit}
+          >
             <div className="tea-field">
               <IonInput
                 autocomplete="given-name"
@@ -244,7 +258,7 @@ const RegisterPage: React.FC = () => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <TeaLoader label="Signing you in" />
+                <TeaLoader label={stage || "Creating your account…"} />
               ) : pendingSession ? (
                 "Retry sign-in"
               ) : (
@@ -262,7 +276,15 @@ const RegisterPage: React.FC = () => {
 
             <p className="auth-link">
               Already have an account?{" "}
-              <Link to="/login" state={location.state} replace>
+              <Link
+                to="/login"
+                state={location.state}
+                replace
+                aria-disabled={isLoading}
+                onClick={(event) => {
+                  if (isLoading) event.preventDefault();
+                }}
+              >
                 Sign In
               </Link>
             </p>
