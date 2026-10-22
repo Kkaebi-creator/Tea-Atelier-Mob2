@@ -14,6 +14,7 @@ import {
 
 import PageIntro from "../components/PageIntro";
 
+// Dev Names
 const developers = [
   { name: "Arce, Jose Luis Gabriel", image: "/images/developers/Josepic.jpg" },
   {
