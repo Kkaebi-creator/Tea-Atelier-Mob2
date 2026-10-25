@@ -22,7 +22,7 @@ const developers = [
     image: "/images/developers/John Bryan.jpg",
   },
   { name: "De Jesus, Sophia Jullia", image: "/images/developers/JULSPIC.jpg" },
-  { name: "Vance, Aaron Golfo", image: "/images/developers/AARONPIC.jpg" },
+  { name: "Vance, Aaron Golfo", image: "/images/developers/ARRONPIC.jpg" },
   {
     name: "Rabanzo, Francheska Ann Nicole",
     image: "/images/developers/CHIPIC.jpg",
