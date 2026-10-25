@@ -27,6 +27,7 @@ import {
   receiptOutline,
   peopleOutline,
   timeOutline,
+  leafOutline,
 } from "ionicons/icons";
 import { useLocation } from "react-router-dom";
 
@@ -164,6 +165,21 @@ const SideMenu: React.FC = () => {
             >
               <IonIcon slot="start" icon={timeOutline} />
               <IonLabel>Company History</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle autoHide={false}>
+            <IonItem
+              button
+              detail={false}
+              routerLink="/about-products"
+              className={
+                isActive("/about-products")
+                  ? "tea-menu-item active"
+                  : "tea-menu-item"
+              }
+            >
+              <IonIcon slot="start" icon={leafOutline} />
+              <IonLabel>About Our Products</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>

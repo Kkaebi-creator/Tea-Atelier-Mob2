@@ -31,6 +31,7 @@ import GuestAccessPage, {
 import AppNavigation from "./components/AppNavigation";
 import AboutPage from "./pages/AboutPage";
 import CompanyHistoryPage from "./pages/CompanyHistoryPage";
+import AboutProductsPage from "./pages/AboutProductsPage";
 import DevelopersPage from "./pages/DevelopersPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ContactPage from "./pages/ContactPage";
@@ -110,6 +111,7 @@ const ProtectedRoute: React.FC<{
         "/register",
         "/about",
         "/company-history",
+        "/about-products",
         "/privacy",
         "/developers",
       ].includes(location.pathname) ||
@@ -172,6 +174,7 @@ const AppRoutes: React.FC = () => {
       />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/company-history" element={<CompanyHistoryPage />} />
+      <Route path="/about-products" element={<AboutProductsPage />} />
       <Route path="/developers" element={<DevelopersPage />} />
       <Route
         path="/notifications"

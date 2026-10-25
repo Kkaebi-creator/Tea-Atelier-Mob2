@@ -25,6 +25,7 @@ export default function AppNavigation() {
           "/notifications",
           "/about",
           "/company-history",
+          "/about-products",
           "/privacy",
           "/developers",
         ].includes(pathname)
